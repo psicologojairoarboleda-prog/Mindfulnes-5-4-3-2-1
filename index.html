@@ -6,14 +6,15 @@
   <title>Conexión Presente 5-4-3-2-1</title>
   <style>
     :root {
-      --bg-gradient: linear-gradient(135deg, #f4f7f5 0%, #e8efe9 100%);
+      --bg-gradient: linear-gradient(135deg, #f3f7f4 0%, #e5eee8 100%);
       --card-bg: rgba(255, 255, 255, 0.95);
-      --primary: #6b8e85;
-      --primary-dark: #4a6b63;
-      --text-main: #2c3e35;
-      --text-muted: #5f7367;
-      --card-shadow: 0 12px 32px rgba(107, 142, 133, 0.12);
-      --border-color: rgba(107, 142, 133, 0.2);
+      --primary: #5b8276;
+      --primary-dark: #3f5e54;
+      --accent: #88a795;
+      --text-main: #24332c;
+      --text-muted: #586e63;
+      --card-shadow: 0 16px 40px rgba(91, 130, 118, 0.15);
+      --border-color: rgba(91, 130, 118, 0.2);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
@@ -30,11 +31,11 @@
 
     .container {
       background: var(--card-bg);
-      backdrop-filter: blur(10px);
+      backdrop-filter: blur(12px);
       border: 1px solid var(--border-color);
-      border-radius: 28px;
-      padding: 35px 25px;
-      max-width: 520px;
+      border-radius: 32px;
+      padding: 40px 28px;
+      max-width: 540px;
       width: 100%;
       box-shadow: var(--card-shadow);
       text-align: center;
@@ -42,28 +43,29 @@
 
     h1 {
       color: var(--primary-dark);
-      font-size: 1.5rem;
-      letter-spacing: 1.5px;
-      margin-bottom: 20px;
+      font-size: 1.6rem;
+      letter-spacing: 1.8px;
+      margin-bottom: 22px;
       font-weight: 600;
     }
 
     .display-card {
       background: #ffffff;
       border: 1px solid var(--border-color);
-      border-radius: 20px;
+      border-radius: 24px;
       padding: 25px 20px;
-      min-height: 400px;
+      min-height: 420px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.02);
     }
 
     .step-title {
       font-weight: 700;
       color: var(--primary-dark);
-      font-size: 1.2rem;
+      font-size: 1.25rem;
       letter-spacing: 1px;
       text-transform: uppercase;
     }
@@ -72,32 +74,33 @@
       font-size: 1.1rem;
       line-height: 1.5;
       color: var(--text-main);
-      margin: 10px 0;
+      margin: 12px 0;
     }
 
     .media-viewport {
       width: 100%;
-      height: 190px;
+      height: 200px;
       margin: 10px 0;
-      border-radius: 16px;
+      border-radius: 18px;
       overflow: hidden;
-      background: #f0f4f1;
+      background: #eef4f0;
       display: flex;
       justify-content: center;
       align-items: center;
-      border: 1px solid rgba(107, 142, 133, 0.15);
+      border: 1px solid rgba(91, 130, 118, 0.15);
     }
 
     .media-viewport img {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: opacity 0.5s ease-in-out;
     }
 
     .object-hint {
       font-size: 0.9rem;
       color: var(--primary-dark);
-      background: #f0f5f3;
+      background: #eef5f1;
       border-left: 4px solid var(--primary);
       padding: 10px 14px;
       border-radius: 8px;
@@ -110,46 +113,51 @@
       font-size: 0.85rem;
       font-weight: 600;
       color: var(--primary-dark);
-      background: #e8f0ec;
+      background: #e4eee7;
       border: 1px solid var(--border-color);
       padding: 6px 18px;
       border-radius: 20px;
+      transition: all 0.3s ease;
     }
 
-    .controls { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+    .controls { display: flex; flex-direction: column; gap: 12px; margin-top: 22px; }
     .nav-group { display: flex; gap: 10px; width: 100%; }
 
     button {
       background: var(--primary);
       color: #ffffff;
       border: none;
-      padding: 12px 20px;
-      border-radius: 12px;
+      padding: 13px 20px;
+      border-radius: 14px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
     }
 
-    button:hover:not(:disabled) { background: var(--primary-dark); }
-    button:disabled { background: #dce4e1; color: #9aa8a1; cursor: not-allowed; }
+    button:hover:not(:disabled) {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    button:disabled { background: #d3dfd9; color: #8fa39a; cursor: not-allowed; }
     
-    .btn-main { width: 100%; padding: 14px; font-size: 1rem; }
-    .btn-nav { flex: 1; background: #e8f0ec; color: var(--primary-dark); }
+    .btn-main { width: 100%; padding: 15px; font-size: 1rem; }
+    .btn-nav { flex: 1; background: #e4eee7; color: var(--primary-dark); }
     .btn-sec { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); }
-    .btn-pause { background: #d9822b; }
-    .btn-pause:hover:not(:disabled) { background: #b86a1f; }
+    .btn-pause { background: #d07d32; }
+    .btn-pause:hover:not(:disabled) { background: #b06522; }
   </style>
 </head>
 <body>
 
   <div class="container">
-    <h1>Conexión Presente</h1>
+    <h1>Conexión Presente 5-4-3-2-1</h1>
 
     <div class="display-card">
       <div id="step-title" class="step-title">Preparación</div>
       
       <div class="media-viewport">
-        <img id="step-image" src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80" alt="Meditación">
+        <img id="step-image" src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80" alt="Meditación y Calma">
       </div>
 
       <div id="step-text" class="step-text">Adopta una postura cómoda, respira profundo y presiona Iniciar.</div>
@@ -157,7 +165,6 @@
       <div id="status-badge" class="status-badge">Listo</div>
     </div>
 
-    <!-- MÚSICA DE FONDO SUAVE EN PIANO -->
     <audio id="piano-bg" loop preload="auto">
       <source src="audio/musica_fondo_piano.mp3" type="audio/mpeg">
     </audio>
@@ -169,133 +176,93 @@
       </div>
 
       <div class="nav-group">
-        <button id="start-btn" class="btn-main" onclick="start()">Iniciar Experiencia</button>
+        <button id="start-btn" class="btn-main" onclick="startExperience()">Iniciar Experiencia</button>
         <button id="pause-btn" class="btn-pause" onclick="togglePause()" disabled>Pausar</button>
       </div>
 
-      <button id="reset-btn" class="btn-sec" onclick="reset()" disabled>Reiniciar</button>
+      <button id="reset-btn" class="btn-sec" onclick="resetExperience()" disabled>Reiniciar</button>
     </div>
   </div>
 
   <script>
-    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const pianoAudio = document.getElementById('piano-bg');
     
     let currentVoiceAudio = null;
+    let currentEffectAudio = null;
     let isPaused = false;
     let currentIdx = 0;
-    let bowlTimeout = null;
 
-    // VOLÚMENES CONTROLADOS PARA EVITAR MÚSICA INTRUSIVA
-    const VOL_NORMAL = 0.12;  // Música de fondo muy suave (12%)
-    const VOL_DUCKING = 0.03; // Casi inaudible mientras habla la voz (3%)
+    // NIVELES DE VOLUMEN REGULADOS (NO INTRUSIVOS)
+    const VOL_PIANO_NORMAL = 0.10; // 10% cuando no hay voz
+    const VOL_PIANO_DUCKING = 0.02; // 2% casi imperceptible cuando habla la voz
 
+    // MÓDULOS DE LA ACTIVIDAD CON AUDIOS Y EFECTOS DE TU REPOSITORIO
     const modules = [
       { 
         cat: "5. Vista", 
         text: "Observa a tu alrededor y nombra 5 objetos mentalmente.", 
-        file: "audio_01_vista.mp3",
+        voiceFile: "audio_01_vista.mp3",
+        effectFile: "efecto_riachuelo.mp3", // Agua corriendo en un riachuelo
         image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",
         hint: "Ejemplo: Una lámpara, tu reloj, una planta, una ventana, una silla." 
       },
       { 
         cat: "4. Tacto", 
         text: "Conecta con la textura y temperatura de 4 objetos a tu alcance.", 
-        file: "audio_02_tacto.mp3",
+        voiceFile: "audio_02_tacto.mp3",
+        effectFile: "efecto_viento.mp3", // Viento fuerte soplando
         image: "https://images.unsplash.com/photo-1516541196182-6bdb0516ed27?auto=format&fit=crop&w=600&q=80",
         hint: "Ejemplo: Tu ropa, la mesa de madera, tus manos, una superficie fría." 
       },
       { 
         cat: "3. Oído", 
-        text: "Cierra los ojos y escucha la resonancia profunda del cuenco.", 
-        file: "audio_03_oido.mp3",
+        text: "Cierra los ojos y escucha el sonido de las aves al amanecer.", 
+        voiceFile: "audio_03_oido.mp3",
+        effectFile: "efecto_aves.mp3", // Aves al amanecer
         image: "https://images.unsplash.com/photo-1512438248247-f0f2a5a8b7f0?auto=format&fit=crop&w=600&q=80",
-        isBowlStep: true,
-        hint: "Permite que la frecuencia limpie cualquier distracción sonora." 
+        hint: "Permite que la frecuencia natural limpie cualquier distracción urbana." 
       },
       { 
         cat: "2. Olfato", 
         text: "Huele 2 aromas de tu entorno y percibe el aire al inhalar.", 
-        file: "audio_04_olfato.mp3",
+        voiceFile: "audio_04_olfato.mp3",
+        effectFile: null,
         image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80",
         hint: "Ejemplo: Tu café, una flor, aceite esencial o el aire fresco." 
       },
       { 
         cat: "1. Gusto", 
         text: "Experimenta la sensación y sabor presente en tu boca.", 
-        file: "audio_05_sabor.mp3",
+        voiceFile: "audio_05_sabor.mp3",
+        effectFile: null,
         image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80",
         hint: "Ejemplo: Un sorbo de agua, una fruta o la frescura del paladar." 
       }
     ];
 
-    function playPianoBG(vol = VOL_NORMAL) {
+    function playPiano(vol = VOL_PIANO_NORMAL) {
       pianoAudio.volume = vol;
       pianoAudio.play().catch(() => {});
     }
 
-    function stopPianoBG() {
+    function stopPiano() {
       pianoAudio.pause();
     }
 
-    function stopCurrentVoice() {
+    function stopAllAudios() {
       if (currentVoiceAudio) {
         currentVoiceAudio.pause();
         currentVoiceAudio.currentTime = 0;
         currentVoiceAudio = null;
       }
-      if (bowlTimeout) {
-        clearTimeout(bowlTimeout);
-        bowlTimeout = null;
+      if (currentEffectAudio) {
+        currentEffectAudio.pause();
+        currentEffectAudio.currentTime = 0;
+        currentEffectAudio = null;
       }
     }
 
-    // REPRODUCCIÓN DE VOZ PREGRABADA
-    function playPreRecordedVoice(file, onEndedCallback) {
-      stopCurrentVoice();
-
-      pianoAudio.volume = VOL_DUCKING;
-
-      currentVoiceAudio = new Audio(`audio/${file}`);
-      currentVoiceAudio.play().catch(err => {
-        console.error("No se pudo cargar el audio pregrabado:", err);
-      });
-
-      currentVoiceAudio.onended = () => {
-        pianoAudio.volume = VOL_NORMAL;
-        if (onEndedCallback) onEndedCallback();
-      };
-    }
-
-    // CUENCO TIBETANO ALTO Y LARGO (12s)
-    function playLongSingingBowl() {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-
-      stopPianoBG();
-
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(432, audioCtx.currentTime);
-
-      gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.85, audioCtx.currentTime + 0.3);
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 11.9);
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      
-      osc.start();
-      osc.stop(audioCtx.currentTime + 12.0);
-
-      bowlTimeout = setTimeout(() => {
-        playPianoBG(VOL_NORMAL);
-        document.getElementById('status-badge').textContent = "En curso";
-      }, 12000);
-    }
-
-    function start() {
+    function startExperience() {
       currentIdx = 0;
       isPaused = false;
       document.getElementById('start-btn').disabled = true;
@@ -304,11 +271,14 @@
       document.getElementById('prev-btn').disabled = false;
       document.getElementById('next-btn').disabled = false;
       
-      playPianoBG(VOL_NORMAL);
-      renderStep();
+      playPiano(VOL_PIANO_NORMAL);
+      executeStep();
     }
 
-    function renderStep() {
+    function executeStep() {
+      stopAllAudios();
+      if (isPaused) return;
+
       const mod = modules[currentIdx];
       document.getElementById('step-title').textContent = mod.cat;
       document.getElementById('step-text').textContent = mod.text;
@@ -322,19 +292,50 @@
         hintEl.style.display = "none";
       }
 
-      document.getElementById('status-badge').textContent = "Reproduciendo voz...";
+      document.getElementById('status-badge').textContent = "Escuchando instrucción...";
+      
+      // 1. Atenuar piano de fondo para la voz
+      playPiano(VOL_PIANO_DUCKING);
 
-      playPreRecordedVoice(mod.file, () => {
-        if (mod.isBowlStep) {
-          document.getElementById('status-badge').textContent = "Escuchando Cuenco (12s)...";
-          playLongSingingBowl();
+      // 2. Reproducir voz pregrabada de la carpeta audio/
+      currentVoiceAudio = new Audio(`audio/${mod.voiceFile}`);
+      currentVoiceAudio.play().catch(e => console.error("Error al reproducir audio:", e));
+
+      currentVoiceAudio.onended = () => {
+        // 3. Si el paso tiene un efecto (Agua, Viento, Aves), detener piano y reproducir efecto
+        if (mod.effectFile) {
+          stopPiano(); // EL PIANO SE DETIENE CUANDO SUENA EL EFECTO NATURALEZA
+          document.getElementById('status-badge').textContent = "Sonido ambiental activo...";
+
+          currentEffectAudio = new Audio(`audio/${mod.effectFile}`);
+          currentEffectAudio.play().catch(e => console.error("Error en efecto:", e));
+
+          currentEffectAudio.onended = () => {
+            playPiano(VOL_PIANO_NORMAL); // Vuelve el piano suave
+            autoAdvanceNext();
+          };
         } else {
-          document.getElementById('status-badge').textContent = "En curso";
+          playPiano(VOL_PIANO_NORMAL);
+          autoAdvanceNext();
         }
-      });
+      };
     }
 
-    // LÓGICA DE PAUSA Y REANUDACIÓN
+    // AVANCE CONTINUO AUTOMÁTICO SIN INTERRUPCIONES
+    function autoAdvanceNext() {
+      if (isPaused) return;
+      
+      if (currentIdx < modules.length - 1) {
+        currentIdx++;
+        setTimeout(() => {
+          executeStep();
+        }, 1500); // Pausa orgánica de 1.5s entre ejercicios
+      } else {
+        document.getElementById('status-badge').textContent = "Experiencia Completada";
+        playPiano(VOL_PIANO_NORMAL);
+      }
+    }
+
     function togglePause() {
       const pauseBtn = document.getElementById('pause-btn');
 
@@ -344,40 +345,45 @@
         document.getElementById('status-badge').textContent = "En Pausa";
 
         if (currentVoiceAudio) currentVoiceAudio.pause();
-        stopPianoBG();
-        if (audioCtx.state === 'running') audioCtx.suspend();
+        if (currentEffectAudio) currentEffectAudio.pause();
+        stopPiano();
       } else {
         isPaused = false;
         pauseBtn.textContent = "Pausar";
         document.getElementById('status-badge').textContent = "En curso";
 
-        if (audioCtx.state === 'suspended') audioCtx.resume();
-        if (currentVoiceAudio && currentVoiceAudio.ended === false) {
+        if (currentVoiceAudio && !currentVoiceAudio.ended) {
+          playPiano(VOL_PIANO_DUCKING);
           currentVoiceAudio.play();
+        } else if (currentEffectAudio && !currentEffectAudio.ended) {
+          stopPiano();
+          currentEffectAudio.play();
+        } else {
+          playPiano(VOL_PIANO_NORMAL);
+          executeStep();
         }
-        playPianoBG(currentVoiceAudio ? VOL_DUCKING : VOL_NORMAL);
       }
     }
 
     function navigateStep(dir) {
-      stopCurrentVoice();
+      stopAllAudios();
       if (isPaused) {
         isPaused = false;
         document.getElementById('pause-btn').textContent = "Pausar";
       }
-      
+
       currentIdx += dir;
       if (currentIdx < 0) currentIdx = 0;
       if (currentIdx >= modules.length) currentIdx = modules.length - 1;
-      renderStep();
+      
+      executeStep();
     }
 
-    function reset() {
-      stopCurrentVoice();
-      stopPianoBG();
+    function resetExperience() {
+      stopAllAudios();
+      stopPiano();
       location.reload();
     }
   </script>
 </body>
 </html>
-        
