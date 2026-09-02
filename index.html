@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ejercicio de Grounding 5-4-3-2-1</title>
+  <style>
+    :root {
+      --bg: #f3f0f7;
+      --card: #ffffff;
+      --primary: #7c5cbf;
+      --primary-hover: #6546a4;
+      --text: #2d2b32;
+      --accent: #e2d9f3;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+    .container { background-color: var(--card); border-radius: 20px; padding: 30px; max-width: 500px; width: 100%; box-shadow: 0 10px 25px rgba(0,0,0,0.05); text-align: center; }
+    h1 { color: var(--primary); font-size: 1.5rem; margin-bottom: 8px; }
+    p.subtitle { color: #666; font-size: 0.95rem; margin-bottom: 24px; }
+    .step-card { background-color: var(--accent); border-radius: 15px; padding: 25px; margin-bottom: 20px; min-height: 180px; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+    .step-number { font-weight: bold; color: var(--primary); text-transform: uppercase; letter-spacing: 1px; font-size: 0.85rem; margin-bottom: 8px; }
+    .step-text { font-size: 1.1rem; font-weight: 600; margin-bottom: 12px; }
+    .timer { font-size: 2rem; font-weight: bold; color: var(--primary); }
+    .controls { display: flex; gap: 10px; justify-content: center; }
+    button { background-color: var(--primary); color: white; border: none; padding: 12px 24px; border-radius: 10px; font-size: 1rem; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+    button:hover { background-color: var(--primary-hover); }
+    button:disabled { background-color: #ccc; cursor: not-allowed; }
+    .btn-secondary { background-color: #e0e0e0; color: #333; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h1>Conciencia Presente: 5-4-3-2-1</h1>
+    <p class="subtitle">Activación Sensorial Guíada</p>
+
+    <div class="step-card">
+      <div id="step-number" class="step-number">Preparado</div>
+      <div id="step-text" class="step-text">Presiona "Iniciar" para comenzar.</div>
+      <div id="timer" class="timer">--</div>
+    </div>
+
+    <div class="controls">
+      <button id="start-btn" onclick="startActivity()">Iniciar</button>
+      <button id="reset-btn" class="btn-secondary" onclick="resetActivity()" disabled>Reiniciar</button>
+    </div>
+  </div>
+
+  <script>
+    // Estructura completa de la secuencia
+    const steps = [];
+
+    // 1. VER (5 Objetos)
+    steps.push({ num: "VER - Objeto 1 de 5", text: "Ubica el primer objeto, míralo y nómbralo mentalmente.", duration: 5 });
+    steps.push({ num: "VER - Objeto 2 de 5", text: "Objeto 2. Míralo y nómbralo mentalmente.", duration: 5 });
+    steps.push({ num: "VER - Objeto 3 de 5", text: "Objeto 3: míralo y nómbralo.", duration: 3 });
+    steps.push({ num: "VER - Objeto 4 de 5", text: "Objeto 4: míralo y nómbralo.", duration: 3 });
+    steps.push({ num: "VER - Objeto 5 de 5", text: "Objeto 5: míralo y nómbralo.", duration: 3 });
+
+    // 2. TOCAR (4 Objetos)
+    for (let i = 1; i <= 4; i++) {
+      steps.push({ num: `TOCAR - Objeto ${i} de 4`, text: `Toma el objeto ${i}. Siente su textura: identifica si es suave, dura, áspera o tiene relieve.`, duration: 10 });
+      steps.push({ num: `TOCAR - Objeto ${i} de 4`, text: "Siente su temperatura: observa si es fría, templada o cálida.", duration: 10 });
+    }
+
+    // 3. ESCUCHAR (3 Sonidos)
+    steps.push({ num: "ESCUCHAR - Sonido 1 de 3", text: "Escucha el sonido del cuenco tibetano.", duration: 6, sound: "bowl" });
+    steps.push({ num: "ESCUCHAR - Sonido 2 de 3", text: "Escucha el sonido de las olas del mar.", duration: 6, sound: "waves" });
+    steps.push({ num: "ESCUCHAR - Sonido 3 de 3", text: "Escucha el sonido del viento.", duration: 6, sound: "wind" });
+
+    // 4. OLER (2 Objetos)
+    for (let i = 1; i <= 2; i++) {
+      steps.push({ num: `OLER - Objeto ${i} de 2`, text: `Toma el objeto ${i} y acércalo a tu nariz. Con los ojos cerrados, concentra tu olfato. Sostén el aroma en la punta de tu nariz.`, duration: 4 });
+      steps.push({ num: `OLER - Objeto ${i} de 2`, text: "Visualiza cómo el aroma transita por tus fosas nasales hasta tus pulmones y tu cabeza.", duration: 5 });
+      steps.push({ num: `OLER - Objeto ${i} de 2`, text: "Sostén el aire que atrapa el aroma.", duration: 4 });
+      steps.push({ num: `OLER - Objeto ${i} de 2`, text: "Ahora déjalo salir suavemente.", duration: 4 });
+    }
+
+    // 5. GUSTO (1 Elemento)
+    steps.push({ num: "GUSTAR - 1 Cosa", text: "Lleva un objeto o alimento a tu boca. Siente el primer sabor que impacta tu lengua.", duration: 5 });
+    steps.push({ num: "GUSTAR - 1 Cosa", text: "Nota la textura y cómo se distribuye el sabor mientras saboreas lentamente.", duration: 6 });
+
+    let currentStep = 0;
+    let timerInterval = null;
+    let audioCtx = null;
+
+    const stepNumberEl = document.getElementById('step-number');
+    const stepTextEl = document.getElementById('step-text');
+    const timerEl = document.getElementById('timer');
+    const startBtn = document.getElementById('start-btn');
+    const resetBtn = document.getElementById('reset-btn');
+
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+    }
+
+    function playSynthesizedSound(type) {
+      initAudio();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+
+      if (type === 'bowl') {
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(432, audioCtx.currentTime);
+        gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 5);
+        osc.start();
+        osc.stop(audioCtx.currentTime + 5);
+      } else {
+        // Ruido blanco simulado para olas/viento
+        const bufferSize = audioCtx.sampleRate * 5;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) { data[i] = Math.random() * 2 - 1; }
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = type === 'waves' ? 'lowpass' : 'bandpass';
+        filter.frequency.value = type === 'waves' ? 400 : 800;
+        noise.connect(filter);
+        filter.connect(gain);
+        gain.gain.setValueAtTime(0.3, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 5);
+        noise.start();
+        noise.stop(audioCtx.currentTime + 5);
+      }
+    }
+
+    function speak(text, callback) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'es-ES';
+        utterance.rate = 0.85;
+        utterance.onend = () => { if (callback) callback(); };
+        window.speechSynthesis.speak(utterance);
+      } else if (callback) {
+        callback();
+      }
+    }
+
+    function startActivity() {
+      initAudio();
+      currentStep = 0;
+      startBtn.disabled = true;
+      resetBtn.disabled = false;
+      runStep();
+    }
+
+    function runStep() {
+      if (currentStep >= steps.length) {
+        finishActivity();
+        return;
+      }
+
+      const step = steps[currentStep];
+      stepNumberEl.textContent = step.num;
+      stepTextEl.textContent = step.text;
+      
+      let timeLeft = step.duration;
+      timerEl.textContent = timeLeft + "s";
+
+      if (step.sound) {
+        playSynthesizedSound(step.sound);
+      }
+
+      speak(step.text, () => {
+        timerInterval = setInterval(() => {
+          timeLeft--;
+          timerEl.textContent = timeLeft + "s";
+
+          if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            currentStep++;
+            runStep();
+          }
+        }, 1000);
+      });
+    }
+
+    function finishActivity() {
+      stepNumberEl.textContent = "Completado";
+      stepTextEl.textContent = "Tu atención ha vuelto completamente al aquí y al ahora.";
+      timerEl.textContent = "✓";
+      speak("Has completado el ejercicio. Tu atención está ahora presente.");
+      startBtn.disabled = false;
+      resetBtn.disabled = true;
+    }
+
+    function resetActivity() {
+      clearInterval(timerInterval);
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      currentStep = 0;
+      stepNumberEl.textContent = "Preparado";
+      stepTextEl.textContent = "Presiona 'Iniciar' para comenzar.";
+      timerEl.textContent = "--";
+      startBtn.disabled = false;
+      resetBtn.disabled = true;
+    }
+  </script>
+</body>
+</html>
