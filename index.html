@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -92,7 +93,6 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: opacity 0.4s ease;
     }
 
     .object-hint {
@@ -131,10 +131,7 @@
       transition: all 0.2s ease;
     }
 
-    button:hover:not(:disabled) {
-      background: var(--primary-dark);
-    }
-
+    button:hover:not(:disabled) { background: var(--primary-dark); }
     button:disabled { background: #dce4e1; color: #9aa8a1; cursor: not-allowed; }
     
     .btn-main { width: 100%; padding: 14px; font-size: 1rem; }
@@ -159,9 +156,9 @@
       <div id="status-badge" class="status-badge">Listo</div>
     </div>
 
-    <!-- AUDIO DE PIANO REAL INSTRUMENTAL EN BUCLE -->
+    <!-- MÚSICA DE FONDO EN PIANO (VOLUMEN CONTROLADO) -->
     <audio id="piano-bg" loop preload="auto">
-      <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=relaxing-piano-112299.mp3" type="audio/mpeg">
+      <source src="audio/musica_fondo_piano.mp3" type="audio/mpeg">
     </audio>
 
     <div class="controls">
@@ -178,36 +175,46 @@
   <script>
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const pianoAudio = document.getElementById('piano-bg');
+    let currentVoiceAudio = null;
+
+    // CONFIGURACIÓN DE MÚSICA NO INTRUSIVA
+    const VOL_NORMAL = 0.12;  // Volumen ambiental muy tenue (12%)
+    const VOL_DUCKING = 0.03; // Volumen imperceptible cuando la voz habla (3%)
 
     const modules = [
       { 
         cat: "5. Vista", 
-        text: "Observa a tu alrededor y nombra cinco objetos mentalmente.", 
+        text: "Observa a tu alrededor y nombra 5 objetos mentalmente.", 
+        file: "audio_01_vista.mp3",
         image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",
         hint: "Ejemplo: Una lámpara, tu reloj, una planta, una ventana, una silla." 
       },
       { 
         cat: "4. Tacto", 
-        text: "Conecta con la textura y temperatura de cuatro objetos a tu alcance.", 
+        text: "Conecta con la textura y temperatura de 4 objetos a tu alcance.", 
+        file: "audio_02_tacto.mp3",
         image: "https://images.unsplash.com/photo-1516541196182-6bdb0516ed27?auto=format&fit=crop&w=600&q=80",
         hint: "Ejemplo: Tu ropa, la mesa de madera, tus manos, una superficie fría." 
       },
       { 
         cat: "3. Oído", 
         text: "Cierra los ojos y escucha la resonancia profunda del cuenco.", 
+        file: "audio_03_oido.mp3",
         image: "https://images.unsplash.com/photo-1512438248247-f0f2a5a8b7f0?auto=format&fit=crop&w=600&q=80",
         isBowlStep: true,
         hint: "Permite que la frecuencia limpie cualquier distracción sonora." 
       },
       { 
         cat: "2. Olfato", 
-        text: "Huele dos aromas de tu entorno y percibe el aire al inhalar.", 
+        text: "Huele 2 aromas de tu entorno y percibe el aire al inhalar.", 
+        file: "audio_04_olfato.mp3",
         image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80",
         hint: "Ejemplo: Tu café, una flor, aceite esencial o el aire fresco." 
       },
       { 
         cat: "1. Gusto", 
         text: "Experimenta la sensación y sabor presente en tu boca.", 
+        file: "audio_05_sabor.mp3",
         image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80",
         hint: "Ejemplo: Un sorbo de agua, una fruta o la frescura del paladar." 
       }
@@ -215,46 +222,44 @@
 
     let currentIdx = 0;
 
-    // MANEJO DE MÚSICA DE FONDO (PIANO SUAVE Y RELAJANTE)
-    function playPianoBG(volume = 0.25) {
-      pianoAudio.volume = volume;
-      pianoAudio.play().catch(e => console.log("Interacción requerida para audio"));
+    function playPianoBG(vol = VOL_NORMAL) {
+      pianoAudio.volume = vol;
+      pianoAudio.play().catch(() => {});
     }
 
-    function lowerPianoBG() {
-      pianoAudio.volume = 0.05; // Baja suavemente para dar espacio a la voz
+    function setPianoVolume(vol) {
+      pianoAudio.volume = vol;
     }
 
     function stopPianoBG() {
       pianoAudio.pause();
     }
 
-    // VOZ NATIVA DEL NAVEGADOR
-    function speakText(text, callback) {
-      if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
-        const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'es-ES';
-        utterance.rate = 0.85; // Tono pausado
-
-        lowerPianoBG();
-
-        utterance.onend = () => {
-          playPianoBG(0.25);
-          if (callback) callback();
-        };
-
-        window.speechSynthesis.speak(utterance);
-      } else if (callback) {
-        callback();
+    // REPRODUCCIÓN DE ARCHIVOS DE VOZ PREGRABADOS (.MP3)
+    function playPreRecordedVoice(file, onEndedCallback) {
+      if (currentVoiceAudio) {
+        currentVoiceAudio.pause();
+        currentVoiceAudio.currentTime = 0;
       }
+
+      setPianoVolume(VOL_DUCKING); // Atenúa el piano mientras la voz habla
+
+      currentVoiceAudio = new Audio(`audio/${file}`);
+      currentVoiceAudio.play().catch(err => {
+        console.error("Error al cargar audio pregrabado:", err);
+      });
+
+      currentVoiceAudio.onended = () => {
+        setPianoVolume(VOL_NORMAL); // Restaura el piano ambiental suave
+        if (onEndedCallback) onEndedCallback();
+      };
     }
 
-    // CUENCO TIBETANO POTENTE Y DE EXTENSIÓN LARGA (12s)
+    // CUENCO TIBETANO ALTO Y LARGO (12s)
     function playLongSingingBowl() {
       if (audioCtx.state === 'suspended') audioCtx.resume();
 
-      stopPianoBG(); // Silencia el piano durante la vibración del cuenco
+      stopPianoBG(); // Silencio total del piano para que solo resuene el cuenco
 
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
@@ -273,7 +278,7 @@
       osc.stop(audioCtx.currentTime + 12.0);
 
       setTimeout(() => {
-        playPianoBG(0.25); // Reanuda el piano al finalizar el cuenco
+        playPianoBG(VOL_NORMAL);
       }, 12000);
     }
 
@@ -284,7 +289,7 @@
       document.getElementById('prev-btn').disabled = false;
       document.getElementById('next-btn').disabled = false;
       
-      playPianoBG(0.25);
+      playPianoBG(VOL_NORMAL);
       renderStep();
     }
 
@@ -302,9 +307,10 @@
         hintEl.style.display = "none";
       }
 
-      document.getElementById('status-badge').textContent = "Escuchando instrucción...";
-      
-      speakText(mod.text, () => {
+      document.getElementById('status-badge').textContent = "Escuchando voz...";
+
+      // Reproducción del archivo de voz de la carpeta audio/
+      playPreRecordedVoice(mod.file, () => {
         if (mod.isBowlStep) {
           document.getElementById('status-badge').textContent = "Escuchando Cuenco (12s)...";
           playLongSingingBowl();
@@ -315,7 +321,7 @@
     }
 
     function navigateStep(dir) {
-      window.speechSynthesis.cancel();
+      if (currentVoiceAudio) currentVoiceAudio.pause();
       currentIdx += dir;
       if (currentIdx < 0) currentIdx = 0;
       if (currentIdx >= modules.length) currentIdx = modules.length - 1;
@@ -323,7 +329,7 @@
     }
 
     function reset() {
-      window.speechSynthesis.cancel();
+      if (currentVoiceAudio) currentVoiceAudio.pause();
       stopPianoBG();
       location.reload();
     }
