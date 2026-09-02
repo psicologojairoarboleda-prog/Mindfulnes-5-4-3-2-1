@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -137,6 +136,8 @@
     .btn-main { width: 100%; padding: 14px; font-size: 1rem; }
     .btn-nav { flex: 1; background: #e8f0ec; color: var(--primary-dark); }
     .btn-sec { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); }
+    .btn-pause { background: #d9822b; }
+    .btn-pause:hover:not(:disabled) { background: #b86a1f; }
   </style>
 </head>
 <body>
@@ -156,7 +157,7 @@
       <div id="status-badge" class="status-badge">Listo</div>
     </div>
 
-    <!-- MÚSICA DE FONDO EN PIANO (VOLUMEN CONTROLADO) -->
+    <!-- MÚSICA DE FONDO SUAVE EN PIANO -->
     <audio id="piano-bg" loop preload="auto">
       <source src="audio/musica_fondo_piano.mp3" type="audio/mpeg">
     </audio>
@@ -167,7 +168,11 @@
         <button id="next-btn" class="btn-nav" onclick="navigateStep(1)" disabled>Siguiente ►</button>
       </div>
 
-      <button id="start-btn" class="btn-main" onclick="start()">Iniciar Experiencia</button>
+      <div class="nav-group">
+        <button id="start-btn" class="btn-main" onclick="start()">Iniciar Experiencia</button>
+        <button id="pause-btn" class="btn-pause" onclick="togglePause()" disabled>Pausar</button>
+      </div>
+
       <button id="reset-btn" class="btn-sec" onclick="reset()" disabled>Reiniciar</button>
     </div>
   </div>
@@ -175,11 +180,15 @@
   <script>
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     const pianoAudio = document.getElementById('piano-bg');
+    
     let currentVoiceAudio = null;
+    let isPaused = false;
+    let currentIdx = 0;
+    let bowlTimeout = null;
 
-    // CONFIGURACIÓN DE MÚSICA NO INTRUSIVA
-    const VOL_NORMAL = 0.12;  // Volumen ambiental muy tenue (12%)
-    const VOL_DUCKING = 0.03; // Volumen imperceptible cuando la voz habla (3%)
+    // VOLÚMENES CONTROLADOS PARA EVITAR MÚSICA INTRUSIVA
+    const VOL_NORMAL = 0.12;  // Música de fondo muy suave (12%)
+    const VOL_DUCKING = 0.03; // Casi inaudible mientras habla la voz (3%)
 
     const modules = [
       { 
@@ -220,37 +229,40 @@
       }
     ];
 
-    let currentIdx = 0;
-
     function playPianoBG(vol = VOL_NORMAL) {
       pianoAudio.volume = vol;
       pianoAudio.play().catch(() => {});
-    }
-
-    function setPianoVolume(vol) {
-      pianoAudio.volume = vol;
     }
 
     function stopPianoBG() {
       pianoAudio.pause();
     }
 
-    // REPRODUCCIÓN DE ARCHIVOS DE VOZ PREGRABADOS (.MP3)
-    function playPreRecordedVoice(file, onEndedCallback) {
+    function stopCurrentVoice() {
       if (currentVoiceAudio) {
         currentVoiceAudio.pause();
         currentVoiceAudio.currentTime = 0;
+        currentVoiceAudio = null;
       }
+      if (bowlTimeout) {
+        clearTimeout(bowlTimeout);
+        bowlTimeout = null;
+      }
+    }
 
-      setPianoVolume(VOL_DUCKING); // Atenúa el piano mientras la voz habla
+    // REPRODUCCIÓN DE VOZ PREGRABADA
+    function playPreRecordedVoice(file, onEndedCallback) {
+      stopCurrentVoice();
+
+      pianoAudio.volume = VOL_DUCKING;
 
       currentVoiceAudio = new Audio(`audio/${file}`);
       currentVoiceAudio.play().catch(err => {
-        console.error("Error al cargar audio pregrabado:", err);
+        console.error("No se pudo cargar el audio pregrabado:", err);
       });
 
       currentVoiceAudio.onended = () => {
-        setPianoVolume(VOL_NORMAL); // Restaura el piano ambiental suave
+        pianoAudio.volume = VOL_NORMAL;
         if (onEndedCallback) onEndedCallback();
       };
     }
@@ -259,7 +271,7 @@
     function playLongSingingBowl() {
       if (audioCtx.state === 'suspended') audioCtx.resume();
 
-      stopPianoBG(); // Silencio total del piano para que solo resuene el cuenco
+      stopPianoBG();
 
       const osc = audioCtx.createOscillator();
       const gain = audioCtx.createGain();
@@ -277,14 +289,17 @@
       osc.start();
       osc.stop(audioCtx.currentTime + 12.0);
 
-      setTimeout(() => {
+      bowlTimeout = setTimeout(() => {
         playPianoBG(VOL_NORMAL);
+        document.getElementById('status-badge').textContent = "En curso";
       }, 12000);
     }
 
     function start() {
       currentIdx = 0;
+      isPaused = false;
       document.getElementById('start-btn').disabled = true;
+      document.getElementById('pause-btn').disabled = false;
       document.getElementById('reset-btn').disabled = false;
       document.getElementById('prev-btn').disabled = false;
       document.getElementById('next-btn').disabled = false;
@@ -307,9 +322,8 @@
         hintEl.style.display = "none";
       }
 
-      document.getElementById('status-badge').textContent = "Escuchando voz...";
+      document.getElementById('status-badge').textContent = "Reproduciendo voz...";
 
-      // Reproducción del archivo de voz de la carpeta audio/
       playPreRecordedVoice(mod.file, () => {
         if (mod.isBowlStep) {
           document.getElementById('status-badge').textContent = "Escuchando Cuenco (12s)...";
@@ -320,8 +334,38 @@
       });
     }
 
+    // LÓGICA DE PAUSA Y REANUDACIÓN
+    function togglePause() {
+      const pauseBtn = document.getElementById('pause-btn');
+
+      if (!isPaused) {
+        isPaused = true;
+        pauseBtn.textContent = "Reanudar";
+        document.getElementById('status-badge').textContent = "En Pausa";
+
+        if (currentVoiceAudio) currentVoiceAudio.pause();
+        stopPianoBG();
+        if (audioCtx.state === 'running') audioCtx.suspend();
+      } else {
+        isPaused = false;
+        pauseBtn.textContent = "Pausar";
+        document.getElementById('status-badge').textContent = "En curso";
+
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        if (currentVoiceAudio && currentVoiceAudio.ended === false) {
+          currentVoiceAudio.play();
+        }
+        playPianoBG(currentVoiceAudio ? VOL_DUCKING : VOL_NORMAL);
+      }
+    }
+
     function navigateStep(dir) {
-      if (currentVoiceAudio) currentVoiceAudio.pause();
+      stopCurrentVoice();
+      if (isPaused) {
+        isPaused = false;
+        document.getElementById('pause-btn').textContent = "Pausar";
+      }
+      
       currentIdx += dir;
       if (currentIdx < 0) currentIdx = 0;
       if (currentIdx >= modules.length) currentIdx = modules.length - 1;
@@ -329,10 +373,11 @@
     }
 
     function reset() {
-      if (currentVoiceAudio) currentVoiceAudio.pause();
+      stopCurrentVoice();
       stopPianoBG();
       location.reload();
     }
   </script>
 </body>
 </html>
+        
