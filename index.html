@@ -170,7 +170,7 @@
       50% { transform: scale(1.1); opacity: 0.8; }
     }
 
-    /* BOTONES DE CONTROL COMPLETO */
+    /* BOTONES DE CONTROL */
     .controls { display: flex; flex-direction: column; gap: 12px; align-items: center; }
     
     .nav-group {
@@ -247,14 +247,12 @@
     </div>
 
     <div class="controls">
-      <!-- Fila 1: Control de Navegación del Ejercicio -->
       <div class="nav-group">
         <button id="prev-btn" class="btn-nav" onclick="navigateStep(-1)" disabled>◄ Anterior</button>
         <button id="pause-btn" class="btn-nav" onclick="togglePause()" disabled>❚❚ Pausa</button>
         <button id="next-btn" class="btn-nav" onclick="navigateStep(1)" disabled>Siguiente ►</button>
       </div>
 
-      <!-- Fila 2: Inicio y Reinicio -->
       <button id="start-btn" class="btn-main" onclick="start()">Iniciar Experiencia</button>
       <button id="reset-btn" class="btn-sec" onclick="reset()" disabled>Reiniciar</button>
     </div>
@@ -266,10 +264,15 @@
     let bgOscs = [];
     let bgFilter = null;
 
-    // AMBIENTE AMBIENTAL MEDITATIVO (Pad continuo, extra suave, envolvente sin aristas)
+    // AMBIENTE MEDITATIVO CONTINUO
     function startAmbientMusic() {
       if (audioCtx.state === 'suspended') audioCtx.resume();
-      if (bgMusicGain) return;
+      if (bgMusicGain) {
+        // Restaurar volumen si estaba pausado
+        bgMusicGain.gain.cancelScheduledValues(audioCtx.currentTime);
+        bgMusicGain.gain.linearRampToValueAtTime(0.035, audioCtx.currentTime + 0.5);
+        return;
+      }
 
       bgFilter = audioCtx.createBiquadFilter();
       bgFilter.type = 'lowpass';
@@ -277,12 +280,11 @@
 
       bgMusicGain = audioCtx.createGain();
       bgMusicGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-      bgMusicGain.gain.linearRampToValueAtTime(0.035, audioCtx.currentTime + 3); // Entrada ultra suave
+      bgMusicGain.gain.linearRampToValueAtTime(0.035, audioCtx.currentTime + 2);
 
       bgFilter.connect(bgMusicGain);
       bgMusicGain.connect(audioCtx.destination);
 
-      // Frecuencias Armónicas Meditativas (108 Hz base, 162 Hz quinta armónica, 216 Hz octava)
       const freqs = [108, 162, 216];
       bgOscs = freqs.map(freq => {
         const osc = audioCtx.createOscillator();
@@ -292,6 +294,23 @@
         osc.start();
         return osc;
       });
+    }
+
+    // SILENCIAR / REANUDAR MÚSICA DE FONDO (Para no solapar con sonidos)
+    function pauseAmbientMusic() {
+      if (bgMusicGain) {
+        bgMusicGain.gain.cancelScheduledValues(audioCtx.currentTime);
+        bgMusicGain.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
+      }
+    }
+
+    function resumeAmbientMusic() {
+      if (bgMusicGain) {
+        bgMusicGain.gain.cancelScheduledValues(audioCtx.currentTime);
+        bgMusicGain.gain.linearRampToValueAtTime(0.035, audioCtx.currentTime + 0.5);
+      } else {
+        startAmbientMusic();
+      }
     }
 
     function stopAmbientMusic() {
@@ -305,40 +324,56 @@
       }
     }
 
-    // SONIDOS GUÍA DE 8 SEGUNDOS EXACTOS
+    // SÍNTESIS DE SONIDOS POTENTES DE 8 SEGUNDOS REALES
     function playSound(type) {
       if (audioCtx.state === 'suspended') audioCtx.resume();
 
-      if (type === 'bowl') {
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(432, audioCtx.currentTime);
-        
-        gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 7.9);
+      if (type === 'piano') {
+        // Acorde armónico de Piano Relajante (C3 - E3 - G3 - C4) con sostén de 8 segundos
+        const notes = [130.81, 164.81, 196.00, 261.63];
+        notes.forEach(freq => {
+          const osc = audioCtx.createOscillator();
+          const gain = audioCtx.createGain();
+          osc.type = 'triangle'; // Forma de onda cálida similar a instrumento de cuerda
+          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
 
-        osc.connect(gain);
-        gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 8.0);
+          // Entrada con ataque suave y caída sostenida hasta 8s
+          gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+          gain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 0.1);
+          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 7.9);
 
-      } else if (type === 'rain') {
+          osc.connect(gain);
+          gain.connect(audioCtx.destination);
+          osc.start();
+          osc.stop(audioCtx.currentTime + 8.0);
+        });
+
+      } else if (type === 'storm') {
+        // Lluvia Torrencial / Tormenta Potente (8 Segundos continuos)
         const bufferSize = audioCtx.sampleRate * 8;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.12;
+        
+        // Generador de ruido rosa/marrón denso
+        let lastOut = 0.0;
+        for (let i = 0; i < bufferSize; i++) {
+          let white = Math.random() * 2 - 1;
+          data[i] = (lastOut + (0.02 * white)) / 1.02;
+          lastOut = data[i];
+          data[i] *= 3.5; // Amplificación para mayor impacto
+        }
 
         const noise = audioCtx.createBufferSource();
         noise.buffer = buffer;
 
         const filter = audioCtx.createBiquadFilter();
         filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(800, audioCtx.currentTime);
+        filter.frequency.setValueAtTime(1400, audioCtx.currentTime); // Filtro ancho para oír gotas y torrente
 
         const gain = audioCtx.createGain();
         gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.3, audioCtx.currentTime + 1);
+        gain.gain.linearRampToValueAtTime(0.8, audioCtx.currentTime + 0.8); // Volumen potente
+        gain.gain.setValueAtTime(0.8, audioCtx.currentTime + 7.0);
         gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 7.9);
 
         noise.connect(filter);
@@ -348,23 +383,29 @@
         noise.start();
         noise.stop(audioCtx.currentTime + 8.0);
 
-      } else if (type === 'wind') {
+      } else if (type === 'strong_wind') {
+        // Viento Fuerte y Soplado Profundo
         const bufferSize = audioCtx.sampleRate * 8;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.15;
+        for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1);
 
         const noise = audioCtx.createBufferSource();
         noise.buffer = buffer;
 
         const filter = audioCtx.createBiquadFilter();
         filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(350, audioCtx.currentTime);
-        filter.Q.value = 2.5;
+        filter.frequency.setValueAtTime(250, audioCtx.currentTime);
+        // Modulación de ráfaga de viento dinámica
+        filter.frequency.linearRampToValueAtTime(600, audioCtx.currentTime + 3);
+        filter.frequency.linearRampToValueAtTime(300, audioCtx.currentTime + 6);
+        filter.frequency.linearRampToValueAtTime(200, audioCtx.currentTime + 7.9);
+        filter.Q.value = 1.8;
 
         const gain = audioCtx.createGain();
         gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.35, audioCtx.currentTime + 2);
+        gain.gain.linearRampToValueAtTime(0.85, audioCtx.currentTime + 1.5); // Ráfaga fuerte
+        gain.gain.setValueAtTime(0.85, audioCtx.currentTime + 6.5);
         gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 7.9);
 
         noise.connect(filter);
@@ -398,7 +439,6 @@
     let timerInterval = null;
     let actionTimeout = null;
     let remainingTime = 0;
-    let isSoundSequence = false;
 
     function setAnimation(type) {
       document.getElementById('anim-pulse').classList.remove('active-anim');
@@ -435,7 +475,6 @@
     function runModule() {
       clearCurrentTimers();
       isPaused = false;
-      isSoundSequence = false;
       document.getElementById('pause-btn').textContent = "❚❚ Pausa";
 
       if (currentModuleIdx >= modules.length) {
@@ -464,6 +503,11 @@
       if (currentAudio) {
         currentAudio.pause();
         currentAudio.currentTime = 0;
+      }
+
+      // Reanudar música ambiental si no estamos en secuencia de efectos especiales
+      if (!mod.hasAmbientSounds) {
+        resumeAmbientMusic();
       }
 
       const audioPath = `audio/${mod.file}`;
@@ -510,17 +554,20 @@
     }
 
     function playAmbientSequence() {
-      isSoundSequence = true;
+      // Pausar música de fondo para dar total protagonismo a los 3 sonidos
+      pauseAmbientMusic();
+
       const sounds = [
-        { type: 'bowl', text: "1. Cuenco tibetano (432 Hz)..." },
-        { type: 'rain', text: "2. Lluvia suave..." },
-        { type: 'wind', text: "3. Viento místico..." }
+        { type: 'piano', text: "1. Acorde de Piano Armónico..." },
+        { type: 'storm', text: "2. Lluvia Torrencial / Tormenta..." },
+        { type: 'strong_wind', text: "3. Viento Fuerte y Soplado..." }
       ];
 
       let soundIdx = 0;
 
       function triggerNextSound() {
         if (soundIdx >= sounds.length) {
+          resumeAmbientMusic(); // Reanudar ambiente al finalizar
           currentModuleIdx++;
           runModule();
           return;
@@ -537,7 +584,7 @@
             soundIdx++;
             triggerNextSound();
           }
-        }, 8000);
+        }, 8000); // 8 segundos exactos
       }
 
       triggerNextSound();
