@@ -6,14 +6,13 @@
   <title>Conexión Presente 5-4-3-2-1</title>
   <style>
     :root {
-      --bg-gradient: linear-gradient(135deg, #f7f9f8 0%, #eef2f5 100%);
-      --card-bg: rgba(255, 255, 255, 0.92);
-      --primary: #6b8e85;      /* Verde salvia relajante */
+      --bg-gradient: linear-gradient(135deg, #f4f7f5 0%, #e8efe9 100%);
+      --card-bg: rgba(255, 255, 255, 0.95);
+      --primary: #6b8e85;
       --primary-dark: #4a6b63;
-      --accent: #8e7cc3;        /* Lavanda suave */
       --text-main: #2c3e35;
       --text-muted: #5f7367;
-      --card-shadow: 0 10px 30px rgba(107, 142, 133, 0.12);
+      --card-shadow: 0 12px 32px rgba(107, 142, 133, 0.12);
       --border-color: rgba(107, 142, 133, 0.2);
     }
 
@@ -54,12 +53,11 @@
       border: 1px solid var(--border-color);
       border-radius: 20px;
       padding: 25px 20px;
-      min-height: 380px;
+      min-height: 400px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       align-items: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.02);
     }
 
     .step-title {
@@ -77,14 +75,13 @@
       margin: 10px 0;
     }
 
-    /* VISOR VISUAL Y MULTIMEDIA */
     .media-viewport {
       width: 100%;
-      height: 180px;
+      height: 190px;
       margin: 10px 0;
       border-radius: 16px;
       overflow: hidden;
-      background: #f4f7f6;
+      background: #f0f4f1;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -95,7 +92,7 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: opacity 0.5s ease-in-out;
+      transition: opacity 0.4s ease;
     }
 
     .object-hint {
@@ -120,7 +117,6 @@
       border-radius: 20px;
     }
 
-    /* CONTROLES */
     .controls { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
     .nav-group { display: flex; gap: 10px; width: 100%; }
 
@@ -137,7 +133,6 @@
 
     button:hover:not(:disabled) {
       background: var(--primary-dark);
-      transform: translateY(-1px);
     }
 
     button:disabled { background: #dce4e1; color: #9aa8a1; cursor: not-allowed; }
@@ -155,9 +150,8 @@
     <div class="display-card">
       <div id="step-title" class="step-title">Preparación</div>
       
-      <!-- CONTENEDOR VISUAL DE IMÁGENES -->
       <div class="media-viewport">
-        <img id="step-image" src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80" alt="Meditación y Calma">
+        <img id="step-image" src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80" alt="Meditación">
       </div>
 
       <div id="step-text" class="step-text">Adopta una postura cómoda, respira profundo y presiona Iniciar.</div>
@@ -165,10 +159,14 @@
       <div id="status-badge" class="status-badge">Listo</div>
     </div>
 
+    <!-- AUDIO DE PIANO REAL INSTRUMENTAL EN BUCLE -->
+    <audio id="piano-bg" loop preload="auto">
+      <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=relaxing-piano-112299.mp3" type="audio/mpeg">
+    </audio>
+
     <div class="controls">
       <div class="nav-group">
         <button id="prev-btn" class="btn-nav" onclick="navigateStep(-1)" disabled>◄ Anterior</button>
-        <button id="pause-btn" class="btn-nav" onclick="togglePause()" disabled>❚❚ Pausa</button>
         <button id="next-btn" class="btn-nav" onclick="navigateStep(1)" disabled>Siguiente ►</button>
       </div>
 
@@ -179,77 +177,18 @@
 
   <script>
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    let bgMusicGain = null;
-    let bgOscs = [];
+    const pianoAudio = document.getElementById('piano-bg');
 
-    // MÚSICA DE FONDO: PIANO INSTRUMENTAL SUAVE
-    function startAmbientPiano() {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-      if (bgMusicGain) return;
-
-      bgMusicGain = audioCtx.createGain();
-      bgMusicGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-      bgMusicGain.gain.linearRampToValueAtTime(0.04, audioCtx.currentTime + 2);
-      bgMusicGain.connect(audioCtx.destination);
-
-      // Acordes de piano constantes e instrumentales suaves (Frecuencias armónicas)
-      const pianoNotes = [261.63, 329.63, 392.00, 523.25]; // Do mayor amplio
-      bgOscs = pianoNotes.map(freq => {
-        const osc = audioCtx.createOscillator();
-        osc.type = 'triangle'; // Tono cálido de instrumento
-        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        
-        const oscGain = audioCtx.createGain();
-        oscGain.gain.value = 0.2;
-        osc.connect(oscGain);
-        oscGain.connect(bgMusicGain);
-        osc.start();
-        return osc;
-      });
-    }
-
-    function pauseAmbientMusic() {
-      if (bgMusicGain) bgMusicGain.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-    }
-
-    function resumeAmbientMusic() {
-      if (bgMusicGain) bgMusicGain.gain.linearRampToValueAtTime(0.04, audioCtx.currentTime + 0.5);
-      else startAmbientPiano();
-    }
-
-    // REPRODUCCIÓN DEL CUENCO TIBETANO ALTO Y LARGO (12 SEGUNDOS)
-    function playLongSingingBowl() {
-      if (audioCtx.state === 'suspended') audioCtx.resume();
-
-      const osc = audioCtx.createOscillator();
-      const gain = audioCtx.createGain();
-
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(432, audioCtx.currentTime); // Frecuencia armónica 432 Hz
-
-      // Volumen alto y decaimiento extendido
-      gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-      gain.gain.linearRampToValueAtTime(0.8, audioCtx.currentTime + 0.3); // Ataque fuerte y claro
-      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 11.9); // Resonancia larga de 12s
-
-      osc.connect(gain);
-      gain.connect(audioCtx.destination);
-      
-      osc.start();
-      osc.stop(audioCtx.currentTime + 12.0);
-    }
-
-    // ESTRUCTURA CON IMÁGENES TEMÁTICAS ASOCIADAS
     const modules = [
       { 
         cat: "5. Vista", 
-        text: "Observa a tu alrededor y nombra 5 objetos mentalmente.", 
+        text: "Observa a tu alrededor y nombra cinco objetos mentalmente.", 
         image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",
         hint: "Ejemplo: Una lámpara, tu reloj, una planta, una ventana, una silla." 
       },
       { 
         cat: "4. Tacto", 
-        text: "Conecta con la textura y temperatura de 4 objetos a tu alcance.", 
+        text: "Conecta con la textura y temperatura de cuatro objetos a tu alcance.", 
         image: "https://images.unsplash.com/photo-1516541196182-6bdb0516ed27?auto=format&fit=crop&w=600&q=80",
         hint: "Ejemplo: Tu ropa, la mesa de madera, tus manos, una superficie fría." 
       },
@@ -262,7 +201,7 @@
       },
       { 
         cat: "2. Olfato", 
-        text: "Huele 2 aromas de tu entorno y percibe el aire al inhalar.", 
+        text: "Huele dos aromas de tu entorno y percibe el aire al inhalar.", 
         image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80",
         hint: "Ejemplo: Tu café, una flor, aceite esencial o el aire fresco." 
       },
@@ -276,13 +215,76 @@
 
     let currentIdx = 0;
 
+    // MANEJO DE MÚSICA DE FONDO (PIANO SUAVE Y RELAJANTE)
+    function playPianoBG(volume = 0.25) {
+      pianoAudio.volume = volume;
+      pianoAudio.play().catch(e => console.log("Interacción requerida para audio"));
+    }
+
+    function lowerPianoBG() {
+      pianoAudio.volume = 0.05; // Baja suavemente para dar espacio a la voz
+    }
+
+    function stopPianoBG() {
+      pianoAudio.pause();
+    }
+
+    // VOZ NATIVA DEL NAVEGADOR
+    function speakText(text, callback) {
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'es-ES';
+        utterance.rate = 0.85; // Tono pausado
+
+        lowerPianoBG();
+
+        utterance.onend = () => {
+          playPianoBG(0.25);
+          if (callback) callback();
+        };
+
+        window.speechSynthesis.speak(utterance);
+      } else if (callback) {
+        callback();
+      }
+    }
+
+    // CUENCO TIBETANO POTENTE Y DE EXTENSIÓN LARGA (12s)
+    function playLongSingingBowl() {
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+
+      stopPianoBG(); // Silencia el piano durante la vibración del cuenco
+
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(432, audioCtx.currentTime);
+
+      gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.85, audioCtx.currentTime + 0.3);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 11.9);
+
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.start();
+      osc.stop(audioCtx.currentTime + 12.0);
+
+      setTimeout(() => {
+        playPianoBG(0.25); // Reanuda el piano al finalizar el cuenco
+      }, 12000);
+    }
+
     function start() {
       currentIdx = 0;
       document.getElementById('start-btn').disabled = true;
       document.getElementById('reset-btn').disabled = false;
       document.getElementById('prev-btn').disabled = false;
       document.getElementById('next-btn').disabled = false;
-      startAmbientPiano();
+      
+      playPianoBG(0.25);
       renderStep();
     }
 
@@ -300,18 +302,20 @@
         hintEl.style.display = "none";
       }
 
-      if (mod.isBowlStep) {
-        pauseAmbientMusic();
-        document.getElementById('status-badge').textContent = "Escuchando Cuenco (12s)...";
-        playLongSingingBowl();
-        setTimeout(() => { resumeAmbientMusic(); }, 12000);
-      } else {
-        resumeAmbientMusic();
-        document.getElementById('status-badge').textContent = "En curso";
-      }
+      document.getElementById('status-badge').textContent = "Escuchando instrucción...";
+      
+      speakText(mod.text, () => {
+        if (mod.isBowlStep) {
+          document.getElementById('status-badge').textContent = "Escuchando Cuenco (12s)...";
+          playLongSingingBowl();
+        } else {
+          document.getElementById('status-badge').textContent = "En curso";
+        }
+      });
     }
 
     function navigateStep(dir) {
+      window.speechSynthesis.cancel();
       currentIdx += dir;
       if (currentIdx < 0) currentIdx = 0;
       if (currentIdx >= modules.length) currentIdx = modules.length - 1;
@@ -319,6 +323,8 @@
     }
 
     function reset() {
+      window.speechSynthesis.cancel();
+      stopPianoBG();
       location.reload();
     }
   </script>
