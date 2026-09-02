@@ -108,7 +108,7 @@
     }
 
     .timer-display {
-      font-size: 2rem;
+      font-size: 2.2rem;
       font-weight: 700;
       color: var(--primary-dark);
       margin: 5px 0;
@@ -139,10 +139,7 @@
       transition: all 0.2s ease;
     }
 
-    button:hover:not(:disabled) {
-      background: var(--primary-dark);
-    }
-
+    button:hover:not(:disabled) { background: var(--primary-dark); }
     button:disabled { background: #d3dfd9; color: #8fa39a; cursor: not-allowed; }
     
     .btn-main { width: 100%; padding: 15px; font-size: 1rem; }
@@ -170,17 +167,11 @@
       <div id="status-badge" class="status-badge">Listo</div>
     </div>
 
-    <audio id="piano-bg" loop preload="auto"><source src="audio/musica_fondo_piano.mp3" type="audio/mpeg"></audio>
-    
-    <audio id="v-0" preload="auto"><source src="audio/audio_01_vista.mp3" type="audio/mpeg"></audio>
-    <audio id="v-1" preload="auto"><source src="audio/audio_02_tacto.mp3" type="audio/mpeg"></audio>
-    <audio id="v-2" preload="auto"><source src="audio/audio_03_oido.mp3" type="audio/mpeg"></audio>
-    <audio id="v-3" preload="auto"><source src="audio/audio_04_olfato.mp3" type="audio/mpeg"></audio>
-    <audio id="v-4" preload="auto"><source src="audio/audio_05_sabor.mp3" type="audio/mpeg"></audio>
-
-    <audio id="e-0" preload="auto"><source src="audio/efecto_riachuelo.mp3" type="audio/mpeg"></audio>
-    <audio id="e-1" preload="auto"><source src="audio/efecto_viento.mp3" type="audio/mpeg"></audio>
-    <audio id="e-2" preload="auto"><source src="audio/efecto_aves.mp3" type="audio/mpeg"></audio>
+    <audio id="piano-bg" loop preload="auto">
+      <source src="audio/musica_fondo_piano.mp3" type="audio/mpeg">
+    </audio>
+    <audio id="voice-player" preload="auto"></audio>
+    <audio id="effect-player" preload="auto"></audio>
 
     <div class="controls">
       <div class="nav-group">
@@ -199,22 +190,23 @@
 
   <script>
     const pianoAudio = document.getElementById('piano-bg');
+    const voicePlayer = document.getElementById('voice-player');
+    const effectPlayer = document.getElementById('effect-player');
+
     let isPaused = false;
     let currentIdx = 0;
-    let activeVoice = null;
-    let activeEffect = null;
     let countdownInterval = null;
     let remainingSeconds = 0;
 
-    const VOL_PIANO_NORMAL = 0.15;
-    const VOL_PIANO_DUCKING = 0.02;
+    const VOL_PIANO_NORMAL = 0.20; // Volume normal cuando no habla la voz
+    const VOL_PIANO_DUCKING = 0.03; // Ducking cuando habla la voz
 
     const modules = [
       { 
         cat: "5. Vista", 
         text: "Observa a tu alrededor y nombra 5 objetos mentalmente.", 
-        voiceId: "v-0",
-        effectId: "e-0",
+        voiceSrc: "audio/audio_01_vista.mp3",
+        effectSrc: "audio/efecto_riachuelo.mp3",
         extraSeconds: 6,
         image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",
         hint: "Ejemplo: Una lámpara, tu reloj, una planta, una ventana, una silla." 
@@ -222,8 +214,8 @@
       { 
         cat: "4. Tacto", 
         text: "Conecta con la textura y temperatura de 4 objetos a tu alcance.", 
-        voiceId: "v-1",
-        effectId: "e-1",
+        voiceSrc: "audio/audio_02_tacto.mp3",
+        effectSrc: "audio/efecto_viento.mp3",
         extraSeconds: 10,
         image: "https://images.unsplash.com/photo-1516541196182-6bdb0516ed27?auto=format&fit=crop&w=600&q=80",
         hint: "Ejemplo: Tu ropa, la mesa de madera, tus manos, una superficie fría." 
@@ -231,17 +223,17 @@
       { 
         cat: "3. Oído", 
         text: "Cierra los ojos y escucha el sonido de las aves al amanecer.", 
-        voiceId: "v-2",
-        effectId: "e-2",
-        extraSeconds: 0, // 0s extra porque el audio ambiental dura 10s
+        voiceSrc: "audio/audio_03_oido.mp3",
+        effectSrc: "audio/efecto_aves.mp3",
+        extraSeconds: 0, // Aves dura 10s -> Sin tiempo extra
         image: "https://images.unsplash.com/photo-1512438248247-f0f2a5a8b7f0?auto=format&fit=crop&w=600&q=80",
         hint: "Permite que la frecuencia natural limpie cualquier distracción." 
       },
       { 
         cat: "2. Olfato", 
         text: "Huele 2 aromas de tu entorno y percibe el aire al inhalar.", 
-        voiceId: "v-3",
-        effectId: null,
+        voiceSrc: "audio/audio_04_olfato.mp3",
+        effectSrc: null,
         extraSeconds: 6,
         image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80",
         hint: "Ejemplo: Tu café, una flor, aceite esencial o el aire fresco." 
@@ -249,33 +241,28 @@
       { 
         cat: "1. Gusto", 
         text: "Experimenta la sensación y sabor presente en tu boca.", 
-        voiceId: "v-4",
-        effectId: null,
+        voiceSrc: "audio/audio_05_sabor.mp3",
+        effectSrc: null,
         extraSeconds: 6,
         image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80",
         hint: "Ejemplo: Un sorbo de agua, una fruta o la frescura del paladar." 
       }
     ];
 
-    function stopAllTimersAndAudios() {
+    function stopAllAudiosAndTimers() {
       if (countdownInterval) {
         clearInterval(countdownInterval);
         countdownInterval = null;
       }
       document.getElementById('timer-display').style.display = "none";
 
-      if (activeVoice) {
-        activeVoice.pause();
-        activeVoice.currentTime = 0;
-        activeVoice.onended = null;
-        activeVoice = null;
-      }
-      if (activeEffect) {
-        activeEffect.pause();
-        activeEffect.currentTime = 0;
-        activeEffect.onended = null;
-        activeEffect = null;
-      }
+      voicePlayer.pause();
+      voicePlayer.currentTime = 0;
+      voicePlayer.onended = null;
+
+      effectPlayer.pause();
+      effectPlayer.currentTime = 0;
+      effectPlayer.onended = null;
     }
 
     function startExperience() {
@@ -287,14 +274,18 @@
       document.getElementById('prev-btn').disabled = false;
       document.getElementById('next-btn').disabled = false;
       
+      // Iniciar reproducción persistente de la música de fondo
       pianoAudio.volume = VOL_PIANO_NORMAL;
-      pianoAudio.play().catch(() => {});
-
-      renderStep();
+      pianoAudio.play().then(() => {
+        renderStep();
+      }).catch(err => {
+        console.error("Error al iniciar música de fondo:", err);
+        renderStep();
+      });
     }
 
     function renderStep() {
-      stopAllTimersAndAudios();
+      stopAllAudiosAndTimers();
       if (isPaused) return;
 
       const mod = modules[currentIdx];
@@ -313,30 +304,26 @@
       document.getElementById('status-badge').textContent = "Escuchando instrucción...";
       pianoAudio.volume = VOL_PIANO_DUCKING;
 
-      activeVoice = document.getElementById(mod.voiceId);
-      if (activeVoice) {
-        activeVoice.currentTime = 0;
-        activeVoice.play().catch(e => console.log("Error voz:", e));
+      // Cargar y reproducir voz
+      voicePlayer.src = mod.voiceSrc;
+      voicePlayer.play().catch(e => console.log("Error en voz:", e));
 
-        activeVoice.onended = () => {
-          if (mod.effectId) {
-            document.getElementById('status-badge').textContent = "Sonido ambiental activo...";
-            activeEffect = document.getElementById(mod.effectId);
-            if (activeEffect) {
-              activeEffect.currentTime = 0;
-              activeEffect.play().catch(e => console.log("Error efecto:", e));
+      voicePlayer.onended = () => {
+        // Al terminar la voz, reproducir el efecto si existe
+        if (mod.effectSrc) {
+          document.getElementById('status-badge').textContent = "Sonido ambiental activo...";
+          effectPlayer.src = mod.effectSrc;
+          effectPlayer.play().catch(e => console.log("Error en efecto:", e));
 
-              activeEffect.onended = () => {
-                pianoAudio.volume = VOL_PIANO_NORMAL;
-                startExtraTimer(mod.extraSeconds);
-              };
-            }
-          } else {
+          effectPlayer.onended = () => {
             pianoAudio.volume = VOL_PIANO_NORMAL;
             startExtraTimer(mod.extraSeconds);
-          }
-        };
-      }
+          };
+        } else {
+          pianoAudio.volume = VOL_PIANO_NORMAL;
+          startExtraTimer(mod.extraSeconds);
+        }
+      };
     }
 
     function startExtraTimer(seconds) {
@@ -374,22 +361,22 @@
         pauseBtn.textContent = "Reanudar";
         document.getElementById('status-badge').textContent = "En Pausa";
 
-        if (activeVoice) activeVoice.pause();
-        if (activeEffect) activeEffect.pause();
         pianoAudio.pause();
+        voicePlayer.pause();
+        effectPlayer.pause();
       } else {
         isPaused = false;
         pauseBtn.textContent = "Pausar";
 
         pianoAudio.play().catch(() => {});
 
-        if (activeVoice && !activeVoice.ended && activeVoice.currentTime > 0) {
+        if (!voicePlayer.ended && voicePlayer.currentTime > 0) {
           pianoAudio.volume = VOL_PIANO_DUCKING;
-          activeVoice.play();
+          voicePlayer.play();
           document.getElementById('status-badge').textContent = "Escuchando instrucción...";
-        } else if (activeEffect && !activeEffect.ended && activeEffect.currentTime > 0) {
+        } else if (!effectPlayer.ended && effectPlayer.currentTime > 0) {
           pianoAudio.volume = VOL_PIANO_DUCKING;
-          activeEffect.play();
+          effectPlayer.play();
           document.getElementById('status-badge').textContent = "Sonido ambiental activo...";
         } else if (remainingSeconds > 0) {
           pianoAudio.volume = VOL_PIANO_NORMAL;
@@ -402,7 +389,7 @@
     }
 
     function navigateStep(dir) {
-      stopAllTimersAndAudios();
+      stopAllAudiosAndTimers();
       if (isPaused) {
         isPaused = false;
         document.getElementById('pause-btn').textContent = "Pausar";
@@ -416,7 +403,7 @@
     }
 
     function resetExperience() {
-      stopAllTimersAndAudios();
+      stopAllAudiosAndTimers();
       pianoAudio.pause();
       location.reload();
     }
