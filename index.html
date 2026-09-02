@@ -6,39 +6,37 @@
   <title>Conexión Presente 5-4-3-2-1</title>
   <style>
     :root {
-      --bg-dark: #0f0a1c;
-      --card-bg: rgba(26, 18, 48, 0.75);
-      --primary: #b38add;
-      --accent-glow: #d4a5ff;
-      --text-light: #ece7f6;
-      --gold: #dfb260;
+      --bg-dark: #0b0714;
+      --card-bg: rgba(22, 14, 38, 0.85);
+      --primary: #c094e8;
+      --accent-glow: #e2c2ff;
+      --text-light: #f1ecf9;
+      --gold: #f3c677;
       --error: #ff5c5c;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
 
     body {
-      background: radial-gradient(circle at center, #1e1238 0%, var(--bg-dark) 100%);
+      background: radial-gradient(circle at center, #1a0f2e 0%, var(--bg-dark) 100%);
       color: var(--text-light);
       display: flex;
       justify-content: center;
       align-items: center;
       min-height: 100vh;
       padding: 20px;
-      overflow-x: hidden;
     }
 
     .container {
       background: var(--card-bg);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(179, 138, 221, 0.2);
+      backdrop-filter: blur(15px);
+      border: 1px solid rgba(192, 148, 232, 0.25);
       border-radius: 24px;
       padding: 35px 25px;
       max-width: 500px;
       width: 100%;
-      box-shadow: 0 0 40px rgba(124, 92, 191, 0.25);
+      box-shadow: 0 0 50px rgba(124, 92, 191, 0.3);
       text-align: center;
-      position: relative;
     }
 
     h1 {
@@ -47,22 +45,21 @@
       letter-spacing: 2px;
       margin-bottom: 20px;
       text-transform: uppercase;
-      text-shadow: 0 0 10px rgba(179, 138, 221, 0.5);
+      text-shadow: 0 0 12px rgba(192, 148, 232, 0.6);
     }
 
     .display-card {
-      background: rgba(15, 10, 28, 0.6);
-      border: 1px solid rgba(223, 178, 96, 0.15);
+      background: rgba(11, 7, 20, 0.7);
+      border: 1px solid rgba(243, 198, 119, 0.2);
       border-radius: 20px;
       padding: 25px 20px;
-      min-height: 320px;
+      min-height: 340px;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       margin-bottom: 25px;
       position: relative;
-      overflow: hidden;
     }
 
     .step-title {
@@ -71,15 +68,27 @@
       font-size: 1.1rem;
       letter-spacing: 1.5px;
       text-transform: uppercase;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .step-text {
       font-size: 1.1rem;
-      line-height: 1.6;
-      margin-bottom: 20px;
-      color: #dcd3ee;
-      z-index: 2;
+      line-height: 1.5;
+      margin-bottom: 12px;
+      color: #e5dcfa;
+    }
+
+    /* Caja de objetos sugeridos en interfaz */
+    .object-hint {
+      font-size: 0.9rem;
+      font-style: italic;
+      color: var(--gold);
+      background: rgba(243, 198, 119, 0.1);
+      border-left: 3px solid var(--gold);
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 15px;
+      display: none;
     }
 
     .status-badge {
@@ -87,19 +96,18 @@
       font-weight: 600;
       letter-spacing: 1px;
       color: var(--accent-glow);
-      background: rgba(179, 138, 221, 0.12);
-      border: 1px solid rgba(179, 138, 221, 0.3);
+      background: rgba(192, 148, 232, 0.15);
+      border: 1px solid rgba(192, 148, 232, 0.4);
       padding: 6px 16px;
       border-radius: 20px;
-      z-index: 2;
     }
 
     .error-msg { color: var(--error); font-weight: 600; margin-top: 10px; font-size: 0.85rem; }
 
-    /* CONTENEDOR DE ANIMACIONES MÍSTICAS */
+    /* VIEWPORT Y ANIMACIONES */
     .anim-viewport {
-      width: 140px;
-      height: 140px;
+      width: 150px;
+      height: 150px;
       margin: 10px auto;
       position: relative;
       display: flex;
@@ -107,63 +115,63 @@
       align-items: center;
     }
 
-    .anim-layer {
-      display: none;
-      width: 100%;
-      height: 100%;
-      position: absolute;
-    }
-
+    .anim-layer { display: none; width: 100%; height: 100%; position: absolute; }
     .active-anim { display: flex; justify-content: center; align-items: center; }
 
-    /* Visual 1: Pulsos místico (Vista / Tacto / Gusto / Cierre) */
+    /* Pulso Genérico */
     .mystic-pulse {
       width: 80px;
       height: 80px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(179,138,221,0.8) 0%, rgba(223,178,96,0.2) 70%, transparent 100%);
+      background: radial-gradient(circle, rgba(192,148,232,0.9) 0%, rgba(243,198,119,0.3) 70%, transparent 100%);
       animation: pulseGlow 3s infinite ease-in-out;
-      box-shadow: 0 0 25px var(--primary);
     }
 
     @keyframes pulseGlow {
-      0%, 100% { transform: scale(0.8); opacity: 0.5; box-shadow: 0 0 15px var(--primary); }
-      50% { transform: scale(1.2); opacity: 0.9; box-shadow: 0 0 35px var(--gold); }
+      0%, 100% { transform: scale(0.85); opacity: 0.6; box-shadow: 0 0 15px var(--primary); }
+      50% { transform: scale(1.2); opacity: 1; box-shadow: 0 0 35px var(--gold); }
     }
 
-    /* Visual 2: Ondas Sonoras Espirales (Oído) */
+    /* Ondas Oído */
     .sound-waves {
-      width: 100px;
-      height: 100px;
+      width: 100px; height: 100px;
       border: 2px solid var(--primary);
       border-radius: 50%;
       animation: waveExpand 2s infinite linear;
       position: absolute;
     }
-
     .sound-waves:nth-child(2) { animation-delay: 0.6s; }
     .sound-waves:nth-child(3) { animation-delay: 1.2s; }
 
     @keyframes waveExpand {
       0% { width: 20px; height: 20px; opacity: 1; border-color: var(--gold); }
-      100% { width: 120px; height: 120px; opacity: 0; border-color: var(--primary); }
+      100% { width: 130px; height: 130px; opacity: 0; border-color: var(--primary); }
     }
 
-    /* Visual 3: Diagrama Anatómico de Inhalación de Aroma (Olfato) */
-    .olfato-svg {
-      width: 120px;
-      height: 120px;
-    }
-
+    /* Animación Olfato Avanzada SVG */
+    .olfato-svg { width: 130px; height: 130px; }
     .aroma-particle {
       fill: var(--gold);
-      animation: flowNasal 2.5s infinite ease-in-out;
+      animation: flowAroma 3s infinite ease-in-out;
     }
 
-    @keyframes flowNasal {
-      0% { transform: translateY(20px) scale(0.5); opacity: 0; }
+    @keyframes flowAroma {
+      0% { transform: translateY(30px) scale(0.3); opacity: 0; }
       50% { opacity: 1; }
-      100% { transform: translateY(-40px) scale(1.2); opacity: 0; }
+      100% { transform: translateY(-50px) scale(1.4); opacity: 0; }
+    }
+
+    .breath-ring {
+      fill: none;
+      stroke: var(--primary);
+      stroke-width: 2;
+      animation: ringExpand 4s infinite ease-in-out;
+      transform-origin: center;
+    }
+
+    @keyframes ringExpand {
+      0%, 100% { transform: scale(0.8); opacity: 0.3; }
+      50% { transform: scale(1.1); opacity: 0.8; }
     }
 
     .controls { display: flex; gap: 12px; justify-content: center; }
@@ -176,12 +184,6 @@
       font-weight: 600;
       letter-spacing: 1px;
       cursor: pointer;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-      transition: all 0.3s ease;
-    }
-    button:hover:not(:disabled) {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(124, 92, 191, 0.5);
     }
     button:disabled { background: #2a223d; color: #665c7a; border-color: transparent; cursor: not-allowed; }
     .btn-sec { background: rgba(255,255,255,0.08); color: var(--text-light); }
@@ -196,30 +198,27 @@
       <div id="step-title" class="step-title">Preparación</div>
       <div id="step-text" class="step-text">Adopta una postura cómoda, respira profundo y presiona Iniciar.</div>
 
-      <!-- VIEWPORT DE ANIMACIONES INTERACTIVAS -->
+      <div id="object-hint" class="object-hint"></div>
+
       <div class="anim-viewport">
-        <!-- Visual Genérico: Pulso místico -->
         <div id="anim-pulse" class="anim-layer active-anim">
           <div class="mystic-pulse"></div>
         </div>
 
-        <!-- Visual Oído: Ondas Expansivas -->
         <div id="anim-sound" class="anim-layer">
           <div class="sound-waves"></div>
           <div class="sound-waves"></div>
           <div class="sound-waves"></div>
         </div>
 
-        <!-- Visual Olfato: Inhalación Anatómica SVG -->
         <div id="anim-olfato" class="anim-layer">
           <svg class="olfato-svg" viewBox="0 0 100 100">
-            <!-- Silueta estilizada de rostro e inhalación -->
-            <path d="M 35,80 Q 30,55 45,45 T 50,20" fill="none" stroke="rgba(179,138,221,0.4)" stroke-width="3" stroke-linecap="round"/>
-            <path d="M 45,45 Q 60,40 55,60 T 40,80" fill="none" stroke="rgba(223,178,96,0.3)" stroke-width="2" stroke-dasharray="3 3"/>
-            <!-- Partículas de aroma ascendente -->
-            <circle class="aroma-particle" cx="45" cy="70" r="4" style="animation-delay: 0s;"/>
-            <circle class="aroma-particle" cx="42" cy="60" r="3" style="animation-delay: 0.6s;"/>
-            <circle class="aroma-particle" cx="48" cy="50" r="3.5" style="animation-delay: 1.2s;"/>
+            <circle class="breath-ring" cx="50" cy="50" r="35" />
+            <path d="M 50,85 C 35,65 35,45 50,25 C 65,45 65,65 50,85 Z" fill="none" stroke="rgba(243,198,119,0.4)" stroke-width="2"/>
+            <circle class="aroma-particle" cx="50" cy="75" r="4.5" style="animation-delay: 0s;"/>
+            <circle class="aroma-particle" cx="44" cy="65" r="3.5" style="animation-delay: 0.7s;"/>
+            <circle class="aroma-particle" cx="56" cy="55" r="4" style="animation-delay: 1.4s;"/>
+            <circle class="aroma-particle" cx="50" cy="40" r="3" style="animation-delay: 2.1s;"/>
           </svg>
         </div>
       </div>
@@ -236,99 +235,81 @@
 
   <script>
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-    let droneGain = null;
-    let droneOsc1 = null;
-    let droneOsc2 = null;
+    let bgMusicGain = null;
+    let bgOscs = [];
 
-    // 1. ZUMBIDO MÍSTICO CONTINUO DE FONDO (Frecuencias 108Hz y 108.5Hz - Battement Alfa)
-    function startAmbientDrone() {
+    // 1. MÚSICA DE FONDO SUAVE Y RELAJANTE
+    function startAmbientMusic() {
       if (audioCtx.state === 'suspended') audioCtx.resume();
-      if (droneGain) return;
+      if (bgMusicGain) return;
 
-      droneGain = audioCtx.createGain();
-      droneGain.gain.setValueAtTime(0.04, audioCtx.currentTime); // Volumen suave subyacente
-      droneGain.connect(audioCtx.destination);
+      bgMusicGain = audioCtx.createGain();
+      bgMusicGain.gain.setValueAtTime(0.08, audioCtx.currentTime); // Volumen suave constante
+      bgMusicGain.connect(audioCtx.destination);
 
-      droneOsc1 = audioCtx.createOscillator();
-      droneOsc2 = audioCtx.createOscillator();
-
-      droneOsc1.type = 'sine';
-      droneOsc2.type = 'sine';
-
-      droneOsc1.frequency.setValueAtTime(108, audioCtx.currentTime);
-      droneOsc2.frequency.setValueAtTime(108.5, audioCtx.currentTime);
-
-      droneOsc1.connect(droneGain);
-      droneOsc2.connect(droneGain);
-
-      droneOsc1.start();
-      droneOsc2.start();
+      // Acorde armónico místico (A4, E5, C#5)
+      const freqs = [220, 329.63, 277.18];
+      bgOscs = freqs.map(freq => {
+        const osc = audioCtx.createOscillator();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+        osc.connect(bgMusicGain);
+        osc.start();
+        return osc;
+      });
     }
 
-    function stopAmbientDrone() {
-      if (droneGain) {
-        droneGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1);
+    function stopAmbientMusic() {
+      if (bgMusicGain) {
+        bgMusicGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1);
         setTimeout(() => {
-          if (droneOsc1) { droneOsc1.stop(); droneOsc1.disconnect(); }
-          if (droneOsc2) { droneOsc2.stop(); droneOsc2.disconnect(); }
-          droneGain = null;
+          bgOscs.forEach(osc => { osc.stop(); osc.disconnect(); });
+          bgOscs = [];
+          bgMusicGain = null;
         }, 1000);
       }
     }
 
-    // 2. SINTETIZADOR MÍSTICO DE 8 SEGUNDOS EXACTOS (SIN PITOS)
+    // 2. SONIDOS POTENTES DE 8 SEGUNDOS
     function playSound(type) {
       if (audioCtx.state === 'suspended') audioCtx.resume();
 
       if (type === 'bowl') {
-        // Cuenco Tibetano Armónico (432Hz con resonancia pura)
+        // Cuenco Tibetano claro y definido
         const osc = audioCtx.createOscillator();
         const gain = audioCtx.createGain();
         osc.type = 'sine';
         osc.frequency.setValueAtTime(432, audioCtx.currentTime);
         
-        gain.gain.setValueAtTime(0.35, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 7.9);
+        gain.gain.setValueAtTime(0.6, audioCtx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 7.9);
 
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start();
         osc.stop(audioCtx.currentTime + 8.0);
 
-      } else if (type === 'wind') {
-        // Viento Místico Relleno (Ruido Rosa Filtrado - Sin Pitos)
+      } else if (type === 'rain') {
+        // Lluvia suave (Ruido rosa continuo)
         const bufferSize = audioCtx.sampleRate * 8;
         const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
         const data = buffer.getChannelData(0);
         
-        let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
         for (let i = 0; i < bufferSize; i++) {
-          let white = Math.random() * 2 - 1;
-          b0 = 0.99886 * b0 + white * 0.0555179;
-          b1 = 0.99332 * b1 + white * 0.0750759;
-          b2 = 0.96900 * b2 + white * 0.1538520;
-          b3 = 0.86650 * b3 + white * 0.3104856;
-          b4 = 0.55000 * b4 + white * 0.5329522;
-          b5 = -0.7616 * b5 - white * 0.0168980;
-          data[i] = b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362;
-          data[i] *= 0.05;
-          b6 = white * 0.115926;
+          data[i] = (Math.random() * 2 - 1) * 0.15;
         }
 
         const noise = audioCtx.createBufferSource();
         noise.buffer = buffer;
 
         const filter = audioCtx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(250, audioCtx.currentTime);
-        filter.frequency.linearRampToValueAtTime(450, audioCtx.currentTime + 4);
-        filter.frequency.linearRampToValueAtTime(200, audioCtx.currentTime + 8);
-        filter.Q.value = 1.2;
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1000, audioCtx.currentTime);
 
         const gain = audioCtx.createGain();
-        gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 3);
-        gain.gain.linearRampToValueAtTime(0.001, audioCtx.currentTime + 7.9);
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.4, audioCtx.currentTime + 1);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 7.9);
 
         noise.connect(filter);
         filter.connect(gain);
@@ -337,41 +318,53 @@
         noise.start();
         noise.stop(audioCtx.currentTime + 8.0);
 
-      } else if (type === 'whale') {
-        // Canto de Ballenas Subacuático Profundo (Sin frecuencias agudas estridentes)
-        const osc = audioCtx.createOscillator();
-        const gain = audioCtx.createGain();
+      } else if (type === 'wind') {
+        // Viento místico
+        const bufferSize = audioCtx.sampleRate * 8;
+        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+        const data = buffer.getChannelData(0);
         
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(140, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(260, audioCtx.currentTime + 3.5);
-        osc.frequency.exponentialRampToValueAtTime(110, audioCtx.currentTime + 7.8);
+        for (let i = 0; i < bufferSize; i++) {
+          data[i] = (Math.random() * 2 - 1) * 0.2;
+        }
 
-        gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 2);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 7.9);
+        const noise = audioCtx.createBufferSource();
+        noise.buffer = buffer;
 
-        osc.connect(gain);
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.setValueAtTime(400, audioCtx.currentTime);
+        filter.Q.value = 3.0;
+
+        const gain = audioCtx.createGain();
+        gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.45, audioCtx.currentTime + 2);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 7.9);
+
+        noise.connect(filter);
+        filter.connect(gain);
         gain.connect(audioCtx.destination);
-        osc.start();
-        osc.stop(audioCtx.currentTime + 8.0);
+
+        noise.start();
+        noise.stop(audioCtx.currentTime + 8.0);
       }
     }
 
-    // ESTRUCTURA CON PAUSA EXACTA DE 7 SEGUNDOS Y VISUALES ESPECÍFICOS
+    // CONFIGURACIÓN DE PAUSAS Y SUGERENCIA DE OBJETOS
     const modules = [
-      { cat: "5. Vista", text: "Observa a tu alrededor y nombra 5 objetos mentalmente.", file: "audio_01_vista.mp3", pauseTime: 7, animType: "pulse" },
-      { cat: "4. Tacto", text: "Conecta con la textura y temperatura de 4 objetos a tu alcance.", file: "audio_02_tacto.mp3", pauseTime: 7, animType: "pulse" },
+      { cat: "5. Vista", text: "Observa a tu alrededor y nombra 5 objetos mentalmente.", file: "audio_01_vista.mp3", pauseTime: 7, hint: "Ejemplo: Una lámpara, tu reloj, una planta, una ventana, una silla.", animType: "pulse" },
+      { cat: "4. Tacto", text: "Conecta con la textura y temperatura de 4 objetos a tu alcance.", file: "audio_02_tacto.mp3", pauseTime: 10, hint: "Ejemplo: Tu ropa, la mesa de madera, la pantalla de tu celular, tus manos.", animType: "pulse" },
       { 
         cat: "3. Oído", 
         text: "Cierra los ojos y escucha atentamente.", 
         file: "audio_03_oido.mp3",
         hasAmbientSounds: true,
+        hint: "Escucha los sonidos de tu entorno y las frecuencias guía.",
         animType: "sound"
       },
-      { cat: "2. Olfato", text: "Huele 2 objetos y visualiza el recorrido del aroma.", file: "audio_04_olfato.mp3", pauseTime: 7, animType: "olfato" },
-      { cat: "1. Gusto", text: "Experimenta las sensaciones del alimento en tu boca.", file: "audio_05_sabor.mp3", pauseTime: 7, animType: "pulse" },
-      { cat: "Cierre", text: "Mueve suavemente tus manos y tus hombros. Tu atención ha vuelto por completo al aquí y al ahora.", file: "audio_06_cierre.mp3", pauseTime: 0, animType: "pulse" }
+      { cat: "2. Olfato", text: "Huele 2 objetos y visualiza el recorrido del aroma.", file: "audio_04_olfato.mp3", pauseTime: 7, hint: "Ejemplo: Tu taza de café, una fruta, tu perfume o el ambiente.", animType: "olfato" },
+      { cat: "1. Gusto", text: "Experimenta las sensaciones del alimento en tu boca.", file: "audio_05_sabor.mp3", pauseTime: 7, hint: "Ejemplo: Un sorbo de agua, una menta o el sabor presente en tu boca.", animType: "pulse" },
+      { cat: "Cierre", text: "Mueve suavemente tus manos y tus hombros. Tu atención ha vuelto por completo al aquí y al ahora.", file: "audio_06_cierre.mp3", pauseTime: 0, hint: "", animType: "pulse" }
     ];
 
     let currentModuleIdx = 0;
@@ -394,7 +387,7 @@
       document.getElementById('start-btn').disabled = true;
       document.getElementById('reset-btn').disabled = false;
       
-      startAmbientDrone();
+      startAmbientMusic();
       runModule();
     }
 
@@ -409,6 +402,14 @@
       document.getElementById('step-text').textContent = mod.text;
       document.getElementById('status-badge').textContent = "Escuchando...";
       document.getElementById('error-display').textContent = "";
+
+      const hintEl = document.getElementById('object-hint');
+      if (mod.hint) {
+        hintEl.textContent = mod.hint;
+        hintEl.style.display = "block";
+      } else {
+        hintEl.style.display = "none";
+      }
 
       setAnimation(mod.animType);
 
@@ -427,7 +428,7 @@
 
       currentAudio.play().catch(err => {
         console.error("Error al reproducir:", err);
-        document.getElementById('error-display').textContent = "Toca la pantalla para permitir la reproducción de audio.";
+        document.getElementById('error-display').textContent = "Toca la pantalla para permitir la reproducción.";
       });
 
       currentAudio.onended = () => {
@@ -457,8 +458,8 @@
     function playAmbientSequence() {
       const sounds = [
         { type: 'bowl', text: "1. Cuenco tibetano (432 Hz)..." },
-        { type: 'wind', text: "2. Viento místico..." },
-        { type: 'whale', text: "3. Cantos de ballena..." }
+        { type: 'rain', text: "2. Lluvia suave..." },
+        { type: 'wind', text: "3. Viento místico..." }
       ];
 
       let soundIdx = 0;
@@ -479,15 +480,16 @@
         actionTimeout = setTimeout(() => {
           soundIdx++;
           triggerNextSound();
-        }, 8000); // 8 segundos exactos sin interrupción
+        }, 8000);
       }
 
       triggerNextSound();
     }
 
     function finish() {
-      stopAmbientDrone();
+      stopAmbientMusic();
       setAnimation('pulse');
+      document.getElementById('object-hint').style.display = "none";
       document.getElementById('step-title').textContent = "Completado";
       document.getElementById('step-text').textContent = "Has vuelto al aquí y al ahora.";
       document.getElementById('status-badge').textContent = "✓ Finalizado";
@@ -497,13 +499,14 @@
 
     function reset() {
       clearTimeout(actionTimeout);
-      stopAmbientDrone();
+      stopAmbientMusic();
       
       if (currentAudio) {
         currentAudio.pause();
         currentAudio.currentTime = 0;
       }
       setAnimation('pulse');
+      document.getElementById('object-hint').style.display = "none";
       document.getElementById('step-title').textContent = "Preparación";
       document.getElementById('step-text').textContent = "Adopta una postura cómoda, respira profundo y presiona Iniciar.";
       document.getElementById('status-badge').textContent = "Listo";
