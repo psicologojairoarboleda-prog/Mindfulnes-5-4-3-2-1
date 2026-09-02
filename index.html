@@ -11,6 +11,7 @@
       --primary: #7c5cbf;
       --accent: #e8e1f5;
       --text: #2d2b32;
+      --error: #d9534f;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
@@ -53,6 +54,7 @@
     .step-title { font-weight: 700; color: var(--primary); font-size: 1rem; text-transform: uppercase; margin-bottom: 12px; }
     .step-text { font-size: 1.1rem; line-height: 1.5; margin-bottom: 15px; }
     .status-badge { font-size: 0.9rem; font-weight: 600; color: var(--primary); background: #ffffff; padding: 6px 14px; border-radius: 20px; }
+    .error-msg { color: var(--error); font-weight: 600; margin-top: 10px; font-size: 0.85rem; }
 
     /* Animación del recorrido del aroma (Fase Olfato) */
     .aroma-container {
@@ -121,6 +123,7 @@
       </div>
 
       <div id="status-badge" class="status-badge">Listo</div>
+      <div id="error-display" class="error-msg"></div>
     </div>
 
     <div class="controls">
@@ -132,7 +135,7 @@
   <script>
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    // Generador de sonidos relajantes de 9 segundos
+    // Generador sintetizado de sonidos relajantes de 9 segundos
     function playSound(type) {
       if (audioCtx.state === 'suspended') audioCtx.resume();
       
@@ -169,7 +172,7 @@
       }
     }
 
-    // Configuración de los 6 módulos con rutas a la carpeta audio/
+    // Mapeo exacto ajustado al nombre de tu archivo: audio_05_sabor.mp3
     const modules = [
       { cat: "5. Vista", text: "Observa a tu alrededor y nombra 5 objetos mentalmente.", file: "audio_01_vista.mp3" },
       { cat: "4. Tacto", text: "Conecta con la textura y temperatura de 4 objetos a tu alcance.", file: "audio_02_tacto.mp3" },
@@ -180,7 +183,7 @@
         hasAmbientSounds: true 
       },
       { cat: "2. Olfato", text: "Huele 2 objetos y visualiza el recorrido del aroma.", file: "audio_04_olfato.mp3", anim: true },
-      { cat: "1. Gusto", text: "Experimenta las sensaciones del alimento en tu boca.", file: "audio_05_gusto.mp3" },
+      { cat: "1. Gusto", text: "Experimenta las sensaciones del alimento en tu boca.", file: "audio_05_sabor.mp3" },
       { cat: "Cierre", text: "Mueve suavemente tus manos y tus hombros. Tu atención ha vuelto por completo al aquí y al ahora.", file: "audio_06_cierre.mp3" }
     ];
 
@@ -191,6 +194,7 @@
 
     function start() {
       currentModuleIdx = 0;
+      document.getElementById('error-display').textContent = "";
       document.getElementById('start-btn').disabled = true;
       document.getElementById('reset-btn').disabled = false;
       runModule();
@@ -206,6 +210,7 @@
       document.getElementById('step-title').textContent = mod.cat;
       document.getElementById('step-text').textContent = mod.text;
       document.getElementById('status-badge').textContent = "Escuchando...";
+      document.getElementById('error-display').textContent = "";
 
       const card = document.getElementById('card');
       if (mod.anim) {
@@ -214,9 +219,23 @@
         card.classList.remove('aroma-active');
       }
 
-      if (currentAudio) currentAudio.pause();
-      currentAudio = new Audio(`audio/${mod.file}`);
-      currentAudio.play();
+      if (currentAudio) {
+        currentAudio.pause();
+        currentAudio.currentTime = 0;
+      }
+
+      const audioPath = `audio/${mod.file}`;
+      currentAudio = new Audio(audioPath);
+
+      currentAudio.onerror = () => {
+        document.getElementById('status-badge').textContent = "Error de audio";
+        document.getElementById('error-display').textContent = `No se encontró el archivo: ${audioPath}`;
+      };
+
+      currentAudio.play().catch(err => {
+        console.error("Error al reproducir:", err);
+        document.getElementById('error-display').textContent = "Haz clic en la pantalla para permitir la reproducción.";
+      });
 
       currentAudio.onended = () => {
         if (mod.hasAmbientSounds) {
@@ -228,7 +247,6 @@
       };
     }
 
-    // Secuencia de 3 sonidos (9s de duración + 2s de pausa)
     function playAmbientSequence() {
       const sounds = [
         { type: 'bowl', text: "Cuenco tibetano..." },
@@ -251,10 +269,8 @@
         
         playSound(snd.type);
 
-        // 9 segundos sonando
         ambientTimeout1 = setTimeout(() => {
           document.getElementById('status-badge').textContent = "Pausa...";
-          // 2 segundos de pausa en silencio
           ambientTimeout2 = setTimeout(() => {
             soundIdx++;
             triggerNextSound();
@@ -286,6 +302,7 @@
       document.getElementById('step-title').textContent = "Preparación";
       document.getElementById('step-text').textContent = "Ponte en una posición cómoda y presiona Iniciar.";
       document.getElementById('status-badge').textContent = "Listo";
+      document.getElementById('error-display').textContent = "";
       document.getElementById('start-btn').disabled = false;
       document.getElementById('reset-btn').disabled = true;
     }
