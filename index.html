@@ -6,20 +6,22 @@
   <title>Conexión Presente 5-4-3-2-1</title>
   <style>
     :root {
-      --bg-dark: #080511;
-      --card-bg: rgba(20, 13, 35, 0.88);
-      --primary: #c094e8;
-      --accent-glow: #e2c2ff;
-      --text-light: #f1ecf9;
-      --gold: #f3c677;
-      --error: #ff5c5c;
+      --bg-gradient: linear-gradient(135deg, #f7f9f8 0%, #eef2f5 100%);
+      --card-bg: rgba(255, 255, 255, 0.92);
+      --primary: #6b8e85;      /* Verde salvia relajante */
+      --primary-dark: #4a6b63;
+      --accent: #8e7cc3;        /* Lavanda suave */
+      --text-main: #2c3e35;
+      --text-muted: #5f7367;
+      --card-shadow: 0 10px 30px rgba(107, 142, 133, 0.12);
+      --border-color: rgba(107, 142, 133, 0.2);
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', system-ui, sans-serif; }
 
     body {
-      background: radial-gradient(circle at center, #180b2b 0%, var(--bg-dark) 100%);
-      color: var(--text-light);
+      background: var(--bg-gradient);
+      color: var(--text-main);
       display: flex;
       justify-content: center;
       align-items: center;
@@ -29,183 +31,120 @@
 
     .container {
       background: var(--card-bg);
-      backdrop-filter: blur(15px);
-      border: 1px solid rgba(192, 148, 232, 0.25);
-      border-radius: 24px;
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-color);
+      border-radius: 28px;
       padding: 35px 25px;
       max-width: 520px;
       width: 100%;
-      box-shadow: 0 0 50px rgba(124, 92, 191, 0.3);
+      box-shadow: var(--card-shadow);
       text-align: center;
     }
 
     h1 {
-      color: var(--primary);
+      color: var(--primary-dark);
       font-size: 1.5rem;
-      letter-spacing: 2px;
+      letter-spacing: 1.5px;
       margin-bottom: 20px;
-      text-transform: uppercase;
-      text-shadow: 0 0 12px rgba(192, 148, 232, 0.6);
+      font-weight: 600;
     }
 
     .display-card {
-      background: rgba(8, 5, 17, 0.75);
-      border: 1px solid rgba(243, 198, 119, 0.2);
+      background: #ffffff;
+      border: 1px solid var(--border-color);
       border-radius: 20px;
       padding: 25px 20px;
-      min-height: 350px;
+      min-height: 380px;
       display: flex;
       flex-direction: column;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      margin-bottom: 25px;
-      position: relative;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.02);
     }
 
     .step-title {
       font-weight: 700;
-      color: var(--gold);
-      font-size: 1.1rem;
-      letter-spacing: 1.5px;
+      color: var(--primary-dark);
+      font-size: 1.2rem;
+      letter-spacing: 1px;
       text-transform: uppercase;
-      margin-bottom: 10px;
     }
 
     .step-text {
       font-size: 1.1rem;
       line-height: 1.5;
-      margin-bottom: 12px;
-      color: #e5dcfa;
+      color: var(--text-main);
+      margin: 10px 0;
+    }
+
+    /* VISOR VISUAL Y MULTIMEDIA */
+    .media-viewport {
+      width: 100%;
+      height: 180px;
+      margin: 10px 0;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #f4f7f6;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border: 1px solid rgba(107, 142, 133, 0.15);
+    }
+
+    .media-viewport img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: opacity 0.5s ease-in-out;
     }
 
     .object-hint {
       font-size: 0.9rem;
-      font-style: italic;
-      color: var(--gold);
-      background: rgba(243, 198, 119, 0.1);
-      border-left: 3px solid var(--gold);
-      padding: 8px 12px;
-      border-radius: 6px;
-      margin-bottom: 15px;
+      color: var(--primary-dark);
+      background: #f0f5f3;
+      border-left: 4px solid var(--primary);
+      padding: 10px 14px;
+      border-radius: 8px;
+      width: 100%;
+      text-align: left;
       display: none;
     }
 
     .status-badge {
       font-size: 0.85rem;
       font-weight: 600;
-      letter-spacing: 1px;
-      color: var(--accent-glow);
-      background: rgba(192, 148, 232, 0.15);
-      border: 1px solid rgba(192, 148, 232, 0.4);
-      padding: 6px 16px;
+      color: var(--primary-dark);
+      background: #e8f0ec;
+      border: 1px solid var(--border-color);
+      padding: 6px 18px;
       border-radius: 20px;
     }
 
-    .error-msg { color: var(--error); font-weight: 600; margin-top: 10px; font-size: 0.85rem; }
-
-    /* VIEWPORT Y ANIMACIONES */
-    .anim-viewport {
-      width: 140px;
-      height: 140px;
-      margin: 10px auto;
-      position: relative;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-
-    .anim-layer { display: none; width: 100%; height: 100%; position: absolute; }
-    .active-anim { display: flex; justify-content: center; align-items: center; }
-
-    .mystic-pulse {
-      width: 75px;
-      height: 75px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(192,148,232,0.85) 0%, rgba(243,198,119,0.25) 70%, transparent 100%);
-      animation: pulseGlow 3s infinite ease-in-out;
-    }
-
-    @keyframes pulseGlow {
-      0%, 100% { transform: scale(0.85); opacity: 0.6; box-shadow: 0 0 15px var(--primary); }
-      50% { transform: scale(1.15); opacity: 0.95; box-shadow: 0 0 30px var(--gold); }
-    }
-
-    .sound-waves {
-      width: 90px; height: 90px;
-      border: 2px solid var(--primary);
-      border-radius: 50%;
-      animation: waveExpand 2s infinite linear;
-      position: absolute;
-    }
-    .sound-waves:nth-child(2) { animation-delay: 0.6s; }
-    .sound-waves:nth-child(3) { animation-delay: 1.2s; }
-
-    @keyframes waveExpand {
-      0% { width: 20px; height: 20px; opacity: 1; border-color: var(--gold); }
-      100% { width: 120px; height: 120px; opacity: 0; border-color: var(--primary); }
-    }
-
-    .olfato-svg { width: 120px; height: 120px; }
-    .aroma-particle {
-      fill: var(--gold);
-      animation: flowAroma 3s infinite ease-in-out;
-    }
-
-    @keyframes flowAroma {
-      0% { transform: translateY(25px) scale(0.3); opacity: 0; }
-      50% { opacity: 1; }
-      100% { transform: translateY(-45px) scale(1.3); opacity: 0; }
-    }
-
-    .breath-ring {
-      fill: none;
-      stroke: var(--primary);
-      stroke-width: 2;
-      animation: ringExpand 4s infinite ease-in-out;
-      transform-origin: center;
-    }
-
-    @keyframes ringExpand {
-      0%, 100% { transform: scale(0.8); opacity: 0.3; }
-      50% { transform: scale(1.1); opacity: 0.8; }
-    }
-
-    /* BOTONES DE CONTROL */
-    .controls { display: flex; flex-direction: column; gap: 12px; align-items: center; }
-    
-    .nav-group {
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      width: 100%;
-    }
+    /* CONTROLES */
+    .controls { display: flex; flex-direction: column; gap: 12px; margin-top: 20px; }
+    .nav-group { display: flex; gap: 10px; width: 100%; }
 
     button {
-      background: linear-gradient(135deg, #7c5cbf 0%, #5a3d93 100%);
-      color: #fff;
-      border: 1px solid rgba(255,255,255,0.2);
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
       padding: 12px 20px;
       border-radius: 12px;
       font-weight: 600;
-      letter-spacing: 0.5px;
       cursor: pointer;
       transition: all 0.2s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
     }
 
     button:hover:not(:disabled) {
-      opacity: 0.95;
+      background: var(--primary-dark);
       transform: translateY(-1px);
     }
 
-    button:disabled { background: #221a30; color: #554a6b; border-color: transparent; cursor: not-allowed; }
+    button:disabled { background: #dce4e1; color: #9aa8a1; cursor: not-allowed; }
     
     .btn-main { width: 100%; padding: 14px; font-size: 1rem; }
-    .btn-nav { flex: 1; background: rgba(192, 148, 232, 0.12); color: var(--text-light); }
-    .btn-sec { background: rgba(255,255,255,0.06); color: #b3a9c9; }
+    .btn-nav { flex: 1; background: #e8f0ec; color: var(--primary-dark); }
+    .btn-sec { background: transparent; color: var(--text-muted); border: 1px solid var(--border-color); }
   </style>
 </head>
 <body>
@@ -213,37 +152,17 @@
   <div class="container">
     <h1>Conexión Presente</h1>
 
-    <div class="display-card" id="card">
+    <div class="display-card">
       <div id="step-title" class="step-title">Preparación</div>
-      <div id="step-text" class="step-text">Adopta una postura cómoda, respira profundo y presiona Iniciar.</div>
-
-      <div id="object-hint" class="object-hint"></div>
-
-      <div class="anim-viewport">
-        <div id="anim-pulse" class="anim-layer active-anim">
-          <div class="mystic-pulse"></div>
-        </div>
-
-        <div id="anim-sound" class="anim-layer">
-          <div class="sound-waves"></div>
-          <div class="sound-waves"></div>
-          <div class="sound-waves"></div>
-        </div>
-
-        <div id="anim-olfato" class="anim-layer">
-          <svg class="olfato-svg" viewBox="0 0 100 100">
-            <circle class="breath-ring" cx="50" cy="50" r="35" />
-            <path d="M 50,85 C 35,65 35,45 50,25 C 65,45 65,65 50,85 Z" fill="none" stroke="rgba(243,198,119,0.4)" stroke-width="2"/>
-            <circle class="aroma-particle" cx="50" cy="75" r="4.5" style="animation-delay: 0s;"/>
-            <circle class="aroma-particle" cx="44" cy="65" r="3.5" style="animation-delay: 0.7s;"/>
-            <circle class="aroma-particle" cx="56" cy="55" r="4" style="animation-delay: 1.4s;"/>
-            <circle class="aroma-particle" cx="50" cy="40" r="3" style="animation-delay: 2.1s;"/>
-          </svg>
-        </div>
+      
+      <!-- CONTENEDOR VISUAL DE IMÁGENES -->
+      <div class="media-viewport">
+        <img id="step-image" src="https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=600&q=80" alt="Meditación y Calma">
       </div>
 
+      <div id="step-text" class="step-text">Adopta una postura cómoda, respira profundo y presiona Iniciar.</div>
+      <div id="object-hint" class="object-hint"></div>
       <div id="status-badge" class="status-badge">Listo</div>
-      <div id="error-display" class="error-msg"></div>
     </div>
 
     <div class="controls">
@@ -262,233 +181,116 @@
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     let bgMusicGain = null;
     let bgOscs = [];
-    let bgFilter = null;
 
-    // AMBIENTE MEDITATIVO CONTINUO
-    function startAmbientMusic() {
+    // MÚSICA DE FONDO: PIANO INSTRUMENTAL SUAVE
+    function startAmbientPiano() {
       if (audioCtx.state === 'suspended') audioCtx.resume();
-      if (bgMusicGain) {
-        // Restaurar volumen si estaba pausado
-        bgMusicGain.gain.cancelScheduledValues(audioCtx.currentTime);
-        bgMusicGain.gain.linearRampToValueAtTime(0.035, audioCtx.currentTime + 0.5);
-        return;
-      }
-
-      bgFilter = audioCtx.createBiquadFilter();
-      bgFilter.type = 'lowpass';
-      bgFilter.frequency.setValueAtTime(350, audioCtx.currentTime);
+      if (bgMusicGain) return;
 
       bgMusicGain = audioCtx.createGain();
       bgMusicGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-      bgMusicGain.gain.linearRampToValueAtTime(0.035, audioCtx.currentTime + 2);
-
-      bgFilter.connect(bgMusicGain);
+      bgMusicGain.gain.linearRampToValueAtTime(0.04, audioCtx.currentTime + 2);
       bgMusicGain.connect(audioCtx.destination);
 
-      const freqs = [108, 162, 216];
-      bgOscs = freqs.map(freq => {
+      // Acordes de piano constantes e instrumentales suaves (Frecuencias armónicas)
+      const pianoNotes = [261.63, 329.63, 392.00, 523.25]; // Do mayor amplio
+      bgOscs = pianoNotes.map(freq => {
         const osc = audioCtx.createOscillator();
-        osc.type = 'sine';
+        osc.type = 'triangle'; // Tono cálido de instrumento
         osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-        osc.connect(bgFilter);
+        
+        const oscGain = audioCtx.createGain();
+        oscGain.gain.value = 0.2;
+        osc.connect(oscGain);
+        oscGain.connect(bgMusicGain);
         osc.start();
         return osc;
       });
     }
 
-    // SILENCIAR / REANUDAR MÚSICA DE FONDO (Para no solapar con sonidos)
     function pauseAmbientMusic() {
-      if (bgMusicGain) {
-        bgMusicGain.gain.cancelScheduledValues(audioCtx.currentTime);
-        bgMusicGain.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
-      }
+      if (bgMusicGain) bgMusicGain.gain.linearRampToValueAtTime(0.0001, audioCtx.currentTime + 0.5);
     }
 
     function resumeAmbientMusic() {
-      if (bgMusicGain) {
-        bgMusicGain.gain.cancelScheduledValues(audioCtx.currentTime);
-        bgMusicGain.gain.linearRampToValueAtTime(0.035, audioCtx.currentTime + 0.5);
-      } else {
-        startAmbientMusic();
-      }
+      if (bgMusicGain) bgMusicGain.gain.linearRampToValueAtTime(0.04, audioCtx.currentTime + 0.5);
+      else startAmbientPiano();
     }
 
-    function stopAmbientMusic() {
-      if (bgMusicGain) {
-        bgMusicGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 1);
-        setTimeout(() => {
-          bgOscs.forEach(osc => { try { osc.stop(); osc.disconnect(); } catch(e){} });
-          bgOscs = [];
-          bgMusicGain = null;
-        }, 1000);
-      }
-    }
-
-    // SÍNTESIS DE SONIDOS POTENTES DE 8 SEGUNDOS REALES
-    function playSound(type) {
+    // REPRODUCCIÓN DEL CUENCO TIBETANO ALTO Y LARGO (12 SEGUNDOS)
+    function playLongSingingBowl() {
       if (audioCtx.state === 'suspended') audioCtx.resume();
 
-      if (type === 'piano') {
-        // Acorde armónico de Piano Relajante (C3 - E3 - G3 - C4) con sostén de 8 segundos
-        const notes = [130.81, 164.81, 196.00, 261.63];
-        notes.forEach(freq => {
-          const osc = audioCtx.createOscillator();
-          const gain = audioCtx.createGain();
-          osc.type = 'triangle'; // Forma de onda cálida similar a instrumento de cuerda
-          osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
 
-          // Entrada con ataque suave y caída sostenida hasta 8s
-          gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
-          gain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 0.1);
-          gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 7.9);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(432, audioCtx.currentTime); // Frecuencia armónica 432 Hz
 
-          osc.connect(gain);
-          gain.connect(audioCtx.destination);
-          osc.start();
-          osc.stop(audioCtx.currentTime + 8.0);
-        });
+      // Volumen alto y decaimiento extendido
+      gain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+      gain.gain.linearRampToValueAtTime(0.8, audioCtx.currentTime + 0.3); // Ataque fuerte y claro
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 11.9); // Resonancia larga de 12s
 
-      } else if (type === 'storm') {
-        // Lluvia Torrencial / Tormenta Potente (8 Segundos continuos)
-        const bufferSize = audioCtx.sampleRate * 8;
-        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const data = buffer.getChannelData(0);
-        
-        // Generador de ruido rosa/marrón denso
-        let lastOut = 0.0;
-        for (let i = 0; i < bufferSize; i++) {
-          let white = Math.random() * 2 - 1;
-          data[i] = (lastOut + (0.02 * white)) / 1.02;
-          lastOut = data[i];
-          data[i] *= 3.5; // Amplificación para mayor impacto
-        }
-
-        const noise = audioCtx.createBufferSource();
-        noise.buffer = buffer;
-
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(1400, audioCtx.currentTime); // Filtro ancho para oír gotas y torrente
-
-        const gain = audioCtx.createGain();
-        gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.8, audioCtx.currentTime + 0.8); // Volumen potente
-        gain.gain.setValueAtTime(0.8, audioCtx.currentTime + 7.0);
-        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 7.9);
-
-        noise.connect(filter);
-        filter.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        noise.start();
-        noise.stop(audioCtx.currentTime + 8.0);
-
-      } else if (type === 'strong_wind') {
-        // Viento Fuerte y Soplado Profundo
-        const bufferSize = audioCtx.sampleRate * 8;
-        const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
-        const data = buffer.getChannelData(0);
-        for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1);
-
-        const noise = audioCtx.createBufferSource();
-        noise.buffer = buffer;
-
-        const filter = audioCtx.createBiquadFilter();
-        filter.type = 'bandpass';
-        filter.frequency.setValueAtTime(250, audioCtx.currentTime);
-        // Modulación de ráfaga de viento dinámica
-        filter.frequency.linearRampToValueAtTime(600, audioCtx.currentTime + 3);
-        filter.frequency.linearRampToValueAtTime(300, audioCtx.currentTime + 6);
-        filter.frequency.linearRampToValueAtTime(200, audioCtx.currentTime + 7.9);
-        filter.Q.value = 1.8;
-
-        const gain = audioCtx.createGain();
-        gain.gain.setValueAtTime(0.01, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.85, audioCtx.currentTime + 1.5); // Ráfaga fuerte
-        gain.gain.setValueAtTime(0.85, audioCtx.currentTime + 6.5);
-        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 7.9);
-
-        noise.connect(filter);
-        filter.connect(gain);
-        gain.connect(audioCtx.destination);
-
-        noise.start();
-        noise.stop(audioCtx.currentTime + 8.0);
-      }
+      osc.connect(gain);
+      gain.connect(audioCtx.destination);
+      
+      osc.start();
+      osc.stop(audioCtx.currentTime + 12.0);
     }
 
+    // ESTRUCTURA CON IMÁGENES TEMÁTICAS ASOCIADAS
     const modules = [
-      { cat: "5. Vista", text: "Observa a tu alrededor y nombra 5 objetos mentalmente.", file: "audio_01_vista.mp3", pauseTime: 7, hint: "Ejemplo: Una lámpara, tu reloj, una planta, una ventana, una silla.", animType: "pulse" },
-      { cat: "4. Tacto", text: "Conecta con la textura y temperatura de 4 objetos a tu alcance.", file: "audio_02_tacto.mp3", pauseTime: 10, hint: "Ejemplo: Tu ropa, la mesa de madera, la pantalla de tu celular, tus manos.", animType: "pulse" },
+      { 
+        cat: "5. Vista", 
+        text: "Observa a tu alrededor y nombra 5 objetos mentalmente.", 
+        image: "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80",
+        hint: "Ejemplo: Una lámpara, tu reloj, una planta, una ventana, una silla." 
+      },
+      { 
+        cat: "4. Tacto", 
+        text: "Conecta con la textura y temperatura de 4 objetos a tu alcance.", 
+        image: "https://images.unsplash.com/photo-1516541196182-6bdb0516ed27?auto=format&fit=crop&w=600&q=80",
+        hint: "Ejemplo: Tu ropa, la mesa de madera, tus manos, una superficie fría." 
+      },
       { 
         cat: "3. Oído", 
-        text: "Cierra los ojos y escucha atentamente.", 
-        file: "audio_03_oido.mp3",
-        hasAmbientSounds: true,
-        hint: "Escucha los sonidos de tu entorno y las frecuencias guía.",
-        animType: "sound"
+        text: "Cierra los ojos y escucha la resonancia profunda del cuenco.", 
+        image: "https://images.unsplash.com/photo-1512438248247-f0f2a5a8b7f0?auto=format&fit=crop&w=600&q=80",
+        isBowlStep: true,
+        hint: "Permite que la frecuencia limpie cualquier distracción sonora." 
       },
-      { cat: "2. Olfato", text: "Huele 2 objetos y visualiza el recorrido del aroma.", file: "audio_04_olfato.mp3", pauseTime: 7, hint: "Ejemplo: Tu taza de café, una fruta, tu perfume o el ambiente.", animType: "olfato" },
-      { cat: "1. Gusto", text: "Experimenta las sensaciones del alimento en tu boca.", file: "audio_05_sabor.mp3", pauseTime: 7, hint: "Ejemplo: Un sorbo de agua, una menta o el sabor presente en tu boca.", animType: "pulse" },
-      { cat: "Cierre", text: "Mueve suavemente tus manos y tus hombros. Tu atención ha vuelto por completo al aquí y al ahora.", file: "audio_06_cierre.mp3", pauseTime: 0, hint: "", animType: "pulse" }
+      { 
+        cat: "2. Olfato", 
+        text: "Huele 2 aromas de tu entorno y percibe el aire al inhalar.", 
+        image: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=600&q=80",
+        hint: "Ejemplo: Tu café, una flor, aceite esencial o el aire fresco." 
+      },
+      { 
+        cat: "1. Gusto", 
+        text: "Experimenta la sensación y sabor presente en tu boca.", 
+        image: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=600&q=80",
+        hint: "Ejemplo: Un sorbo de agua, una fruta o la frescura del paladar." 
+      }
     ];
 
-    let currentModuleIdx = 0;
-    let currentAudio = null;
-    let isPaused = false;
-    let timerInterval = null;
-    let actionTimeout = null;
-    let remainingTime = 0;
-
-    function setAnimation(type) {
-      document.getElementById('anim-pulse').classList.remove('active-anim');
-      document.getElementById('anim-sound').classList.remove('active-anim');
-      document.getElementById('anim-olfato').classList.remove('active-anim');
-
-      if (type === 'sound') document.getElementById('anim-sound').classList.add('active-anim');
-      else if (type === 'olfato') document.getElementById('anim-olfato').classList.add('active-anim');
-      else document.getElementById('anim-pulse').classList.add('active-anim');
-    }
-
-    function updateNavButtons() {
-      document.getElementById('prev-btn').disabled = (currentModuleIdx <= 0);
-      document.getElementById('next-btn').disabled = (currentModuleIdx >= modules.length - 1);
-      document.getElementById('pause-btn').disabled = false;
-    }
+    let currentIdx = 0;
 
     function start() {
-      currentModuleIdx = 0;
-      isPaused = false;
-      document.getElementById('error-display').textContent = "";
+      currentIdx = 0;
       document.getElementById('start-btn').disabled = true;
       document.getElementById('reset-btn').disabled = false;
-      
-      startAmbientMusic();
-      runModule();
+      document.getElementById('prev-btn').disabled = false;
+      document.getElementById('next-btn').disabled = false;
+      startAmbientPiano();
+      renderStep();
     }
 
-    function clearCurrentTimers() {
-      if (timerInterval) clearInterval(timerInterval);
-      if (actionTimeout) clearTimeout(actionTimeout);
-    }
-
-    function runModule() {
-      clearCurrentTimers();
-      isPaused = false;
-      document.getElementById('pause-btn').textContent = "❚❚ Pausa";
-
-      if (currentModuleIdx >= modules.length) {
-        finish();
-        return;
-      }
-
-      updateNavButtons();
-
-      const mod = modules[currentModuleIdx];
+    function renderStep() {
+      const mod = modules[currentIdx];
       document.getElementById('step-title').textContent = mod.cat;
       document.getElementById('step-text').textContent = mod.text;
-      document.getElementById('status-badge').textContent = "Escuchando...";
-      document.getElementById('error-display').textContent = "";
+      document.getElementById('step-image').src = mod.image;
 
       const hintEl = document.getElementById('object-hint');
       if (mod.hint) {
@@ -498,163 +300,26 @@
         hintEl.style.display = "none";
       }
 
-      setAnimation(mod.animType);
-
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-      }
-
-      // Reanudar música ambiental si no estamos en secuencia de efectos especiales
-      if (!mod.hasAmbientSounds) {
-        resumeAmbientMusic();
-      }
-
-      const audioPath = `audio/${mod.file}`;
-      currentAudio = new Audio(audioPath);
-
-      currentAudio.onerror = () => {
-        document.getElementById('status-badge').textContent = "Error de audio";
-        document.getElementById('error-display').textContent = `No se encontró el archivo: ${audioPath}`;
-      };
-
-      currentAudio.play().catch(err => {
-        console.error("Error al reproducir:", err);
-        document.getElementById('error-display').textContent = "Toca la pantalla para reproducir.";
-      });
-
-      currentAudio.onended = () => {
-        if (mod.hasAmbientSounds) {
-          playAmbientSequence();
-        } else if (mod.pauseTime > 0) {
-          startCountdown(mod.pauseTime);
-        } else {
-          currentModuleIdx++;
-          runModule();
-        }
-      };
-    }
-
-    function startCountdown(seconds) {
-      remainingTime = seconds;
-      document.getElementById('status-badge').textContent = `Realiza la acción (${remainingTime}s)`;
-      
-      timerInterval = setInterval(() => {
-        if (!isPaused) {
-          remainingTime--;
-          if (remainingTime > 0) {
-            document.getElementById('status-badge').textContent = `Realiza la acción (${remainingTime}s)`;
-          } else {
-            clearInterval(timerInterval);
-            currentModuleIdx++;
-            runModule();
-          }
-        }
-      }, 1000);
-    }
-
-    function playAmbientSequence() {
-      // Pausar música de fondo para dar total protagonismo a los 3 sonidos
-      pauseAmbientMusic();
-
-      const sounds = [
-        { type: 'piano', text: "1. Acorde de Piano Armónico..." },
-        { type: 'storm', text: "2. Lluvia Torrencial / Tormenta..." },
-        { type: 'strong_wind', text: "3. Viento Fuerte y Soplado..." }
-      ];
-
-      let soundIdx = 0;
-
-      function triggerNextSound() {
-        if (soundIdx >= sounds.length) {
-          resumeAmbientMusic(); // Reanudar ambiente al finalizar
-          currentModuleIdx++;
-          runModule();
-          return;
-        }
-
-        const snd = sounds[soundIdx];
-        document.getElementById('step-text').textContent = snd.text;
-        document.getElementById('status-badge').textContent = "Escuchando sonido (8s)...";
-        
-        playSound(snd.type);
-
-        actionTimeout = setTimeout(() => {
-          if (!isPaused) {
-            soundIdx++;
-            triggerNextSound();
-          }
-        }, 8000); // 8 segundos exactos
-      }
-
-      triggerNextSound();
-    }
-
-    function togglePause() {
-      isPaused = !isPaused;
-      const pauseBtn = document.getElementById('pause-btn');
-
-      if (isPaused) {
-        pauseBtn.textContent = "▶ Reanudar";
-        document.getElementById('status-badge').textContent = "⏸ Pausado";
-        if (currentAudio && !currentAudio.paused) {
-          currentAudio.pause();
-        }
+      if (mod.isBowlStep) {
+        pauseAmbientMusic();
+        document.getElementById('status-badge').textContent = "Escuchando Cuenco (12s)...";
+        playLongSingingBowl();
+        setTimeout(() => { resumeAmbientMusic(); }, 12000);
       } else {
-        pauseBtn.textContent = "❚❚ Pausa";
-        if (currentAudio && currentAudio.paused && currentAudio.currentTime > 0) {
-          currentAudio.play();
-          document.getElementById('status-badge').textContent = "Escuchando...";
-        } else if (remainingTime > 0) {
-          document.getElementById('status-badge').textContent = `Realiza la acción (${remainingTime}s)`;
-        }
+        resumeAmbientMusic();
+        document.getElementById('status-badge').textContent = "En curso";
       }
     }
 
-    function navigateStep(direction) {
-      clearCurrentTimers();
-      currentModuleIdx += direction;
-      
-      if (currentModuleIdx < 0) currentModuleIdx = 0;
-      if (currentModuleIdx >= modules.length) currentModuleIdx = modules.length - 1;
-      
-      runModule();
-    }
-
-    function finish() {
-      stopAmbientMusic();
-      clearCurrentTimers();
-      setAnimation('pulse');
-      document.getElementById('object-hint').style.display = "none";
-      document.getElementById('step-title').textContent = "Completado";
-      document.getElementById('step-text').textContent = "Has vuelto al aquí y al ahora.";
-      document.getElementById('status-badge').textContent = "✓ Finalizado";
-      document.getElementById('start-btn').disabled = false;
-      document.getElementById('reset-btn').disabled = true;
-      document.getElementById('prev-btn').disabled = true;
-      document.getElementById('next-btn').disabled = true;
-      document.getElementById('pause-btn').disabled = true;
+    function navigateStep(dir) {
+      currentIdx += dir;
+      if (currentIdx < 0) currentIdx = 0;
+      if (currentIdx >= modules.length) currentIdx = modules.length - 1;
+      renderStep();
     }
 
     function reset() {
-      clearCurrentTimers();
-      stopAmbientMusic();
-      
-      if (currentAudio) {
-        currentAudio.pause();
-        currentAudio.currentTime = 0;
-      }
-      setAnimation('pulse');
-      document.getElementById('object-hint').style.display = "none";
-      document.getElementById('step-title').textContent = "Preparación";
-      document.getElementById('step-text').textContent = "Adopta una postura cómoda, respira profundo y presiona Iniciar.";
-      document.getElementById('status-badge').textContent = "Listo";
-      document.getElementById('error-display').textContent = "";
-      document.getElementById('start-btn').disabled = false;
-      document.getElementById('reset-btn').disabled = true;
-      document.getElementById('prev-btn').disabled = true;
-      document.getElementById('next-btn').disabled = true;
-      document.getElementById('pause-btn').disabled = true;
+      location.reload();
     }
   </script>
 </body>
