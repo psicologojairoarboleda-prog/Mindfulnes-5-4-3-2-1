@@ -109,7 +109,6 @@
       <div id="step-title" class="step-title">Preparación</div>
       <div id="step-text" class="step-text">Ponte en una posición cómoda y presiona Iniciar.</div>
 
-      <!-- ANIMACIÓN SVG: Recorrido del aroma -->
       <div class="aroma-container">
         <svg viewBox="0 0 100 100" width="100%" height="100%">
           <path d="M 30,55 C 30,45 35,25 50,25 C 65,25 70,45 70,55" fill="none" stroke="#d2c5ed" stroke-width="2" stroke-dasharray="2 2" />
@@ -135,7 +134,7 @@
   <script>
     const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
-    // Generador sintetizado de sonidos relajantes de 9 segundos
+    // Generador de 3 sonidos relajantes con duración exacta de 8 segundos
     function playSound(type) {
       if (audioCtx.state === 'suspended') audioCtx.resume();
       
@@ -145,52 +144,53 @@
       gain.connect(audioCtx.destination);
 
       if (type === 'bowl') {
+        // 1. Cuenco tibetano (432 Hz) por 8s
         osc.type = 'sine';
         osc.frequency.setValueAtTime(432, audioCtx.currentTime);
         gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 8.8);
+        gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 7.8);
         osc.start();
-        osc.stop(audioCtx.currentTime + 8.8);
+        osc.stop(audioCtx.currentTime + 7.8);
       } else if (type === 'waves') {
+        // 2. Olas del mar por 8s
         osc.type = 'triangle';
         osc.frequency.setValueAtTime(100, audioCtx.currentTime);
-        osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 8.5);
+        osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 7.5);
         gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
-        gain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 4.5);
-        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 8.8);
+        gain.gain.linearRampToValueAtTime(0.25, audioCtx.currentTime + 4.0);
+        gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 7.8);
         osc.start();
-        osc.stop(audioCtx.currentTime + 8.8);
+        osc.stop(audioCtx.currentTime + 7.8);
       } else if (type === 'whale') {
+        // 3. Cantos de ballena por 8s
         osc.type = 'sine';
         osc.frequency.setValueAtTime(280, audioCtx.currentTime);
-        osc.frequency.linearRampToValueAtTime(420, audioCtx.currentTime + 4.5);
-        osc.frequency.linearRampToValueAtTime(180, audioCtx.currentTime + 8.8);
+        osc.frequency.linearRampToValueAtTime(420, audioCtx.currentTime + 4.0);
+        osc.frequency.linearRampToValueAtTime(180, audioCtx.currentTime + 7.8);
         gain.gain.setValueAtTime(0.15, audioCtx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 8.8);
+        gain.gain.exponentialRampToValueAtTime(0.01, audioCtx.currentTime + 7.8);
         osc.start();
-        osc.stop(audioCtx.currentTime + 8.8);
+        osc.stop(audioCtx.currentTime + 7.8);
       }
     }
 
-    // Mapeo exacto ajustado al nombre de tu archivo: audio_05_sabor.mp3
     const modules = [
-      { cat: "5. Vista", text: "Observa a tu alrededor y nombra 5 objetos mentalmente.", file: "audio_01_vista.mp3" },
-      { cat: "4. Tacto", text: "Conecta con la textura y temperatura de 4 objetos a tu alcance.", file: "audio_02_tacto.mp3" },
+      { cat: "5. Vista", text: "Observa a tu alrededor y nombra 5 objetos mentalmente.", file: "audio_01_vista.mp3", pauseTime: 10 },
+      { cat: "4. Tacto", text: "Conecta con la textura y temperatura de 4 objetos a tu alcance.", file: "audio_02_tacto.mp3", pauseTime: 10 },
       { 
         cat: "3. Oído", 
         text: "Cierra los ojos y escucha atentamente.", 
         file: "audio_03_oido.mp3",
         hasAmbientSounds: true 
       },
-      { cat: "2. Olfato", text: "Huele 2 objetos y visualiza el recorrido del aroma.", file: "audio_04_olfato.mp3", anim: true },
-      { cat: "1. Gusto", text: "Experimenta las sensaciones del alimento en tu boca.", file: "audio_05_sabor.mp3" },
-      { cat: "Cierre", text: "Mueve suavemente tus manos y tus hombros. Tu atención ha vuelto por completo al aquí y al ahora.", file: "audio_06_cierre.mp3" }
+      { cat: "2. Olfato", text: "Huele 2 objetos y visualiza el recorrido del aroma.", file: "audio_04_olfato.mp3", anim: true, pauseTime: 10 },
+      { cat: "1. Gusto", text: "Experimenta las sensaciones del alimento en tu boca.", file: "audio_05_sabor.mp3", pauseTime: 10 },
+      { cat: "Cierre", text: "Mueve suavemente tus manos y tus hombros. Tu atención ha vuelto por completo al aquí y al ahora.", file: "audio_06_cierre.mp3", pauseTime: 0 }
     ];
 
     let currentModuleIdx = 0;
     let currentAudio = null;
-    let ambientTimeout1 = null;
-    let ambientTimeout2 = null;
+    let actionTimeout = null;
 
     function start() {
       currentModuleIdx = 0;
@@ -240,6 +240,21 @@
       currentAudio.onended = () => {
         if (mod.hasAmbientSounds) {
           playAmbientSequence();
+        } else if (mod.pauseTime > 0) {
+          // Opciones para darle tiempo al usuario de hacer la actividad
+          let timeLeft = mod.pauseTime;
+          document.getElementById('status-badge').textContent = `Haz la actividad (${timeLeft}s)`;
+          
+          const countdown = setInterval(() => {
+            timeLeft--;
+            if (timeLeft > 0) {
+              document.getElementById('status-badge').textContent = `Haz la actividad (${timeLeft}s)`;
+            } else {
+              clearInterval(countdown);
+              currentModuleIdx++;
+              runModule();
+            }
+          }, 1000);
         } else {
           currentModuleIdx++;
           runModule();
@@ -249,9 +264,9 @@
 
     function playAmbientSequence() {
       const sounds = [
-        { type: 'bowl', text: "Cuenco tibetano..." },
-        { type: 'waves', text: "Olas del mar..." },
-        { type: 'whale', text: "Canto de ballenas..." }
+        { type: 'bowl', text: "1. Cuenco tibetano..." },
+        { type: 'waves', text: "2. Olas del mar..." },
+        { type: 'whale', text: "3. Cantos de ballena..." }
       ];
 
       let soundIdx = 0;
@@ -265,17 +280,15 @@
 
         const snd = sounds[soundIdx];
         document.getElementById('step-text').textContent = snd.text;
-        document.getElementById('status-badge').textContent = "Sonido relajante";
+        document.getElementById('status-badge').textContent = "Escuchando sonido (8s)...";
         
         playSound(snd.type);
 
-        ambientTimeout1 = setTimeout(() => {
-          document.getElementById('status-badge').textContent = "Pausa...";
-          ambientTimeout2 = setTimeout(() => {
-            soundIdx++;
-            triggerNextSound();
-          }, 2000);
-        }, 9000);
+        // Cada sonido dura exactamente 8 segundos antes de pasar al siguiente
+        actionTimeout = setTimeout(() => {
+          soundIdx++;
+          triggerNextSound();
+        }, 8000);
       }
 
       triggerNextSound();
@@ -291,8 +304,7 @@
     }
 
     function reset() {
-      clearTimeout(ambientTimeout1);
-      clearTimeout(ambientTimeout2);
+      clearTimeout(actionTimeout);
       
       if (currentAudio) {
         currentAudio.pause();
