@@ -1,10 +1,11 @@
 :root {
-    --petroleo: #045256;
-    --turquesa: #0d8193;
-    --celeste-claro: #e6f7ff;
-    --crema: #fce4b8;
-    --naranja: #f8a245;
-    --texto-oscuro: #1c3135;
+    /* Paleta extraída de la imagen */
+    --lago-profundo: #324b53;   /* Oscuro / Títulos */
+    --agua-serena: #729a9e;     /* Acentos / Subtítulos */
+    --gris-perla: #dbe2e0;      /* Tarjetas y fondos suaves */
+    --verde-hoja: #789270;      /* Botón de acción principal */
+    --rosa-loto: #ba8a96;       /* Progreso / Resaltados */
+    --fondo-suave: #f4f7f6;     /* Fondo general de la app */
 }
 
 * {
@@ -15,9 +16,7 @@
 }
 
 body {
-    background-color: #faf6f0;
-    background-image: radial-gradient(#e0b98d 1.5px, transparent 1.5px);
-    background-size: 18px 18px;
+    background-color: var(--fondo-suave);
     min-height: 100vh;
     display: flex;
     justify-content: center;
@@ -27,12 +26,12 @@ body {
 
 .card-container {
     background: #ffffff;
-    border: 1px solid #e2e8f0;
+    border: 1px solid #e1e8e6;
     width: 100%;
-    max-width: 480px;
-    border-radius: 20px;
+    max-width: 460px;
+    border-radius: 24px;
     padding: 32px 24px;
-    box-shadow: 0 12px 30px rgba(4, 82, 86, 0.1);
+    box-shadow: 0 14px 35px rgba(50, 75, 83, 0.08);
     text-align: center;
     display: flex;
     flex-direction: column;
@@ -40,18 +39,18 @@ body {
 }
 
 .badge {
-    background-color: var(--celeste-claro);
-    color: var(--turquesa);
-    font-size: 12px;
+    background-color: #e8f0ef;
+    color: var(--agua-serena);
+    font-size: 11px;
     font-weight: 700;
     text-transform: uppercase;
     padding: 6px 14px;
     border-radius: 20px;
-    letter-spacing: 1px;
+    letter-spacing: 1.2px;
 }
 
 h1 {
-    color: var(--petroleo);
+    color: var(--lago-profundo);
     font-size: 24px;
     margin-top: 10px;
     font-weight: 700;
@@ -67,13 +66,12 @@ h1 {
     width: 150px;
     height: 150px;
     border-radius: 50%;
-    background-color: var(--crema);
+    background-color: var(--gris-perla);
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    box-shadow: 0 6px 18px rgba(248, 162, 69, 0.25);
-    transition: transform 0.3s ease;
+    box-shadow: 0 8px 20px rgba(186, 138, 150, 0.2);
 }
 
 .timer-svg {
@@ -87,13 +85,13 @@ h1 {
 
 .timer-bg {
     fill: none;
-    stroke: rgba(13, 129, 147, 0.15);
+    stroke: rgba(114, 154, 158, 0.2);
     stroke-width: 6;
 }
 
 .timer-progress {
     fill: none;
-    stroke: var(--naranja);
+    stroke: var(--rosa-loto);
     stroke-width: 6;
     stroke-dasharray: 283;
     stroke-dashoffset: 0;
@@ -114,35 +112,29 @@ h1 {
     width: 44px;
     height: 44px;
     fill: none;
-    stroke: var(--petroleo);
+    stroke: var(--lago-profundo);
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
-    animation: popIcon 0.4s ease-out;
-}
-
-@keyframes popIcon {
-    from { transform: scale(0.6); opacity: 0; }
-    to { transform: scale(1); opacity: 1; }
 }
 
 .timer-text {
-    font-size: 24px;
+    font-size: 26px;
     font-weight: 800;
-    color: var(--petroleo);
+    color: var(--lago-profundo);
 }
 
 .descripcion {
     font-size: 16px;
     line-height: 1.6;
-    color: var(--texto-oscuro);
+    color: var(--lago-profundo);
     min-height: 60px;
 }
 
 .sub-indicacion {
     font-size: 14px;
     font-weight: 600;
-    color: var(--turquesa);
+    color: var(--agua-serena);
     min-height: 24px;
     margin-top: 5px;
 }
@@ -159,10 +151,10 @@ h1 {
     font-size: 15px;
     font-weight: 600;
     border: none;
-    border-radius: 10px;
+    border-radius: 12px;
     cursor: pointer;
-    background-color: #f1f5f9;
-    color: var(--petroleo);
+    background-color: #f0f4f3;
+    color: var(--lago-profundo);
     transition: all 0.2s ease;
 }
 
@@ -171,21 +163,21 @@ h1 {
 }
 
 .btn-nav:disabled {
-    opacity: 0.4;
+    opacity: 0.35;
     cursor: not-allowed;
 }
 
 .btn-primary {
-    background-color: var(--naranja);
+    background-color: var(--verde-hoja);
     color: #ffffff;
-    box-shadow: 0 4px 10px rgba(248, 162, 69, 0.3);
+    box-shadow: 0 4px 12px rgba(120, 146, 112, 0.35);
 }
 
 .btn-primary:hover:not(:disabled) {
-    background-color: #e08b2d;
+    background-color: #688260;
 }
 
 .btn-pause {
-    background-color: var(--celeste-claro);
-    color: var(--turquesa);
+    background-color: #e8f0ef;
+    color: var(--agua-serena);
 }
