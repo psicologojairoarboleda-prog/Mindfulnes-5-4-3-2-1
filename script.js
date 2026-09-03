@@ -1,5 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // Música de fondo ambiental desde un enlace externo libre de derechos
+    const musicaFondo = new Audio("https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3");
+    musicaFondo.loop = true;
+    musicaFondo.volume = 0.15; // Volumen suave (15%) para acompañar sin tapar la voz
+
     const pasos = [
         {
             titulo: "Paso 1: Introducción",
@@ -62,12 +67,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const subIndicacionEl = document.getElementById('sub-indicacion');
     const timerDisplay = document.getElementById('timer-display');
     const timerProgress = document.getElementById('timer-progress');
+    const breathCircle = document.querySelector('.breath-circle');
 
     const btnAnterior = document.getElementById('btn-anterior');
     const btnPausa = document.getElementById('btn-pausa');
     const btnSiguiente = document.getElementById('btn-siguiente');
 
-    // Estado inicial de los botones
+    // Estado inicial de la interfaz
     btnAnterior.disabled = true;
     btnSiguiente.textContent = "Iniciar Ejercicio";
 
@@ -121,19 +127,30 @@ document.addEventListener('DOMContentLoaded', () => {
         detenerTodoAudio();
         subIndicacionEl.textContent = "";
 
+        // Activar música de fondo si estaba pausada
+        if (musicaFondo.paused) {
+            musicaFondo.play().catch(() => {});
+        }
+
         pasoActual = indice;
         btnAnterior.disabled = (pasoActual <= 0);
 
         const paso = pasos[indice];
         tituloEl.textContent = paso.titulo;
+
+        // Transición suave de texto
+        descripcionEl.classList.remove('animar-cambio');
+        void descripcionEl.offsetWidth;
+        descripcionEl.classList.add('animar-cambio');
         descripcionEl.textContent = paso.texto;
 
         if (paso.esOido) {
-            // Reproducir audio explicativo del oído
+            if (breathCircle) breathCircle.classList.add('fijo');
+            
+            // Audio explicativo de oído
             audioInstruccion = new Audio("audio/oido.mp3");
             audioInstruccion.play().catch(() => {});
 
-            // Al terminar la instrucción de voz, arranca la secuencia de 3 sonidos (10s + 3s)
             audioInstruccion.onended = () => {
                 reproducirSecuenciaOido(paso.subAudios, 0);
             };
@@ -144,10 +161,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
             audioInstruccion.onended = () => {
                 if (paso.duracion > 0) {
+                    if (breathCircle) breathCircle.classList.add('fijo');
                     subIndicacionEl.textContent = "Tiempo de práctica...";
                     iniciarConteoRegresivo(paso.duracion, () => {
+                        if (breathCircle) breathCircle.classList.remove('fijo');
                         subIndicacionEl.textContent = "¡Tiempo completado! Avanza al siguiente paso.";
                     });
+                } else {
+                    if (breathCircle) breathCircle.classList.remove('fijo');
                 }
             };
         }
@@ -160,34 +181,34 @@ document.addEventListener('DOMContentLoaded', () => {
             subIndicacionEl.textContent = "Has escuchado los 3 sonidos. Puedes avanzar al siguiente paso.";
             timerDisplay.textContent = "--";
             actualizarCirculoProgreso(0, 0);
+            if (breathCircle) breathCircle.classList.remove('fijo');
             return;
         }
 
         const actual = audios[indiceAudio];
         subIndicacionEl.textContent = `Escuchando: ${actual.nombre} (${indiceAudio + 1} de 3)...`;
         
-        // 1. Reproducir el sonido
+        // 1. Sonido por 10 segundos
         audioInstruccion = new Audio(actual.archivo);
         audioInstruccion.play().catch(() => {});
 
-        // 2. Conteo de 10 SEGUNDOS de sonido
         iniciarConteoRegresivo(10, () => {
-            // Pausar el sonido al llegar a los 10s
+            // Silenciar el sonido exacto a los 10s
             if (audioInstruccion) {
                 audioInstruccion.pause();
                 audioInstruccion.currentTime = 0;
             }
 
-            // 3. Conteo de 3 SEGUNDOS de silencio para la actividad
+            // 2. Tiempo de actividad en silencio de 3 segundos
             subIndicacionEl.textContent = `Tiempo de actividad (${actual.nombre})...`;
             iniciarConteoRegresivo(3, () => {
-                // Ir al siguiente sonido
+                // Siguiente sonido
                 reproducirSecuenciaOido(audios, indiceAudio + 1);
             });
         });
     }
 
-    // Eventos de los botones
+    // Controles de botones
     btnSiguiente.addEventListener('click', () => {
         if (pasoActual === -1 || pasoActual >= pasos.length - 1) {
             ejecutarPaso(0);
@@ -208,9 +229,11 @@ document.addEventListener('DOMContentLoaded', () => {
         enPausa = !enPausa;
         if (enPausa) {
             if (audioInstruccion) audioInstruccion.pause();
+            musicaFondo.pause();
             btnPausa.textContent = "▶ Reanudar";
         } else {
             if (audioInstruccion) audioInstruccion.play().catch(() => {});
+            musicaFondo.play().catch(() => {});
             btnPausa.textContent = "⏸ Pausar";
         }
     });
