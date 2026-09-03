@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejercicio de Grounding 5-4-3-2-1</title>
+    <title>Ejercicio grounding 5-4-3-2-1</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -12,19 +12,24 @@
 <body>
     <main class="app-card">
         <header class="app-header">
-            <span class="step-badge" id="step-badge">Paso 1 de 7</span>
-            <h1 id="stage-title">Cargando...</h1>
+            <span class="step-badge" id="step-badge">Bienvenido</span>
+            <h1 id="stage-title">Grounding 5-4-3-2-1</h1>
             <div class="progress-track">
                 <div class="progress-fill" id="progress-bar"></div>
             </div>
         </header>
 
         <section class="stage-viewer">
-            <div id="visual-content" class="illustration-card"></div>
+            <div class="image-frame">
+                <img id="visual-image" src="" alt="Ilustración grounding" />
+            </div>
+            
             <div id="timer-box" class="timer-container">
-                <span>⏱ Tiempo para observar:</span>
+                <span class="timer-icon">⏱</span>
+                <span>Tiempo de práctica:</span>
                 <span id="timer-count">0s</span>
             </div>
+
             <p id="stage-subtext" class="stage-subtext"></p>
         </section>
 
@@ -42,9 +47,9 @@
         </footer>
     </main>
 
-    <!-- Pista ambiental persistente -->
+    <!-- Reproductor ambiental y reproductor principal -->
     <audio id="bg-music" loop preload="auto">
-        <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=meditation-piano-112270.mp3" type="audio/mpeg">
+        <source src="https://actions.google.com/sounds/v1/ambiences/outdoor_lake_ambient.ogg" type="audio/ogg">
     </audio>
     <audio id="main-audio" preload="auto"></audio>
 
