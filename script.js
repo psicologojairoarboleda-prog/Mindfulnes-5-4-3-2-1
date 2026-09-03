@@ -16,7 +16,7 @@ const stages = [
         title: '3 Sonidos que puedas ESCUCHAR', 
         audio: 'audio/oido.mp3', 
         svg: svgIcons.oido, 
-        text: 'Escucha los sonidos de la naturaleza a continuación con los ojos cerrados.',
+        text: 'Concéntrate en los sonidos con los ojos cerrados.',
         effects: [
             'https://cdn.pixabay.com/download/audio/2021/08/09/audio_884d658c7e.mp3?filename=heavy-rain-nature-sounds-8162.mp3',
             'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c3e6f9fa68.mp3?filename=wind-blowing-sound-effect-10823.mp3',
@@ -30,7 +30,7 @@ const stages = [
 
 let currentStageIndex = 0;
 let isPlaying = false;
-let isEffectsActive = false;
+let subAudioIndex = -1; // -1: audio principal, 0,1,2: efectos ambientales de oído
 
 const mainAudio = document.getElementById('main-audio');
 const bgMusic = document.getElementById('bg-music');
@@ -42,9 +42,9 @@ const btnPlayPause = document.getElementById('btn-play-pause');
 const btnNext = document.getElementById('btn-next');
 const btnPrev = document.getElementById('btn-prev');
 
-bgMusic.volume = 0.25;
+bgMusic.volume = 0.2;
 
-function loadStage(index) {
+function loadStageUI(index) {
     const stage = stages[index];
     stageTitle.textContent = stage.title;
     stageSubtext.textContent = stage.text;
@@ -63,87 +63,84 @@ function loadStage(index) {
     } else {
         visualContainer.innerHTML = `<div class="visual-card">${stage.svg}</div>`;
     }
+}
 
-    mainAudio.src = stage.audio;
+function playCurrentAudio() {
+    const stage = stages[currentStageIndex];
+    
+    if (subAudioIndex === -1) {
+        mainAudio.src = stage.audio;
+    } else if (stage.effects && stage.effects[subAudioIndex]) {
+        mainAudio.src = stage.effects[subAudioIndex];
+    }
+
     mainAudio.load();
-}
-
-async function playCurrentStage() {
-    isPlaying = true;
-    btnPlayPause.textContent = '⏸ Pausa';
-
-    try {
-        if (bgMusic.paused) await bgMusic.play();
-        await mainAudio.play();
-    } catch (e) {
-        console.warn("Interacción requerida para reproducir audio:", e);
+    
+    if (isPlaying) {
+        bgMusic.play().catch(() => {});
+        mainAudio.play().catch((err) => console.log("Cargando pista:", err));
     }
 }
 
-function pauseCurrentStage() {
-    isPlaying = false;
-    btnPlayPause.textContent = '▶ Continuar';
-    mainAudio.pause();
-    bgMusic.pause();
-}
+// Controlador de flujo automático al terminar cada audio
+mainAudio.onended = () => {
+    const stage = stages[currentStageIndex];
 
-// Avance automático continuo entre sentidos al terminar cada audio
-mainAudio.onended = async () => {
-    const currentStage = stages[currentStageIndex];
-
-    // Reproducción secuencial de efectos de naturaleza en la etapa de Oído
-    if (currentStage.id === 'oido' && currentStage.effects && !isEffectsActive) {
-        isEffectsActive = true;
-        for (const effectUrl of currentStage.effects) {
-            if (!isPlaying) break;
-            mainAudio.src = effectUrl;
-            mainAudio.load();
-            try {
-                await mainAudio.play();
-            } catch (e) {}
-            // Espera 7 segundos por cada sonido ambiental
-            await new Promise(resolve => setTimeout(resolve, 7000));
-        }
-        isEffectsActive = false;
+    // Manejo de la sub-secuencia de los 3 efectos de sonido en Oído
+    if (stage.id === 'oido' && stage.effects && subAudioIndex < stage.effects.length - 1) {
+        subAudioIndex++;
+        playCurrentAudio();
+        return;
     }
 
+    // Reiniciar sub-índice y avanzar automáticamente a la siguiente etapa
+    subAudioIndex = -1;
     if (currentStageIndex < stages.length - 1) {
         currentStageIndex++;
-        loadStage(currentStageIndex);
-        if (isPlaying) playCurrentStage();
+        loadStageUI(currentStageIndex);
+        playCurrentAudio();
     } else {
-        pauseCurrentStage();
+        isPlaying = false;
         btnPlayPause.textContent = '▶ Reiniciar';
+        bgMusic.pause();
     }
 };
 
+// Controles del Usuario (Play/Pausa, Siguiente, Anterior)
 btnPlayPause.addEventListener('click', () => {
     if (isPlaying) {
-        pauseCurrentStage();
+        isPlaying = false;
+        btnPlayPause.textContent = '▶ Continuar';
+        mainAudio.pause();
+        bgMusic.pause();
     } else {
-        if (currentStageIndex === stages.length - 1) currentStageIndex = 0;
-        loadStage(currentStageIndex);
-        playCurrentStage();
+        if (currentStageIndex === stages.length - 1 && subAudioIndex === -1) {
+            currentStageIndex = 0;
+        }
+        isPlaying = true;
+        btnPlayPause.textContent = '⏸ Pausa';
+        loadStageUI(currentStageIndex);
+        playCurrentAudio();
     }
 });
 
 btnNext.addEventListener('click', () => {
-    isEffectsActive = false;
+    subAudioIndex = -1;
     if (currentStageIndex < stages.length - 1) {
         currentStageIndex++;
-        loadStage(currentStageIndex);
-        if (isPlaying) playCurrentStage();
+        loadStageUI(currentStageIndex);
+        playCurrentAudio();
     }
 });
 
 btnPrev.addEventListener('click', () => {
-    isEffectsActive = false;
+    subAudioIndex = -1;
     if (currentStageIndex > 0) {
         currentStageIndex--;
-        loadStage(currentStageIndex);
-        if (isPlaying) playCurrentStage();
+        loadStageUI(currentStageIndex);
+        playCurrentAudio();
     }
 });
 
-// Carga inicial de la aplicación
-loadStage(currentStageIndex);
+// Carga de la interfaz inicial
+loadStageUI(currentStageIndex);
