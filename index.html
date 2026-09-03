@@ -10,11 +10,6 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="background-blobs">
-        <div class="blob blob-1"></div>
-        <div class="blob blob-2"></div>
-    </div>
-
     <main class="app-card">
         <header class="app-header">
             <span class="step-badge" id="step-badge">Paso 1 de 7</span>
@@ -25,7 +20,11 @@
         </header>
 
         <section class="stage-viewer">
-            <div id="visual-content" class="visual-wrapper"></div>
+            <div id="visual-content" class="illustration-card"></div>
+            <div id="timer-box" class="timer-container">
+                <span>⏱ Tiempo para observar:</span>
+                <span id="timer-count">0s</span>
+            </div>
             <p id="stage-subtext" class="stage-subtext"></p>
         </section>
 
@@ -43,7 +42,7 @@
         </footer>
     </main>
 
-    <!-- Pista de fondo constante y reproductor principal -->
+    <!-- Pista ambiental persistente -->
     <audio id="bg-music" loop preload="auto">
         <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=meditation-piano-112270.mp3" type="audio/mpeg">
     </audio>
