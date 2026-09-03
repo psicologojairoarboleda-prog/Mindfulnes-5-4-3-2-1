@@ -3,18 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Técnica Mindfulness 5-4-3-2-1</title>
+    <title>Mindfulness 5-4-3-2-1 — Paz de Otoño</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-    <div class="contenedor-principal">
-        <span class="subtitulo">Ejercicio Guiado</span>
-        <h1 id="titulo">Técnica Mindfulness 5-4-3-2-1</h1>
-        <p id="descripcion">Bienvenido. Esta técnica te ayudará a conectar con el momento presente a través de tus sentidos. Haz clic en el botón para iniciar.</p>
-        
-        <button id="btn-iniciar">Iniciar Ejercicio</button>
-    </div>
+    <!-- Fondo dinámico animado -->
+    <div class="bg-shape shape-1"></div>
+    <div class="bg-shape shape-2"></div>
+
+    <main class="card-container">
+        <header class="header">
+            <span class="badge">Ejercicio Guiado</span>
+            <h1 id="titulo">Técnica Mindfulness 5-4-3-2-1</h1>
+        </header>
+
+        <section class="content-body">
+            <!-- Anillo visual animado para la meditación -->
+            <div class="breath-circle-container">
+                <div class="breath-circle" id="breath-circle">
+                    <svg class="timer-svg" viewBox="0 0 100 100">
+                        <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
+                        <circle class="timer-progress" id="timer-progress" cx="50" cy="50" r="45"></circle>
+                    </svg>
+                    <span id="timer-display" class="timer-text">--</span>
+                </div>
+            </div>
+
+            <p id="descripcion" class="descripcion">
+                Bienvenido a este espacio de calma. Esta técnica te ayudará a conectar con el momento presente a través de tus 5 sentidos.
+            </p>
+            <p id="sub-indicacion" class="sub-indicacion"></p>
+        </section>
+
+        <footer class="controls">
+            <button id="btn-accion" class="btn-primary">Iniciar Ejercicio</button>
+            <button id="btn-musica" class="btn-toggle-music">🎵 Música: ON</button>
+        </footer>
+    </main>
 
     <script src="script.js"></script>
 </body>
