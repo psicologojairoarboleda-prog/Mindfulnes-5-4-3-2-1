@@ -1,76 +1,113 @@
-const pasos = [
-    {
-        titulo: "Paso 1: Intro",
-        texto: "Tómate un momento para respirar profundo y ponerte cómodo.",
-        audio: "audio/intro.mp3"
-    },
-    {
-        titulo: "Paso 2: Vista (5 cosas)",
-        texto: "Observa a tu alrededor 5 cosas que puedas ver.",
-        audio: "audio/vista.mp3"
-    },
-    {
-        titulo: "Paso 3: Tacto (4 cosas)",
-        texto: "Siente 4 cosas que puedas tocar a tu alrededor.",
-        audio: "audio/tacto.mp3"
-    },
-    {
-        titulo: "Paso 4: Oído (3 cosas)",
-        texto: "Escucha con atención 3 sonidos a tu alrededor.",
-        audio: "audio/oido.mp3"
-    },
-    {
-        titulo: "Paso 5: Olfato (2 cosas)",
-        texto: "Identifica 2 olores que puedas percibir.",
-        audio: "audio/olfato.mp3"
-    },
-    {
-        titulo: "Paso 6: Gusto (1 cosa)",
-        texto: "Reconoce 1 sabor presente en tu boca.",
-        audio: "audio/gusto.mp3"
-    },
-    {
-        titulo: "Paso Final: Cierre",
-        texto: "Has completado el ejercicio. Conéctate con tu respiración y el presente.",
-        audio: "audio/cierre.mp3"
+document.addEventListener('DOMContentLoaded', () => {
+    const pasos = [
+        {
+            titulo: "Introducción",
+            descripcion: "Ponte en una posición cómoda. Haz una respiración profunda y prepárate para conectar con tus sentidos.",
+            audio: "audio/intro.mp3"
+        },
+        {
+            titulo: "5 Cosas que puedes VER",
+            descripcion: "Observa a tu alrededor y detalla 5 cosas que puedas ver claramente.",
+            audio: "audio/vista.mp3"
+        },
+        {
+            titulo: "4 Cosas que puedes TOCAR",
+            descripcion: "Siente 4 cosas que estén a tu alcance o la textura de tu ropa.",
+            audio: "audio/tacto.mp3"
+        },
+        {
+            titulo: "3 Cosas que puedes ESCUCHAR",
+            descripcion: "Presta atención y reconoce 3 sonidos sutiles a tu alrededor.",
+            audio: "audio/oido.mp3"
+        },
+        {
+            titulo: "2 Cosas que puedes OLER",
+            descripcion: "Inhala suavemente e identifica 2 olores en tu entorno.",
+            audio: "audio/olfato.mp3"
+        },
+        {
+            titulo: "1 Cosa que puedes SABOREAR",
+            descripcion: "Nota el sabor en tu boca o reconoce 1 sabor que te sea agradable.",
+            audio: "audio/gusto.mp3"
+        },
+        {
+            titulo: "Cierre del Ejercicio",
+            descripcion: "Has completado el ejercicio. Mantén esta sensación de calma y presencia.",
+            audio: "audio/cierre.mp3"
+        }
+    ];
+
+    let pasoActual = -1;
+    let audioActual = null;
+
+    const tituloEl = document.getElementById('titulo-paso');
+    const descripcionEl = document.getElementById('descripcion-paso');
+    const btnPrincipal = document.getElementById('btn-principal');
+    const btnReiniciar = document.getElementById('btn-reiniciar');
+    const progresoContainer = document.getElementById('indicador-progreso');
+    const barraProgreso = document.getElementById('barra-progreso');
+
+    function detenerAudioActual() {
+        if (audioActual) {
+            audioActual.pause();
+            audioActual.currentTime = 0;
+            audioActual = null;
+        }
     }
-];
 
-let pasoActual = 0;
-let reproductor = null;
+    function reproducirPaso(indice) {
+        detenerAudioActual();
 
-const tituloEl = document.getElementById('titulo');
-const descripcionEl = document.getElementById('descripcion');
-const btnAccion = document.getElementById('btn-accion');
+        const paso = pasos[indice];
+        tituloEl.textContent = paso.titulo;
+        descripcionEl.textContent = paso.descripcion;
 
-function reproducirPaso(indice) {
-    if (reproductor) {
-        reproductor.pause();
-        reproductor.currentTime = 0;
+        // Mostrar barra de progreso
+        progresoContainer.style.display = "block";
+        const porcentaje = ((indice + 1) / pasos.length) * 100;
+        barraProgreso.style.width = `${porcentaje}%`;
+
+        // Reproducción de audio compatible con móviles
+        try {
+            audioActual = new Audio(paso.audio);
+            const playPromise = audioActual.play();
+
+            if (playPromise !== undefined) {
+                playPromise.catch(error => {
+                    console.warn("Autoplay impedido o archivo no encontrado:", error);
+                });
+            }
+        } catch (e) {
+            console.error("Error al instanciar el audio:", e);
+        }
+
+        // Actualización del botón
+        if (indice < pasos.length - 1) {
+            btnPrincipal.textContent = "Siguiente paso";
+            btnReiniciar.style.display = "block";
+        } else {
+            btnPrincipal.textContent = "Finalizar";
+            btnReiniciar.style.display = "block";
+        }
     }
 
-    const paso = pasos[indice];
-    tituloEl.textContent = paso.titulo;
-    descripcionEl.textContent = paso.texto;
-
-    reproductor = new Audio(paso.audio);
-    reproductor.play().catch(function(error) {
-        console.log("Error o bloqueo de audio:", error);
+    btnPrincipal.addEventListener('click', () => {
+        if (pasoActual === -1 || pasoActual >= pasos.length - 1) {
+            pasoActual = 0;
+        } else {
+            pasoActual++;
+        }
+        reproducirPaso(pasoActual);
     });
 
-    if (indice < pasos.length - 1) {
-        btnAccion.textContent = "Siguiente paso";
-    } else {
-        btnAccion.textContent = "Reiniciar ejercicio";
-    }
-}
-
-btnAccion.addEventListener('click', function() {
-    if (btnAccion.textContent === "Iniciar Ejercicio" || btnAccion.textContent === "Reiniciar ejercicio") {
-        pasoActual = 0;
-    } else {
-        pasoActual++;
-    }
-
-    reproducirPaso(pasoActual);
+    btnReiniciar.addEventListener('click', () => {
+        detenerAudioActual();
+        pasoActual = -1;
+        tituloEl.textContent = "Técnica Mindfulness 5-4-3-2-1";
+        descripcionEl.textContent = "Bienvenido. Esta técnica te ayudará a conectar con el momento presente a través de tus sentidos. Haz clic en el botón para iniciar.";
+        btnPrincipal.textContent = "Iniciar Ejercicio";
+        btnReiniciar.style.display = "none";
+        progresoContainer.style.display = "none";
+        barraProgreso.style.width = "0%";
+    });
 });
