@@ -8,29 +8,17 @@ const svgIcons = {
 };
 
 const stages = [
-    { id: 'intro', title: 'Bienvenido', audio: 'audio/intro.mp3.mp4', svg: svgIcons.intro, text: 'Prepárate para conectar con el presente.' },
-    { id: 'vista', title: '5 Cosas que puedas VER', audio: 'audio/vista.mp3.mp4', svg: svgIcons.vista, text: 'Observa a tu alrededor y nombra 5 objetos.' },
-    { id: 'tacto', title: '4 Cosas que puedas TOCAR', audio: 'audio/tacto.mp3.mp4', svg: svgIcons.tacto, text: 'Siente texturas y temperaturas.' },
-    { 
-        id: 'oido', 
-        title: '3 Sonidos que puedas ESCUCHAR', 
-        audio: 'audio/oido.mp3.mp4', 
-        svg: svgIcons.oido, 
-        text: 'A continuación concéntrate en los sonidos con los ojos cerrados y déjate llevar por ellos.',
-        effects: [
-            'https://actions.google.com/sounds/v1/weather/rain_heavy.ogg',
-            'https://actions.google.com/sounds/v1/weather/wind_synthetic.ogg',
-            'https://actions.google.com/sounds/v1/ambiences/outdoor_birds.ogg'
-        ]
-    },
-    { id: 'olfato', title: '2 Cosas que puedas OLER', audio: 'audio/olfato.mp3.mp4', svg: '', text: 'Inhala profundo y visualiza cómo transita el aroma.' },
-    { id: 'gusto', title: '1 Cosa que puedas SABOREAR', audio: 'audio/gusto.mp3.mp4', svg: svgIcons.gusto, text: 'Lleva el producto a la boca y experimenta su textura y sabor.' },
-    { id: 'cierre', title: 'Ejercicio Completado', audio: 'audio/cierre.mp3.mp4', svg: svgIcons.cierre, text: 'Has vuelto al aquí y al ahora.' }
+    { id: 'intro', title: 'Bienvenido', audio: 'audio/intro.mp3', svg: svgIcons.intro, text: 'Prepárate para conectar con el presente.' },
+    { id: 'vista', title: '5 Cosas que puedas VER', audio: 'audio/vista.mp3', svg: svgIcons.vista, text: 'Observa a tu alrededor y nombra 5 objetos.' },
+    { id: 'tacto', title: '4 Cosas que puedas TOCAR', audio: 'audio/tacto.mp3', svg: svgIcons.tacto, text: 'Siente texturas y temperaturas.' },
+    { id: 'oido', title: '3 Sonidos que puedas ESCUCHAR', audio: 'audio/oido.mp3', svg: svgIcons.oido, text: 'Concéntrate en los sonidos con los ojos cerrados.' },
+    { id: 'olfato', title: '2 Cosas que puedas OLER', audio: 'audio/olfato.mp3', svg: '', text: 'Inhala profundo y visualiza cómo transita el aroma.' },
+    { id: 'gusto', title: '1 Cosa que puedas SABOREAR', audio: 'audio/gusto.mp3', svg: svgIcons.gusto, text: 'Lleva el producto a la boca y experimenta su textura y sabor.' },
+    { id: 'cierre', title: 'Ejercicio Completado', audio: 'audio/cierre.mp3', svg: svgIcons.cierre, text: 'Has vuelto al aquí y al ahora.' }
 ];
 
 let currentStageIndex = 0;
 let isPlaying = false;
-let isEffectsPlaying = false;
 
 const mainAudio = document.getElementById('main-audio');
 const bgMusic = document.getElementById('bg-music');
@@ -42,7 +30,7 @@ const btnPlayPause = document.getElementById('btn-play-pause');
 const btnNext = document.getElementById('btn-next');
 const btnPrev = document.getElementById('btn-prev');
 
-bgMusic.volume = 0.25;
+bgMusic.volume = 0.2;
 
 function loadStage(index) {
     const stage = stages[index];
@@ -58,26 +46,28 @@ function loadStage(index) {
                 <circle class="aroma-particle p1" cx="125" cy="110" r="8" fill="#a29bfe"/>
                 <circle class="aroma-particle p2" cx="125" cy="110" r="6" fill="#74b9ff"/>
             </svg>`;
-        document.querySelectorAll('.aroma-particle').forEach(p => p.classList.add('active'));
     } else {
         visualContainer.innerHTML = stage.svg;
     }
 
     mainAudio.src = stage.audio;
+    mainAudio.load();
 }
 
 async function playStage() {
     isPlaying = true;
     btnPlayPause.textContent = '⏸ Pausa';
     
-    // Desbloquea la reproducción en navegadores móviles tras la primera pulsación
     try {
-        if (!isEffectsPlaying) {
-            await bgMusic.play();
-        }
+        await bgMusic.play();
+    } catch (e) {
+        console.warn("Música de fondo bloqueada por el navegador");
+    }
+
+    try {
         await mainAudio.play();
     } catch (e) {
-        console.error("Error al reproducir audio:", e);
+        console.error("Error al reproducir la voz: Formato no soportado o archivo corrupto.", e);
     }
 }
 
@@ -88,42 +78,14 @@ function pauseStage() {
     bgMusic.pause();
 }
 
-mainAudio.onended = async () => {
-    const currentStage = stages[currentStageIndex];
-
-    if (currentStage.id === 'oido' && currentStage.effects) {
-        isEffectsPlaying = true;
-        bgMusic.pause();
-
-        for (const soundSrc of currentStage.effects) {
-            if (!isPlaying) break;
-            mainAudio.src = soundSrc;
-            try {
-                await mainAudio.play();
-            } catch(e) {}
-            await new Promise(resolve => setTimeout(resolve, 8000));
-        }
-
-        isEffectsPlaying = false;
-        if (isPlaying) bgMusic.play().catch(() => {});
-    }
-
-    if (currentStageIndex < stages.length - 1) {
-        currentStageIndex++;
-        loadStage(currentStageIndex);
-        if (isPlaying) playStage();
-    } else {
-        pauseStage();
-        btnPlayPause.textContent = '▶ Reiniciar';
-    }
+mainAudio.onerror = () => {
+    console.error(`El archivo ${stages[currentStageIndex].audio} no es un archivo MP3 válido.`);
 };
 
 btnPlayPause.addEventListener('click', () => {
     if (isPlaying) {
         pauseStage();
     } else {
-        if (currentStageIndex === stages.length - 1) currentStageIndex = 0;
-        loadStage(currentStageIndex);
         playStage();
     }
 });
