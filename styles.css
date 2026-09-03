@@ -1,11 +1,9 @@
 :root {
     --petroleo: #045256;
     --turquesa: #0d8193;
-    --celeste: #3cb9dd;
     --celeste-claro: #e6f7ff;
     --crema: #fce4b8;
     --naranja: #f8a245;
-    --rosa-otono: #b58c8c;
     --texto-oscuro: #1c3135;
 }
 
@@ -17,63 +15,29 @@
 }
 
 body {
-    background-color: #f4fafb;
-    color: var(--texto-oscuro);
+    /* Fondo limpio estilo "Paz de Otoño" */
+    background-color: #faf6f0;
+    background-image: radial-gradient(#e0b98d 1.5px, transparent 1.5px);
+    background-size: 18px 18px;
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
-    overflow: hidden;
-    position: relative;
-}
-
-/* Animaciones de fondo */
-.bg-shape {
-    position: absolute;
-    border-radius: 50%;
-    filter: blur(80px);
-    z-index: -1;
-    opacity: 0.6;
-    animation: float 12s infinite alternate ease-in-out;
-}
-
-.shape-1 {
-    width: 350px;
-    height: 350px;
-    background: var(--turquesa);
-    top: -50px;
-    left: -50px;
-}
-
-.shape-2 {
-    width: 400px;
-    height: 400px;
-    background: var(--crema);
-    bottom: -100px;
-    right: -50px;
-    animation-delay: -6s;
-}
-
-@keyframes float {
-    0% { transform: translate(0, 0) scale(1); }
-    100% { transform: translate(40px, 50px) scale(1.15); }
 }
 
 .card-container {
-    background: rgba(255, 255, 255, 0.88);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
     width: 100%;
-    max-width: 460px;
-    border-radius: 24px;
+    max-width: 480px;
+    border-radius: 16px;
     padding: 32px 24px;
-    box-shadow: 0 20px 40px rgba(4, 82, 86, 0.12);
+    box-shadow: 0 10px 25px rgba(4, 82, 86, 0.08);
     text-align: center;
     display: flex;
     flex-direction: column;
     gap: 20px;
-    animation: fadeIn 0.8s ease-out;
 }
 
 .badge {
@@ -89,12 +53,11 @@ body {
 
 h1 {
     color: var(--petroleo);
-    font-size: 22px;
+    font-size: 24px;
     margin-top: 10px;
     font-weight: 700;
 }
 
-/* Círculo con temporizador y animación de respiración */
 .breath-circle-container {
     display: flex;
     justify-content: center;
@@ -102,21 +65,14 @@ h1 {
 }
 
 .breath-circle {
-    width: 140px;
-    height: 140px;
+    width: 130px;
+    height: 130px;
     border-radius: 50%;
-    background: radial-gradient(circle, var(--crema) 0%, rgba(252, 228, 184, 0.3) 100%);
+    background-color: var(--crema);
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
-    box-shadow: 0 8px 20px rgba(248, 162, 69, 0.25);
-    animation: pulse 4s infinite ease-in-out;
-}
-
-@keyframes pulse {
-    0%, 100% { transform: scale(1); box-shadow: 0 8px 20px rgba(248, 162, 69, 0.2); }
-    50% { transform: scale(1.08); box-shadow: 0 12px 28px rgba(248, 162, 69, 0.4); }
 }
 
 .timer-svg {
@@ -166,45 +122,41 @@ h1 {
     margin-top: 5px;
 }
 
-.controls {
+/* Panel de Navegación */
+.controls-nav {
     display: flex;
-    flex-direction: column;
     gap: 10px;
+    justify-content: space-between;
 }
 
-button {
-    width: 100%;
-    padding: 14px;
-    font-size: 16px;
-    font-weight: 700;
+.btn-nav {
+    flex: 1;
+    padding: 12px 8px;
+    font-size: 14px;
+    font-weight: 600;
     border: none;
-    border-radius: 14px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    background-color: #f1f5f9;
+    color: var(--petroleo);
+    transition: background-color 0.2s;
+}
+
+.btn-nav:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 .btn-primary {
-    background: linear-gradient(135deg, var(--naranja) 0%, #e08b2d 100%);
+    background-color: var(--naranja);
     color: #ffffff;
-    box-shadow: 0 6px 18px rgba(248, 162, 69, 0.35);
 }
 
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgba(248, 162, 69, 0.45);
+.btn-primary:hover:not(:disabled) {
+    background-color: #e08b2d;
 }
 
-.btn-primary:active {
-    transform: translateY(1px);
-}
-
-.btn-toggle-music {
+.btn-pause {
     background-color: var(--celeste-claro);
-    color: var(--petroleo);
-    font-size: 14px;
-}
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(15px); }
-    to { opacity: 1; transform: translateY(0); }
+    color: var(--turquesa);
 }
