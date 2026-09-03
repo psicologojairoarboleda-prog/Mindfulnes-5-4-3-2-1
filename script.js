@@ -1,4 +1,3 @@
-// Ilustraciones vectoriales en código (SVG) para no depender de archivos de imagen externos
 const svgIcons = {
     intro: `<svg viewBox="0 0 200 200" width="160" height="160"><circle cx="100" cy="100" r="80" fill="#e0e7ff"/><path d="M70 100 Q100 70 130 100 Q100 130 70 100" fill="none" stroke="#6366f1" stroke-width="8" stroke-linecap="round"/><circle cx="100" cy="100" r="15" fill="#6366f1"/></svg>`,
     vista: `<svg viewBox="0 0 200 200" width="160" height="160"><circle cx="100" cy="100" r="80" fill="#e0f2fe"/><path d="M50 100 C70 60 130 60 150 100 C130 140 70 140 50 100 Z" fill="none" stroke="#0284c7" stroke-width="8"/><circle cx="100" cy="100" r="25" fill="#0284c7"/></svg>`,
@@ -65,20 +64,20 @@ function loadStage(index) {
     }
 
     mainAudio.src = stage.audio;
-    mainAudio.load();
 }
 
 async function playStage() {
     isPlaying = true;
     btnPlayPause.textContent = '⏸ Pausa';
     
+    // Desbloquea la reproducción en navegadores móviles tras la primera pulsación
     try {
         if (!isEffectsPlaying) {
             await bgMusic.play();
         }
         await mainAudio.play();
     } catch (e) {
-        console.log("Esperando toque inicial del usuario...");
+        console.error("Error al reproducir audio:", e);
     }
 }
 
@@ -99,7 +98,6 @@ mainAudio.onended = async () => {
         for (const soundSrc of currentStage.effects) {
             if (!isPlaying) break;
             mainAudio.src = soundSrc;
-            mainAudio.load();
             try {
                 await mainAudio.play();
             } catch(e) {}
