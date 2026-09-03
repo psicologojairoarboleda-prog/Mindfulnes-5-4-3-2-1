@@ -1,113 +1,184 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    // Música de fondo meditativa por defecto (URL externa continua)
+    const musicaFondo = new Audio("https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=meditation-background-112224.mp3");
+    musicaFondo.loop = true;
+    musicaFondo.volume = 0.25;
+    let musicaActiva = true;
+
+    // Configuración de pasos, audios del repositorio y tiempos exactos
     const pasos = [
         {
-            titulo: "Introducción",
-            descripcion: "Ponte en una posición cómoda. Haz una respiración profunda y prepárate para conectar con tus sentidos.",
-            audio: "audio/intro.mp3"
+            titulo: "Paso 1: Introducción",
+            texto: "Acomódate en tu lugar. Toma una respiración profunda y permite que tu mente se relaje.",
+            audio: "audio/intro.mp3",
+            duracion: 0
         },
         {
-            titulo: "5 Cosas que puedes VER",
-            descripcion: "Observa a tu alrededor y detalla 5 cosas que puedas ver claramente.",
-            audio: "audio/vista.mp3"
+            titulo: "Paso 2: Vista (5 Cosas)",
+            texto: "Observa a tu alrededor y detalla con atención 5 elementos que puedas ver.",
+            audio: "audio/vista.mp3",
+            duracion: 8
         },
         {
-            titulo: "4 Cosas que puedes TOCAR",
-            descripcion: "Siente 4 cosas que estén a tu alcance o la textura de tu ropa.",
-            audio: "audio/tacto.mp3"
+            titulo: "Paso 3: Tacto (4 Cosas)",
+            texto: "Siente 4 texturas o sensaciones táctiles presentes en este instante.",
+            audio: "audio/tacto.mp3",
+            duracion: 8
         },
         {
-            titulo: "3 Cosas que puedes ESCUCHAR",
-            descripcion: "Presta atención y reconoce 3 sonidos sutiles a tu alrededor.",
-            audio: "audio/oido.mp3"
+            titulo: "Paso 4: Oído (3 Sonidos)",
+            texto: "Escucha con atención. Se reproducirán 3 sonidos distintos.",
+            esOido: true,
+            subAudios: ["audio/oido.mp3", "audio/oido.mp3", "audio/oido.mp3"], // Si tienes oido1.mp3, oido2.mp3, oido3.mp3 cámbialos aquí
+            duracionSonido: 8,
+            pausa: 3
         },
         {
-            titulo: "2 Cosas que puedes OLER",
-            descripcion: "Inhala suavemente e identifica 2 olores en tu entorno.",
-            audio: "audio/olfato.mp3"
+            titulo: "Paso 5: Olfato (2 Olores)",
+            texto: "Inhala despacio e identifica 2 olores en tu espacio.",
+            audio: "audio/olfato.mp3",
+            duracion: 6
         },
         {
-            titulo: "1 Cosa que puedes SABOREAR",
-            descripcion: "Nota el sabor en tu boca o reconoce 1 sabor que te sea agradable.",
-            audio: "audio/gusto.mp3"
+            titulo: "Paso 6: Gusto (1 Sabor)",
+            texto: "Percibe y reconoce 1 sabor en tu boca en este momento.",
+            audio: "audio/gusto.mp3",
+            duracion: 4
         },
         {
-            titulo: "Cierre del Ejercicio",
-            descripcion: "Has completado el ejercicio. Mantén esta sensación de calma y presencia.",
-            audio: "audio/cierre.mp3"
+            titulo: "Paso Final: Cierre",
+            texto: "Has completado el ejercicio. Conserva esta calma y presencialidad durante todo tu día.",
+            audio: "audio/cierre.mp3",
+            duracion: 0
         }
     ];
 
     let pasoActual = -1;
-    let audioActual = null;
+    let audioInstruccion = null;
+    let timerInterval = null;
 
-    const tituloEl = document.getElementById('titulo-paso');
-    const descripcionEl = document.getElementById('descripcion-paso');
-    const btnPrincipal = document.getElementById('btn-principal');
-    const btnReiniciar = document.getElementById('btn-reiniciar');
-    const progresoContainer = document.getElementById('indicador-progreso');
-    const barraProgreso = document.getElementById('barra-progreso');
+    const tituloEl = document.getElementById('titulo');
+    const descripcionEl = document.getElementById('descripcion');
+    const subIndicacionEl = document.getElementById('sub-indicacion');
+    const timerDisplay = document.getElementById('timer-display');
+    const timerProgress = document.getElementById('timer-progress');
+    const btnAccion = document.getElementById('btn-accion');
+    const btnMusica = document.getElementById('btn-musica');
 
-    function detenerAudioActual() {
-        if (audioActual) {
-            audioActual.pause();
-            audioActual.currentTime = 0;
-            audioActual = null;
+    function detenerTodoAudio() {
+        if (audioInstruccion) {
+            audioInstruccion.pause();
+            audioInstruccion.currentTime = 0;
         }
+        if (timerInterval) clearInterval(timerInterval);
     }
 
-    function reproducirPaso(indice) {
-        detenerAudioActual();
+    function actualizarCirculoProgreso(segundosRestantes, total) {
+        if (total === 0) {
+            timerProgress.style.strokeDashoffset = 0;
+            return;
+        }
+        const maxOffset = 283;
+        const offset = maxOffset - (segundosRestantes / total) * maxOffset;
+        timerProgress.style.strokeDashoffset = offset;
+    }
+
+    function iniciarConteoRegresivo(segundos, callback) {
+        let tiempo = segundos;
+        timerDisplay.textContent = tiempo;
+        actualizarCirculoProgreso(tiempo, segundos);
+
+        timerInterval = setInterval(() => {
+            tiempo--;
+            if (tiempo >= 0) {
+                timerDisplay.textContent = tiempo;
+                actualizarCirculoProgreso(tiempo, segundos);
+            } else {
+                clearInterval(timerInterval);
+                timerDisplay.textContent = "--";
+                actualizarCirculoProgreso(0, 0);
+                if (callback) callback();
+            }
+        }, 1000);
+    }
+
+    function ejecutarPaso(indice) {
+        detenerTodoAudio();
+        subIndicacionEl.textContent = "";
+
+        // Activar música de fondo si el usuario la mantiene encendida
+        if (musicaActiva && musicaFondo.paused) {
+            musicaFondo.play().catch(() => {});
+        }
 
         const paso = pasos[indice];
         tituloEl.textContent = paso.titulo;
-        descripcionEl.textContent = paso.descripcion;
+        descripcionEl.textContent = paso.texto;
 
-        // Mostrar barra de progreso
-        progresoContainer.style.display = "block";
-        const porcentaje = ((indice + 1) / pasos.length) * 100;
-        barraProgreso.style.width = `${porcentaje}%`;
+        if (paso.esOido) {
+            // Manejo especial para los 3 sonidos de oído
+            audioInstruccion = new Audio("audio/oido.mp3");
+            audioInstruccion.play().catch(() => {});
 
-        // Reproducción de audio compatible con móviles
-        try {
-            audioActual = new Audio(paso.audio);
-            const playPromise = audioActual.play();
-
-            if (playPromise !== undefined) {
-                playPromise.catch(error => {
-                    console.warn("Autoplay impedido o archivo no encontrado:", error);
-                });
-            }
-        } catch (e) {
-            console.error("Error al instanciar el audio:", e);
-        }
-
-        // Actualización del botón
-        if (indice < pasos.length - 1) {
-            btnPrincipal.textContent = "Siguiente paso";
-            btnReiniciar.style.display = "block";
+            audioInstruccion.onended = () => {
+                reproducirSecuenciaOido(paso.subAudios, 0, paso.duracionSonido, paso.pausa);
+            };
         } else {
-            btnPrincipal.textContent = "Finalizar";
-            btnReiniciar.style.display = "block";
+            // Reproducción estándar de audio de voz guiada
+            audioInstruccion = new Audio(paso.audio);
+            audioInstruccion.play().catch(() => {});
+
+            audioInstruccion.onended = () => {
+                if (paso.duracion > 0) {
+                    subIndicacionEl.textContent = "Tiempo de práctica...";
+                    iniciarConteoRegresivo(paso.duracion, () => {
+                        subIndicacionEl.textContent = "¡Tiempo completado! Haz clic en siguiente.";
+                    });
+                }
+            };
         }
+
+        btnAccion.textContent = (indice < pasos.length - 1) ? "Siguiente paso" : "Reiniciar ejercicio";
     }
 
-    btnPrincipal.addEventListener('click', () => {
+    function reproducirSecuenciaOido(audios, indiceAudio, duracion, pausa) {
+        if (indiceAudio >= audios.length) {
+            subIndicacionEl.textContent = "Has escuchado los 3 sonidos. Puedes continuar.";
+            return;
+        }
+
+        subIndicacionEl.textContent = `Escuchando sonido ${indiceAudio + 1} de 3...`;
+        let sonido = new Audio(audios[indiceAudio]);
+        sonido.play().catch(() => {});
+
+        iniciarConteoRegresivo(duracion, () => {
+            sonido.pause();
+            subIndicacionEl.textContent = `Pausa de integración (${pausa}s)...`;
+            iniciarConteoRegresivo(pausa, () => {
+                reproducirSecuenciaOido(audios, indiceAudio + 1, duracion, pausa);
+            });
+        });
+    }
+
+    // Eventos
+    btnAccion.addEventListener('click', () => {
         if (pasoActual === -1 || pasoActual >= pasos.length - 1) {
             pasoActual = 0;
         } else {
             pasoActual++;
         }
-        reproducirPaso(pasoActual);
+        ejecutarPaso(pasoActual);
     });
 
-    btnReiniciar.addEventListener('click', () => {
-        detenerAudioActual();
-        pasoActual = -1;
-        tituloEl.textContent = "Técnica Mindfulness 5-4-3-2-1";
-        descripcionEl.textContent = "Bienvenido. Esta técnica te ayudará a conectar con el momento presente a través de tus sentidos. Haz clic en el botón para iniciar.";
-        btnPrincipal.textContent = "Iniciar Ejercicio";
-        btnReiniciar.style.display = "none";
-        progresoContainer.style.display = "none";
-        barraProgreso.style.width = "0%";
+    btnMusica.addEventListener('click', () => {
+        musicaActiva = !musicaActiva;
+        if (musicaActiva) {
+            musicaFondo.play().catch(() => {});
+            btnMusica.textContent = "🎵 Música: ON";
+        } else {
+            musicaFondo.pause();
+            btnMusica.textContent = "🔇 Música: OFF";
+        }
     });
 });
