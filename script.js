@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Música de fondo ambiental
+    // Música ambiental de fondo
     const musicaFondo = new Audio("https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3");
     musicaFondo.loop = true;
     musicaFondo.volume = 0.15;
 
-    // Iconos SVG representativos por sentido
+    // Iconos de los sentidos
     const iconos = {
         inicio: `<svg class="sense-icon" viewBox="0 0 24 24"><path stroke="currentColor" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path stroke="currentColor" d="M10 8l6 4-6 4V8z"/></svg>`,
         vista: `<svg class="sense-icon" viewBox="0 0 24 24"><path stroke="currentColor" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3" stroke="currentColor"/></svg>`,
@@ -16,30 +16,31 @@ document.addEventListener('DOMContentLoaded', () => {
         cierre: `<svg class="sense-icon" viewBox="0 0 24 24"><path stroke="currentColor" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path stroke="currentColor" d="M9 12l2 2 4-4"/></svg>`
     };
 
+    // Estructura limpia SIN enumerar los pasos
     const pasos = [
         {
-            titulo: "Paso 1: Introducción",
+            titulo: "Introducción",
             texto: "Acomódate en tu lugar. Toma una respiración profunda y prepárate para conectar con tus sentidos.",
             audio: "audio/intro.mp3",
             icono: iconos.inicio,
             duracion: 0
         },
         {
-            titulo: "Paso 2: Vista (5 Cosas)",
+            titulo: "Vista (5 Cosas)",
             texto: "Observa a tu alrededor e identifica 5 cosas que puedas ver claramente.",
             audio: "audio/vista.mp3",
             icono: iconos.vista,
             duracion: 8
         },
         {
-            titulo: "Paso 3: Tacto (4 Cosas)",
+            titulo: "Tacto (4 Cosas)",
             texto: "Siente 4 cosas que puedas tocar a tu alrededor o la textura de tu ropa.",
             audio: "audio/tacto.mp3",
             icono: iconos.tacto,
             duracion: 8
         },
         {
-            titulo: "Paso 4: Oído (3 Sonidos)",
+            titulo: "Oído (3 Sonidos)",
             texto: "Escucha con atención los sonidos de la naturaleza que se reproducirán a continuación.",
             esOido: true,
             icono: iconos.oido,
@@ -50,21 +51,21 @@ document.addEventListener('DOMContentLoaded', () => {
             ]
         },
         {
-            titulo: "Paso 5: Olfato (2 Olores)",
+            titulo: "Olfato (2 Olores)",
             texto: "Inhala despacio e identifica 2 olores presentes en tu entorno.",
             audio: "audio/olfato.mp3",
             icono: iconos.olfato,
             duracion: 6
         },
         {
-            titulo: "Paso 6: Gusto (1 Sabor)",
+            titulo: "Gusto (1 Sabor)",
             texto: "Percibe y reconoce 1 sabor en tu boca en este momento.",
             audio: "audio/gusto.mp3",
             icono: iconos.gusto,
             duracion: 4
         },
         {
-            titulo: "Paso Final: Cierre",
+            titulo: "Cierre",
             texto: "Has completado el ejercicio. Mantén esta sensación de presencia y calma.",
             audio: "audio/cierre.mp3",
             icono: iconos.cierre,
@@ -82,7 +83,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const tituloEl = document.getElementById('titulo');
     const descripcionEl = document.getElementById('descripcion');
     const subIndicacionEl = document.getElementById('sub-indicacion');
-    const timerDisplay = document.getElementById('timer-display');
     const timerProgress = document.getElementById('timer-progress');
     const iconContainer = document.getElementById('icon-container');
 
@@ -114,23 +114,25 @@ document.addEventListener('DOMContentLoaded', () => {
         timerProgress.style.strokeDashoffset = offset;
     }
 
+    // Conteo en tiempo real mostrado en el centro del circulo
     function iniciarConteoRegresivo(segundos, callback) {
         if (timerInterval) clearInterval(timerInterval);
         tiempoRestante = segundos;
         tiempoTotal = segundos;
 
-        timerDisplay.textContent = tiempoRestante;
+        const timerDisplay = document.getElementById('timer-display');
+        if (timerDisplay) timerDisplay.textContent = tiempoRestante;
         actualizarCirculoProgreso(tiempoRestante, tiempoTotal);
 
         timerInterval = setInterval(() => {
             if (!enPausa) {
                 tiempoRestante--;
                 if (tiempoRestante >= 0) {
-                    timerDisplay.textContent = tiempoRestante;
+                    if (timerDisplay) timerDisplay.textContent = tiempoRestante;
                     actualizarCirculoProgreso(tiempoRestante, tiempoTotal);
                 } else {
                     clearInterval(timerInterval);
-                    timerDisplay.textContent = "--";
+                    if (timerDisplay) timerDisplay.textContent = "--";
                     actualizarCirculoProgreso(0, 0);
                     if (callback) callback();
                 }
@@ -149,12 +151,10 @@ document.addEventListener('DOMContentLoaded', () => {
         tituloEl.textContent = paso.titulo;
         descripcionEl.textContent = paso.texto;
 
-        // Renderizar el icono del sentido correspondiente
+        // Renderizar icono + numero
         iconContainer.innerHTML = `${paso.icono}<span id="timer-display" class="timer-text">--</span>`;
-        const nuevoTimerDisplay = document.getElementById('timer-display');
 
         if (paso.esOido) {
-            // Reanudar música de fondo durante la voz explicativa de oído
             if (musicaFondo.paused) musicaFondo.play().catch(() => {});
 
             audioInstruccion = new Audio("audio/oido.mp3");
@@ -164,7 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 reproducirSecuenciaOido(paso.subAudios, 0);
             };
         } else {
-            // Asegurar música de fondo para el resto de pasos
             if (musicaFondo.paused) musicaFondo.play().catch(() => {});
 
             audioInstruccion = new Audio(paso.audio);
@@ -174,13 +173,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (paso.duracion > 0) {
                     subIndicacionEl.textContent = "Tiempo de práctica...";
                     iniciarConteoRegresivo(paso.duracion, () => {
-                        // Pasar automáticamente al siguiente paso sin pausas
                         if (pasoActual < pasos.length - 1) {
                             ejecutarPaso(pasoActual + 1);
                         }
                     });
                 } else {
-                    // Si no requiere temporizador (como la intro), pasa directamente al siguiente
                     if (pasoActual < pasos.length - 1) {
                         ejecutarPaso(pasoActual + 1);
                     }
@@ -193,7 +190,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function reproducirSecuenciaOido(audios, indiceAudio) {
         if (indiceAudio >= audios.length) {
-            // Al terminar todos los sonidos de la naturaleza, reanudar música ambiental y avanzar
             if (musicaFondo.paused) musicaFondo.play().catch(() => {});
             if (pasoActual < pasos.length - 1) {
                 ejecutarPaso(pasoActual + 1);
@@ -201,7 +197,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        // Silenciar música ambiental MIENTRAS suenan los audios de la naturaleza
+        // Se detiene la música de fondo únicamente cuando suena la naturaleza
         musicaFondo.pause();
 
         const actual = audios[indiceAudio];
@@ -210,14 +206,14 @@ document.addEventListener('DOMContentLoaded', () => {
         audioInstruccion = new Audio(actual.archivo);
         audioInstruccion.play().catch(() => {});
 
-        // 1. 10 segundos del sonido de la naturaleza
+        // 10s sonido
         iniciarConteoRegresivo(10, () => {
             if (audioInstruccion) {
                 audioInstruccion.pause();
                 audioInstruccion.currentTime = 0;
             }
 
-            // 2. 3 segundos de silencio/actividad
+            // 3s silencio/actividad
             subIndicacionEl.textContent = `Tiempo de actividad (${actual.nombre})...`;
             iniciarConteoRegresivo(3, () => {
                 reproducirSecuenciaOido(audios, indiceAudio + 1);
@@ -225,7 +221,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Controles manuales
     btnSiguiente.addEventListener('click', () => {
         if (pasoActual === -1 || pasoActual >= pasos.length - 1) {
             ejecutarPaso(0);
@@ -250,7 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
             btnPausa.textContent = "▶ Reanudar";
         } else {
             if (audioInstruccion) audioInstruccion.play().catch(() => {});
-            // Reanudar la música de fondo solo si no estamos en medio de un sonido de la naturaleza
             if (!pasos[pasoActual].esOido) {
                 musicaFondo.play().catch(() => {});
             }
