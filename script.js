@@ -1,34 +1,84 @@
-// Ilustraciones vectoriales en paleta territa
-const svgIllustrations = {
-    intro: `<svg viewBox="0 0 200 200" width="100" height="100"><circle cx="100" cy="100" r="70" fill="#fdf0ed"/><path d="M60 100 C60 70 140 70 140 100 C140 130 60 130 60 100 Z" fill="none" stroke="#e07a5f" stroke-width="6"/><circle cx="100" cy="100" r="16" fill="#81b29a"/></svg>`,
-    vista: `<svg viewBox="0 0 200 200" width="100" height="100"><circle cx="100" cy="100" r="70" fill="#f2cc8f" opacity="0.3"/><path d="M40 100 Q100 45 160 100 Q100 155 40 100 Z" fill="none" stroke="#e07a5f" stroke-width="7"/><circle cx="100" cy="100" r="22" fill="#3d405b"/></svg>`,
-    tacto: `<svg viewBox="0 0 200 200" width="100" height="100"><circle cx="100" cy="100" r="70" fill="#e8f3ee"/><path d="M75 130 C75 95 90 85 100 85 C110 85 125 95 125 130" fill="none" stroke="#81b29a" stroke-width="8" stroke-linecap="round"/><path d="M100 60 L100 110" stroke="#81b29a" stroke-width="8" stroke-linecap="round"/></svg>`,
-    oido: `<svg viewBox="0 0 200 200" width="100" height="100"><circle cx="100" cy="100" r="70" fill="#fdf0ed"/><path d="M75 60 C115 40 145 70 125 110 C110 130 90 120 90 145" fill="none" stroke="#e07a5f" stroke-width="7" stroke-linecap="round"/></svg>`,
-    olfato: `<svg viewBox="0 0 200 200" width="100" height="100"><circle cx="100" cy="100" r="70" fill="#e8f3ee"/><path d="M100 140 Q100 80 130 60 M100 100 Q80 80 70 90" stroke="#81b29a" stroke-width="6" fill="none" stroke-linecap="round"/></svg>`,
-    gusto: `<svg viewBox="0 0 200 200" width="100" height="100"><circle cx="100" cy="100" r="70" fill="#f2cc8f" opacity="0.3"/><path d="M60 90 Q100 145 140 90" fill="none" stroke="#e07a5f" stroke-width="7" stroke-linecap="round"/></svg>`,
-    cierre: `<svg viewBox="0 0 200 200" width="100" height="100"><circle cx="100" cy="100" r="70" fill="#e8f3ee"/><path d="M60 100 L90 130 L140 70" fill="none" stroke="#81b29a" stroke-width="9" stroke-linecap="round" stroke-linejoin="round"/></svg>`
+// Fotografías de alta estética (Unsplash)
+const stageImages = {
+    intro: 'https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80',
+    vista: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=800&q=80',
+    tacto: 'https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80',
+    oido: 'https://images.unsplash.com/photo-1511497584788-876761c119ef?auto=format&fit=crop&w=800&q=80',
+    olfato: 'https://images.unsplash.com/photo-1508746829417-e6f548d8d6ed?auto=format&fit=crop&w=800&q=80',
+    gusto: 'https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80',
+    cierre: 'https://images.unsplash.com/photo-1519834785169-98be25ec3f84?auto=format&fit=crop&w=800&q=80'
 };
 
 const stages = [
-    { id: 'intro', title: 'Bienvenido', audio: 'audio/intro.mp3', svg: svgIllustrations.intro, text: 'Prepárate para conectar con el presente.', pause: 6 },
-    { id: 'vista', title: '5 Cosas que puedas VER', audio: 'audio/vista.mp3', svg: svgIllustrations.vista, text: 'Observa a tu alrededor y nombra 5 objetos.', pause: 6 },
-    { id: 'tacto', title: '4 Cosas que puedas TOCAR', audio: 'audio/tacto.mp3', svg: svgIllustrations.tacto, text: 'Siente texturas y temperaturas.', pause: 10 },
+    { 
+        id: 'intro', 
+        badge: 'Introducción', 
+        title: 'Calma y Presencia', 
+        audio: 'audio/intro.mp3', 
+        img: stageImages.intro, 
+        text: 'Siéntate cómodamente y respira profundo.', 
+        pause: 6 
+    },
+    { 
+        id: 'vista', 
+        badge: 'Vista', 
+        title: '5 Cosas que puedas ver', 
+        audio: 'audio/vista.mp3', 
+        img: stageImages.vista, 
+        text: 'Observa detenidamente los detalles de 5 objetos a tu alrededor.', 
+        pause: 6 
+    },
+    { 
+        id: 'tacto', 
+        badge: 'Tacto', 
+        title: '4 Cosas que puedas tocar', 
+        audio: 'audio/tacto.mp3', 
+        img: stageImages.tacto, 
+        text: 'Siente texturas, temperaturas o telas cercanas.', 
+        pause: 10 
+    },
     { 
         id: 'oido', 
-        title: '3 Sonidos que puedas ESCUCHAR', 
+        badge: 'Oído', 
+        title: '3 Sonidos que puedas escuchar', 
         audio: 'audio/oido.mp3', 
-        svg: svgIllustrations.oido, 
-        text: 'Escucha atentamente a los sonidos de la naturaleza.',
+        img: stageImages.oido, 
+        text: 'Escucha con atención los 3 sonidos naturales a continuación.',
         pauseAfterEffect: 3,
+        // Audios de prueba estables y directos (Aves, Viento, Lluvia - 8 segundos cada uno)
         effects: [
-            'https://cdn.pixabay.com/download/audio/2022/03/10/audio_c3e6f9fa68.mp3?filename=wind-blowing-sound-effect-10823.mp3', // Viento
-            'https://cdn.pixabay.com/download/audio/2021/08/09/audio_884d658c7e.mp3?filename=heavy-rain-nature-sounds-8162.mp3', // Lluvia
-            'https://cdn.pixabay.com/download/audio/2021/09/06/audio_0ed471549d.mp3?filename=birds-in-forest-24239.mp3'  // Aves
+            'https://actions.google.com/sounds/v1/animals/birds_forest.ogg',
+            'https://actions.google.com/sounds/v1/weather/wind_heavy.ogg',
+            'https://actions.google.com/sounds/v1/weather/rain_heavy.ogg'
         ]
     },
-    { id: 'olfato', title: '2 Cosas que puedas OLER', audio: 'audio/olfato.mp3', svg: svgIllustrations.olfato, text: 'Inhala profundo y reconoce los aromas.', pause: 6 },
-    { id: 'gusto', title: '1 Cosa que puedas SABOREAR', audio: 'audio/gusto.mp3', svg: svgIllustrations.gusto, text: 'Conéctate con el sentido del gusto.', pause: 6 },
-    { id: 'cierre', title: 'Ejercicio Completado', audio: 'audio/cierre.mp3', svg: svgIllustrations.cierre, text: 'Has vuelto al aquí y al ahora.', pause: 0 }
+    { 
+        id: 'olfato', 
+        badge: 'Olfato', 
+        title: '2 Cosas que puedas oler', 
+        audio: 'audio/olfato.mp3', 
+        img: stageImages.olfato, 
+        text: 'Inhala suavemente e identifica los aromas del ambiente.', 
+        pause: 6 
+    },
+    { 
+        id: 'gusto', 
+        badge: 'Gusto', 
+        title: '1 Cosa que puedas saborear', 
+        audio: 'audio/gusto.mp3', 
+        img: stageImages.gusto, 
+        text: 'Registra cualquier sabor en tu boca o toma un sorbo de agua.', 
+        pause: 6 
+    },
+    { 
+        id: 'cierre', 
+        badge: 'Cierre', 
+        title: 'Ejercicio Completado', 
+        audio: 'audio/cierre.mp3', 
+        img: stageImages.cierre, 
+        text: 'Has regresado al momento presente.', 
+        pause: 0 
+    }
 ];
 
 let currentStageIndex = 0;
@@ -39,7 +89,7 @@ const mainAudio = document.getElementById('main-audio');
 const bgMusic = document.getElementById('bg-music');
 const stageTitle = document.getElementById('stage-title');
 const stageSubtext = document.getElementById('stage-subtext');
-const visualContainer = document.getElementById('visual-content');
+const visualImage = document.getElementById('visual-image');
 const progressBar = document.getElementById('progress-bar');
 const stepBadge = document.getElementById('step-badge');
 const timerBox = document.getElementById('timer-box');
@@ -50,98 +100,139 @@ const btnText = document.getElementById('btn-text');
 const btnNext = document.getElementById('btn-next');
 const btnPrev = document.getElementById('btn-prev');
 
-// Música ambiental suave (volumen bajo: 0.08)
-bgMusic.volume = 0.08;
+// Música de fondo a volumen bajo (0.05 a 0.08)
+bgMusic.volume = 0.06;
 
-function loadStageUI(index) {
-    clearTimeout(timerInterval);
+function updateUI(index) {
+    clearInterval(timerInterval);
     timerBox.classList.remove('active');
+    timerCount.textContent = '0s';
+
     const stage = stages[index];
+    stepBadge.textContent = stage.badge;
     stageTitle.textContent = stage.title;
     stageSubtext.textContent = stage.text;
-    stepBadge.textContent = `Paso ${index + 1} de ${stages.length}`;
+    visualImage.src = stage.img;
     progressBar.style.width = `${((index + 1) / stages.length) * 100}%`;
-    visualContainer.innerHTML = stage.svg;
 }
 
-function startCountdown(seconds, callback) {
-    if (seconds <= 0) {
-        callback();
-        return;
-    }
-    let remaining = seconds;
-    timerCount.textContent = `${remaining}s`;
-    timerBox.classList.add('active');
-
-    timerInterval = setInterval(() => {
-        if (!isPlaying) return;
-        remaining--;
-        timerCount.textContent = `${remaining}s`;
-        if (remaining <= 0) {
-            clearInterval(timerInterval);
-            timerBox.classList.remove('active');
-            callback();
+function runCountdown(seconds) {
+    return new Promise((resolve) => {
+        if (seconds <= 0 || !isPlaying) {
+            resolve();
+            return;
         }
-    }, 1000);
+
+        let remaining = seconds;
+        timerCount.textContent = `${remaining}s`;
+        timerBox.classList.add('active');
+
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+            if (!isPlaying) {
+                clearInterval(timerInterval);
+                return;
+            }
+
+            remaining--;
+            timerCount.textContent = `${remaining}s`;
+
+            if (remaining <= 0) {
+                clearInterval(timerInterval);
+                timerBox.classList.remove('active');
+                resolve();
+            }
+        }, 1000);
+    });
 }
 
-async function playStageSequence() {
-    clearTimeout(timerInterval);
-    timerBox.classList.remove('active');
+function playAudioTrack(src) {
+    return new Promise((resolve) => {
+        mainAudio.src = src;
+        mainAudio.load();
+        
+        mainAudio.play().then(() => {
+            mainAudio.onended = () => resolve(true);
+        }).catch((err) => {
+            console.warn('Audio no disponible o bloqueado:', src, err);
+            resolve(false); // Continúa la secuencia aun si falla la carga local
+        });
+    });
+}
+
+function playAudioWithCutoff(src, durationSeconds) {
+    return new Promise((resolve) => {
+        mainAudio.src = src;
+        mainAudio.load();
+        
+        let timer = null;
+        mainAudio.play().then(() => {
+            timer = setTimeout(() => {
+                mainAudio.pause();
+                resolve(true);
+            }, durationSeconds * 1000);
+
+            mainAudio.onended = () => {
+                clearTimeout(timer);
+                resolve(true);
+            };
+        }).catch(() => {
+            resolve(false);
+        });
+    });
+}
+
+async function executeStageSequence() {
     const stage = stages[currentStageIndex];
 
     if (stage.id === 'oido') {
-        // Voz del sentido del oído
+        // Voz explicativa del sentido del oído con fondo sutil
         bgMusic.play().catch(() => {});
-        mainAudio.src = stage.audio;
-        mainAudio.load();
-        await mainAudio.play().catch(() => {});
+        await playAudioTrack(stage.audio);
 
-        mainAudio.onended = async () => {
-            // Silenciar música ambiental para emitir los efectos de la naturaleza
-            bgMusic.pause();
-            
-            for (let i = 0; i < stage.effects.length; i++) {
-                if (!isPlaying) return;
-                mainAudio.src = stage.effects[i];
-                mainAudio.load();
-                await mainAudio.play().catch(() => {});
+        // Apagar la música de fondo para dejar solo los sonidos de la naturaleza
+        bgMusic.pause();
 
-                // Esperar a que el efecto de naturaleza termine de sonar
-                await new Promise(resolve => {
-                    mainAudio.onended = resolve;
-                });
+        for (let i = 0; i < stage.effects.length; i++) {
+            if (!isPlaying) return;
 
-                // Pausa con contador de 3 segundos después de cada efecto
-                if (isPlaying) {
-                    await new Promise(resolve => startCountdown(stage.pauseAfterEffect, resolve));
-                }
+            // Reproducir efecto exactamente durante 8 segundos
+            await playAudioWithCutoff(stage.effects[i], 8);
+
+            // Pausa obligatoria con contador visible de 3 segundos
+            if (isPlaying) {
+                await runCountdown(stage.pauseAfterEffect);
             }
+        }
 
-            // Retomar música de fondo y avanzar
+        // Retomar la música de fondo
+        if (isPlaying) {
             bgMusic.play().catch(() => {});
-            advanceStage();
-        };
+            nextStage();
+        }
 
     } else {
-        // Restaurar música de fondo suave
+        // Restaurar música de fondo suave en los demás sentidos
         bgMusic.play().catch(() => {});
-        mainAudio.src = stage.audio;
-        mainAudio.load();
-        await mainAudio.play().catch(() => {});
+        
+        // Reproducir audio de voz de la actividad
+        await playAudioTrack(stage.audio);
 
-        mainAudio.onended = () => {
-            // Pausa programada con contador regresivo al finalizar la voz
-            startCountdown(stage.pause, advanceStage);
-        };
+        // Activar el contador de segundos para la realización del ejercicio
+        if (isPlaying) {
+            await runCountdown(stage.pause);
+            if (isPlaying) {
+                nextStage();
+            }
+        }
     }
 }
 
-function advanceStage() {
+function nextStage() {
     if (currentStageIndex < stages.length - 1) {
         currentStageIndex++;
-        loadStageUI(currentStageIndex);
-        if (isPlaying) playStageSequence();
+        updateUI(currentStageIndex);
+        if (isPlaying) executeStageSequence();
     } else {
         isPlaying = false;
         btnIcon.textContent = '▶';
@@ -158,6 +249,7 @@ btnPlayPause.addEventListener('click', () => {
         mainAudio.pause();
         bgMusic.pause();
         clearInterval(timerInterval);
+        timerBox.classList.remove('active');
     } else {
         if (currentStageIndex === stages.length - 1) {
             currentStageIndex = 0;
@@ -165,28 +257,30 @@ btnPlayPause.addEventListener('click', () => {
         isPlaying = true;
         btnIcon.textContent = '⏸';
         btnText.textContent = 'Pausa';
-        loadStageUI(currentStageIndex);
-        playStageSequence();
+        updateUI(currentStageIndex);
+        executeStageSequence();
     }
 });
 
 btnNext.addEventListener('click', () => {
+    mainAudio.pause();
     clearInterval(timerInterval);
     if (currentStageIndex < stages.length - 1) {
         currentStageIndex++;
-        loadStageUI(currentStageIndex);
-        if (isPlaying) playStageSequence();
+        updateUI(currentStageIndex);
+        if (isPlaying) executeStageSequence();
     }
 });
 
 btnPrev.addEventListener('click', () => {
+    mainAudio.pause();
     clearInterval(timerInterval);
     if (currentStageIndex > 0) {
         currentStageIndex--;
-        loadStageUI(currentStageIndex);
-        if (isPlaying) playStageSequence();
+        updateUI(currentStageIndex);
+        if (isPlaying) executeStageSequence();
     }
 });
 
-// Inicialización de interfaz
-loadStageUI(currentStageIndex);
+// Cargar vista inicial
+updateUI(currentStageIndex);
