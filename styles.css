@@ -15,7 +15,6 @@
 }
 
 body {
-    /* Fondo limpio estilo "Paz de Otoño" */
     background-color: #faf6f0;
     background-image: radial-gradient(#e0b98d 1.5px, transparent 1.5px);
     background-size: 18px 18px;
@@ -31,13 +30,20 @@ body {
     border: 1px solid #e2e8f0;
     width: 100%;
     max-width: 480px;
-    border-radius: 16px;
+    border-radius: 20px;
     padding: 32px 24px;
-    box-shadow: 0 10px 25px rgba(4, 82, 86, 0.08);
+    box-shadow: 0 12px 30px rgba(4, 82, 86, 0.1);
     text-align: center;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    /* Animación de entrada inicial de la tarjeta */
+    animation: tarjetaEntrada 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes tarjetaEntrada {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .badge {
@@ -58,6 +64,7 @@ h1 {
     font-weight: 700;
 }
 
+/* Círculo Guiado de Respiración y Contador */
 .breath-circle-container {
     display: flex;
     justify-content: center;
@@ -65,14 +72,33 @@ h1 {
 }
 
 .breath-circle {
-    width: 130px;
-    height: 130px;
+    width: 140px;
+    height: 140px;
     border-radius: 50%;
     background-color: var(--crema);
     display: flex;
     align-items: center;
     justify-content: center;
     position: relative;
+    box-shadow: 0 6px 16px rgba(248, 162, 69, 0.25);
+    /* Animación constante de respiración (inhalar/exhalar) */
+    animation: respiracionGuiada 6s infinite ease-in-out;
+}
+
+/* Desactiva la respiración expansiva durante el conteo para no distorsionar el temporizador */
+.breath-circle.fijo {
+    animation: none;
+}
+
+@keyframes respiracionGuiada {
+    0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 6px 16px rgba(248, 162, 69, 0.25);
+    }
+    50% {
+        transform: scale(1.08);
+        box-shadow: 0 12px 28px rgba(248, 162, 69, 0.4);
+    }
 }
 
 .timer-svg {
@@ -107,6 +133,16 @@ h1 {
     z-index: 2;
 }
 
+/* Animación al cambiar de paso */
+.animar-cambio {
+    animation: cambioPaso 0.4s ease-out;
+}
+
+@keyframes cambioPaso {
+    0% { opacity: 0; transform: translateY(8px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
 .descripcion {
     font-size: 16px;
     line-height: 1.6;
@@ -122,24 +158,31 @@ h1 {
     margin-top: 5px;
 }
 
-/* Panel de Navegación */
 .controls-nav {
     display: flex;
+    flex-direction: column;
     gap: 10px;
-    justify-content: space-between;
 }
 
 .btn-nav {
-    flex: 1;
-    padding: 12px 8px;
-    font-size: 14px;
+    width: 100%;
+    padding: 14px;
+    font-size: 15px;
     font-weight: 600;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     cursor: pointer;
     background-color: #f1f5f9;
     color: var(--petroleo);
-    transition: background-color 0.2s;
+    transition: all 0.2s ease;
+}
+
+.btn-nav:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.btn-nav:active:not(:disabled) {
+    transform: translateY(1px);
 }
 
 .btn-nav:disabled {
@@ -150,10 +193,12 @@ h1 {
 .btn-primary {
     background-color: var(--naranja);
     color: #ffffff;
+    box-shadow: 0 4px 10px rgba(248, 162, 69, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
     background-color: #e08b2d;
+    box-shadow: 0 6px 14px rgba(248, 162, 69, 0.4);
 }
 
 .btn-pause {
