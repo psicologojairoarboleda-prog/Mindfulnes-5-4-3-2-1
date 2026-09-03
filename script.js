@@ -21,15 +21,13 @@ document.addEventListener('DOMContentLoaded', () => {
         },
         {
             titulo: "Paso 4: Oído (3 Sonidos)",
-            texto: "Escucha con atención. Escucharás sonidos de Aves, Lluvia y Mar.",
+            texto: "Escucha con atención los sonidos de la naturaleza que se reproducirán a continuación.",
             esOido: true,
             subAudios: [
                 { nombre: "Aves", archivo: "audio/aves.mp3" },
                 { nombre: "Lluvia", archivo: "audio/lluvia.mp3" },
                 { nombre: "Mar", archivo: "audio/mar.mp3" }
-            ],
-            duracionSonido: 8,
-            pausa: 3
+            ]
         },
         {
             titulo: "Paso 5: Olfato (2 Olores)",
@@ -68,6 +66,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnAnterior = document.getElementById('btn-anterior');
     const btnPausa = document.getElementById('btn-pausa');
     const btnSiguiente = document.getElementById('btn-siguiente');
+
+    // Estado inicial de los botones
+    btnAnterior.disabled = true;
+    btnSiguiente.textContent = "Iniciar Ejercicio";
 
     function detenerTodoAudio() {
         if (audioInstruccion) {
@@ -127,13 +129,16 @@ document.addEventListener('DOMContentLoaded', () => {
         descripcionEl.textContent = paso.texto;
 
         if (paso.esOido) {
+            // Reproducir audio explicativo del oído
             audioInstruccion = new Audio("audio/oido.mp3");
             audioInstruccion.play().catch(() => {});
 
+            // Al terminar la instrucción de voz, arranca la secuencia de 3 sonidos (10s + 3s)
             audioInstruccion.onended = () => {
-                reproducirSecuenciaOido(paso.subAudios, 0, paso.duracionSonido, paso.pausa);
+                reproducirSecuenciaOido(paso.subAudios, 0);
             };
         } else {
+            // Pasos estándar
             audioInstruccion = new Audio(paso.audio);
             audioInstruccion.play().catch(() => {});
 
@@ -150,28 +155,39 @@ document.addEventListener('DOMContentLoaded', () => {
         btnSiguiente.textContent = (indice < pasos.length - 1) ? "Siguiente →" : "Reiniciar ↺";
     }
 
-    function reproducirSecuenciaOido(audios, indiceAudio, duracion, pausa) {
+    function reproducirSecuenciaOido(audios, indiceAudio) {
         if (indiceAudio >= audios.length) {
-            subIndicacionEl.textContent = "Has escuchado los 3 sonidos. Puedes avanzar.";
+            subIndicacionEl.textContent = "Has escuchado los 3 sonidos. Puedes avanzar al siguiente paso.";
+            timerDisplay.textContent = "--";
+            actualizarCirculoProgreso(0, 0);
             return;
         }
 
         const actual = audios[indiceAudio];
-        subIndicacionEl.textContent = `Reproduciendo: ${actual.nombre} (${indiceAudio + 1} de 3)...`;
+        subIndicacionEl.textContent = `Escuchando: ${actual.nombre} (${indiceAudio + 1} de 3)...`;
         
+        // 1. Reproducir el sonido
         audioInstruccion = new Audio(actual.archivo);
         audioInstruccion.play().catch(() => {});
 
-        iniciarConteoRegresivo(duracion, () => {
-            if (audioInstruccion) audioInstruccion.pause();
-            subIndicacionEl.textContent = `Pausa de integración (${pausa}s)...`;
-            iniciarConteoRegresivo(pausa, () => {
-                reproducirSecuenciaOido(audios, indiceAudio + 1, duracion, pausa);
+        // 2. Conteo de 10 SEGUNDOS de sonido
+        iniciarConteoRegresivo(10, () => {
+            // Pausar el sonido al llegar a los 10s
+            if (audioInstruccion) {
+                audioInstruccion.pause();
+                audioInstruccion.currentTime = 0;
+            }
+
+            // 3. Conteo de 3 SEGUNDOS de silencio para la actividad
+            subIndicacionEl.textContent = `Tiempo de actividad (${actual.nombre})...`;
+            iniciarConteoRegresivo(3, () => {
+                // Ir al siguiente sonido
+                reproducirSecuenciaOido(audios, indiceAudio + 1);
             });
         });
     }
 
-    // Controles
+    // Eventos de los botones
     btnSiguiente.addEventListener('click', () => {
         if (pasoActual === -1 || pasoActual >= pasos.length - 1) {
             ejecutarPaso(0);
@@ -187,6 +203,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     btnPausa.addEventListener('click', () => {
+        if (pasoActual === -1) return;
+
         enPausa = !enPausa;
         if (enPausa) {
             if (audioInstruccion) audioInstruccion.pause();
