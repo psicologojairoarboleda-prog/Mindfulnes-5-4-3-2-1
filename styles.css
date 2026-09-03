@@ -1,0 +1,137 @@
+:root {
+    --bg-color: #f4f7f6;
+    --card-bg: #ffffff;
+    --text-color: #2d3436;
+    --primary-color: #a29bfe;
+    --accent-color: #81ecec;
+    --progress-color: #74b9ff;
+}
+
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.app-container {
+    width: 90%;
+    max-width: 500px;
+    background: var(--card-bg);
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.app-header {
+    width: 100%;
+    text-align: center;
+}
+
+#stage-title {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #6c5ce7;
+    margin-bottom: 15px;
+}
+
+.progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background-color: #dfe6e9;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background-color: var(--progress-color);
+    transition: width 0.3s ease;
+}
+
+.stage-viewer {
+    width: 100%;
+    height: 320px;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.stage-img {
+    max-width: 80%;
+    max-height: 200px;
+    object-fit: contain;
+}
+
+.stage-subtext {
+    font-size: 1.1rem;
+    text-align: center;
+    margin-top: 15px;
+    color: #636e72;
+}
+
+.controls-container {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    justify-content: center;
+}
+
+.btn {
+    border: none;
+    padding: 12px 20px;
+    border-radius: 25px;
+    background-color: #dfe6e9;
+    color: var(--text-color);
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn:hover {
+    opacity: 0.9;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Animación del Aroma (Olfato) */
+@keyframes flowAroma {
+    0% {
+        cx: 120;
+        cy: 180;
+        opacity: 0;
+    }
+    30% {
+        opacity: 1;
+    }
+    100% {
+        cx: 150;
+        cy: 300;
+        opacity: 0;
+    }
+}
+
+.aroma-particle.active {
+    animation: flowAroma 4s infinite ease-in-out;
+}
+
+.p2 {
+    animation-delay: 1.5s !important;
+}
