@@ -1,137 +1,139 @@
 :root {
-    --bg-color: #f4f7f6;
-    --card-bg: #ffffff;
-    --text-color: #2d3436;
-    --primary-color: #a29bfe;
-    --accent-color: #81ecec;
-    --progress-color: #74b9ff;
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --bg-gradient: linear-gradient(135deg, #f0fdf4 0%, #e0e7ff 50%, #f3e8ff 100%);
+    --card-bg: rgba(255, 255, 255, 0.85);
+    --text-color: #1e293b;
+    --text-muted: #64748b;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
 }
 
 body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: var(--bg-color);
-    color: var(--text-color);
+    background: var(--bg-gradient);
+    min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 100vh;
+    color: var(--text-color);
+    padding: 20px;
 }
 
 .app-container {
-    width: 90%;
-    max-width: 500px;
     background: var(--card-bg);
-    border-radius: 20px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
-    padding: 25px;
+    backdrop-filter: blur(12px);
+    border-radius: 24px;
+    padding: 32px;
+    width: 100%;
+    max-width: 480px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08), 0 1px 3px rgba(0, 0, 0, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    text-align: center;
     display: flex;
     flex-direction: column;
-    align-items: center;
+    gap: 24px;
 }
 
-.app-header {
-    width: 100%;
-    text-align: center;
-}
-
-#stage-title {
-    font-size: 1.4rem;
-    font-weight: 600;
-    color: #6c5ce7;
-    margin-bottom: 15px;
+.app-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 12px;
 }
 
 .progress-bar-container {
-    width: 100%;
+    background: #e2e8f0;
     height: 8px;
-    background-color: #dfe6e9;
-    border-radius: 4px;
+    border-radius: 999px;
     overflow: hidden;
 }
 
 .progress-bar {
-    width: 0%;
+    background: linear-gradient(90deg, #6366f1, #a855f7);
     height: 100%;
-    background-color: var(--progress-color);
-    transition: width 0.3s ease;
+    width: 0%;
+    transition: width 0.4s ease;
 }
 
 .stage-viewer {
-    width: 100%;
-    height: 320px;
-    margin: 20px 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    min-height: 260px;
+    gap: 16px;
 }
 
-.stage-img {
-    max-width: 80%;
-    max-height: 200px;
-    object-fit: contain;
+.visual-card {
+    background: #ffffff;
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.15);
+    animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
 }
 
 .stage-subtext {
-    font-size: 1.1rem;
-    text-align: center;
-    margin-top: 15px;
-    color: #636e72;
+    font-size: 1.05rem;
+    color: var(--text-muted);
+    line-height: 1.5;
+    max-width: 320px;
 }
 
 .controls-container {
     display: flex;
-    gap: 15px;
-    width: 100%;
-    justify-content: center;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
 }
 
 .btn {
     border: none;
-    padding: 12px 20px;
-    border-radius: 25px;
-    background-color: #dfe6e9;
-    color: var(--text-color);
-    font-weight: bold;
+    background: #f1f5f9;
+    color: #334155;
+    padding: 12px 18px;
+    border-radius: 14px;
+    font-weight: 600;
+    font-size: 0.95rem;
     cursor: pointer;
-    transition: background 0.2s;
-}
-
-.btn-primary {
-    background-color: var(--primary-color);
-    color: white;
+    transition: all 0.2s ease;
 }
 
 .btn:hover {
-    opacity: 0.9;
+    background: #e2e8f0;
 }
 
-.hidden {
-    display: none !important;
+.btn-primary {
+    background: linear-gradient(135deg, #6366f1, #4f46e5);
+    color: white;
+    flex-grow: 1;
+    padding: 14px 24px;
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
 }
 
-/* Animación del Aroma (Olfato) */
-@keyframes flowAroma {
-    0% {
-        cx: 120;
-        cy: 180;
-        opacity: 0;
-    }
-    30% {
-        opacity: 1;
-    }
-    100% {
-        cx: 150;
-        cy: 300;
-        opacity: 0;
-    }
+.btn-primary:hover {
+    background: linear-gradient(135deg, #4f46e5, #4338ca);
+    transform: translateY(-1px);
 }
 
-.aroma-particle.active {
-    animation: flowAroma 4s infinite ease-in-out;
+.aroma-particle {
+    animation: pulse 2s ease-in-out infinite alternate;
 }
 
-.p2 {
-    animation-delay: 1.5s !important;
+@keyframes pulse {
+    0% { transform: scale(0.9); opacity: 0.6; }
+    100% { transform: scale(1.1); opacity: 1; }
 }
