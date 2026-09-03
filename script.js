@@ -3,28 +3,24 @@ const stages = [
         id: 'intro', 
         title: 'Bienvenido', 
         audio: 'audio/intro.mp3', 
-        image: '', 
         text: 'Prepárate para conectar con el presente.' 
     },
     { 
         id: 'vista', 
         title: '5 Cosas que puedas VER', 
         audio: 'audio/vista.mp3', 
-        image: '', 
         text: 'Observa a tu alrededor y nombra 5 objetos.' 
     },
     { 
         id: 'tacto', 
         title: '4 Cosas que puedas TOCAR', 
         audio: 'audio/tacto.mp3', 
-        image: '', 
         text: 'Siente texturas y temperaturas.' 
     },
     { 
         id: 'oido', 
         title: '3 Sonidos que puedas ESCUCHAR', 
         audio: 'audio/oido.mp3', 
-        image: '', 
         text: 'A continuación concéntrate en los sonidos con los ojos cerrados y déjate llevar por ellos.',
         effects: ['audio/lluvia.mp3', 'audio/viento.mp3', 'audio/aves.mp3']
     },
@@ -32,21 +28,18 @@ const stages = [
         id: 'olfato', 
         title: '2 Cosas que puedas OLER', 
         audio: 'audio/olfato.mp3', 
-        image: '', 
         text: 'Inhala profundo y visualiza cómo transita el aroma.' 
     },
     { 
         id: 'gusto', 
         title: '1 Cosa que puedas SABOREAR', 
         audio: 'audio/gusto.mp3', 
-        image: '', 
         text: 'Lleva el producto a la boca y experimenta su textura y sabor.' 
     },
     { 
         id: 'cierre', 
         title: 'Ejercicio Completado', 
         audio: 'audio/cierre.mp3', 
-        image: '', 
         text: 'Has vuelto al aquí y al ahora.' 
     }
 ];
@@ -73,7 +66,7 @@ function loadStage(index) {
     stageSubtext.textContent = stage.text;
     progressBar.style.width = `${((index + 1) / stages.length) * 100}%`;
 
-    // Manejar vista especial de Olfato (Animación)
+    // Manejo de animación visual de Olfato o visibilidad
     if (stage.id === 'olfato') {
         stageImage.classList.add('hidden');
         olfatoAnimation.classList.remove('hidden');
@@ -81,26 +74,25 @@ function loadStage(index) {
     } else {
         olfatoAnimation.classList.add('hidden');
         stageImage.classList.remove('hidden');
-        stageImage.src = stage.image || '';
         aromaParticles.forEach(p => p.classList.remove('active'));
     }
 
     mainAudio.src = stage.audio;
+    mainAudio.load();
 }
 
 async function playStage() {
     isPlaying = true;
     btnPlayPause.textContent = '⏸ Pausa';
     
-    // Reproducir música de fondo suave salvo cuando estén los sonidos del oído
-    if (!isEffectsPlaying) {
-        bgMusic.play().catch(() => {});
-    }
-
+    // Iniciar reproducción de audio de fondo y voz
     try {
+        if (!isEffectsPlaying && bgMusic.src) {
+            await bgMusic.play();
+        }
         await mainAudio.play();
     } catch (e) {
-        console.log("Aesperando reproducción de audio...");
+        console.warn("El navegador requirió interacción del usuario para reproducir el audio:", e);
     }
 }
 
@@ -111,25 +103,28 @@ function pauseStage() {
     bgMusic.pause();
 }
 
-// Al terminar el audio principal de una sección
+// Al finalizar el audio de la etapa
 mainAudio.onended = async () => {
     const currentStage = stages[currentStageIndex];
 
-    // Secuencia especial para la sección de Oído: 3 sonidos de 8 segundos cada uno
+    // Secuencia de los 3 efectos de sonido del oído
     if (currentStage.id === 'oido' && currentStage.effects) {
         isEffectsPlaying = true;
-        bgMusic.pause(); // Pausar música ambiental durante los 3 sonidos
+        bgMusic.pause();
 
         for (const soundSrc of currentStage.effects) {
-            if (!isPlaying) break; // Si el usuario pausó, detener la secuencia
+            if (!isPlaying) break;
             mainAudio.src = soundSrc;
-            await mainAudio.play();
+            mainAudio.load();
+            try {
+                await mainAudio.play();
+            } catch(e) {}
             // Esperar 8 segundos por cada sonido
             await new Promise(resolve => setTimeout(resolve, 8000));
         }
 
         isEffectsPlaying = false;
-        if (isPlaying) bgMusic.play();
+        if (isPlaying && bgMusic.src) bgMusic.play().catch(() => {});
     }
 
     // Avanzar automáticamente a la siguiente etapa
@@ -170,5 +165,5 @@ btnPrev.addEventListener('click', () => {
     }
 });
 
-// Carga inicial de la primera etapa
+// Carga inicial
 loadStage(currentStageIndex);
