@@ -3,18 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejercicio Mindfulness 5-4-3-2-1</title>
+    <title>Técnica Mindfulness 5-4-3-2-1</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="card">
-        <h1 id="titulo">Mindfulness 5-4-3-2-1</h1>
-        <p id="descripcion">Haz clic en el botón para iniciar la técnica de conexión con el presente.</p>
-        
-        <div class="controls">
-            <button id="btn-accion">Iniciar Ejercicio</button>
-        </div>
-    </div>
+
+    <main class="container">
+        <header class="header">
+            <span class="badge">Ejercicio Guiado</span>
+            <h1 id="titulo-paso">Técnica Mindfulness 5-4-3-2-1</h1>
+        </header>
+
+        <section class="card-content">
+            <p id="descripcion-paso" class="descripcion">
+                Bienvenido. Esta técnica te ayudará a conectar con el momento presente a través de tus sentidos. Haz clic en el botón para iniciar.
+            </p>
+            
+            <div id="indicador-progreso" class="progreso-container" style="display: none;">
+                <div id="barra-progreso" class="barra"></div>
+            </div>
+        </section>
+
+        <footer class="controls">
+            <button id="btn-principal" class="btn-primary">Iniciar Ejercicio</button>
+            <button id="btn-reiniciar" class="btn-secondary" style="display: none;">Reiniciar</button>
+        </footer>
+    </main>
 
     <script src="script.js"></script>
 </body>
