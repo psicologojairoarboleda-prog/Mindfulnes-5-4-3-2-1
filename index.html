@@ -3,55 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ejercicio grounding 5-4-3-2-1</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>Ejercicio Mindfulness 5-4-3-2-1</title>
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <main class="app-card">
-        <header class="app-header">
-            <span class="step-badge" id="step-badge">Bienvenido</span>
-            <h1 id="stage-title">Grounding 5-4-3-2-1</h1>
-            <div class="progress-track">
-                <div class="progress-fill" id="progress-bar"></div>
-            </div>
-        </header>
-
-        <section class="stage-viewer">
-            <div class="image-frame">
-                <img id="visual-image" src="" alt="Ilustración grounding" />
-            </div>
-            
-            <div id="timer-box" class="timer-container">
-                <span class="timer-icon">⏱</span>
-                <span>Tiempo de práctica:</span>
-                <span id="timer-count">0s</span>
-            </div>
-
-            <p id="stage-subtext" class="stage-subtext"></p>
-        </section>
-
-        <footer class="controls-wrapper">
-            <button id="btn-prev" class="btn btn-secondary" aria-label="Anterior">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            </button>
-            <button id="btn-play-pause" class="btn btn-primary">
-                <span id="btn-icon">▶</span>
-                <span id="btn-text">Iniciar</span>
-            </button>
-            <button id="btn-next" class="btn btn-secondary" aria-label="Siguiente">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </button>
-        </footer>
-    </main>
-
-    <!-- Reproductor ambiental y reproductor principal -->
-    <audio id="bg-music" loop preload="auto">
-        <source src="https://actions.google.com/sounds/v1/ambiences/outdoor_lake_ambient.ogg" type="audio/ogg">
-    </audio>
-    <audio id="main-audio" preload="auto"></audio>
+    <div class="card">
+        <h1 id="titulo">Mindfulness 5-4-3-2-1</h1>
+        <p id="descripcion">Haz clic en el botón para iniciar la técnica de conexión con el presente.</p>
+        
+        <div class="controls">
+            <button id="btn-accion">Iniciar Ejercicio</button>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
