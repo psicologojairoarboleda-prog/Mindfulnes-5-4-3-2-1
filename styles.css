@@ -1,183 +1,51 @@
-:root {
-    --bg-main: #fdfbf7;
-    --card-bg: rgba(255, 255, 255, 0.92);
-    --border-color: #f3ece0;
-    --text-primary: #3d405b;
-    --text-muted: #707585;
-    --accent-terracota: #e07a5f;
-    --accent-sage: #81b29a;
-    --accent-sand: #f2cc8f;
-    --shadow-warm: 0 20px 40px -15px rgba(224, 122, 95, 0.15);
-}
-
 * {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
 }
 
 body {
-    min-height: 100vh;
-    background-color: var(--bg-main);
-    background-image: radial-gradient(#f2cc8f 0.75px, transparent 0.75px);
-    background-size: 16px 16px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: var(--text-primary);
-    padding: 24px;
-}
-
-.app-card {
-    background: var(--card-bg);
-    backdrop-filter: blur(16px);
-    border: 1px solid var(--border-color);
-    border-radius: 32px;
-    padding: 32px 28px;
+    background-color: #f0f4f8;
+    color: #333;
+    display: table;
     width: 100%;
-    max-width: 440px;
-    box-shadow: var(--shadow-warm);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    height: 100vh;
     text-align: center;
-    gap: 20px;
 }
 
-.step-badge {
-    font-size: 0.8rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--accent-terracota);
-    background: #fdf0ed;
-    padding: 6px 16px;
-    border-radius: 999px;
+.card {
+    display: table-cell;
+    vertical-align: middle;
+    padding: 20px;
 }
 
-.app-header h1 {
-    font-size: 1.35rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin-top: 8px;
+h1 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    font-size: 24px;
 }
 
-.progress-track {
-    width: 100%;
-    height: 6px;
-    background: #f3ece0;
-    border-radius: 999px;
-    overflow: hidden;
-    margin-top: 12px;
-}
-
-.progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent-terracota), var(--accent-sand));
-    width: 0%;
-    transition: width 0.4s ease;
-}
-
-.stage-viewer {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 16px;
-    width: 100%;
-}
-
-.image-frame {
-    width: 100%;
-    height: 220px;
-    border-radius: 24px;
-    overflow: hidden;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
-    border: 1px solid var(--border-color);
-    background-color: #f8f4ee;
-}
-
-.image-frame img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 0.5s ease;
-}
-
-.image-frame:hover img {
-    transform: scale(1.03);
-}
-
-/* Temporizador */
-.timer-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: #fdf0ed;
-    color: var(--accent-terracota);
-    padding: 10px 20px;
-    border-radius: 20px;
-    font-weight: 700;
-    font-size: 1rem;
-    border: 1px solid #f9dcd5;
-    width: 100%;
-    opacity: 0.3;
-    transition: opacity 0.3s ease, background-color 0.3s ease;
-}
-
-.timer-container.active {
-    opacity: 1;
-    background: #fce8e3;
-}
-
-.stage-subtext {
-    font-size: 0.95rem;
-    color: var(--text-muted);
+p {
+    color: #555;
+    font-size: 18px;
+    max-width: 500px;
+    margin: 0 auto 25px auto;
     line-height: 1.5;
 }
 
-.controls-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    width: 100%;
-}
-
-.btn {
-    border: none;
-    outline: none;
-    cursor: pointer;
-    border-radius: 18px;
-    font-weight: 700;
-    transition: all 0.2s ease;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.btn-secondary {
-    width: 52px;
-    height: 52px;
-    background: #ffffff;
-    color: var(--text-primary);
-    border: 1px solid var(--border-color);
-}
-
-.btn-secondary:hover {
-    background: #fdfbf7;
-}
-
-.btn-primary {
-    flex: 1;
-    height: 52px;
-    background: var(--accent-terracota);
+button {
+    background-color: #3498db;
     color: #ffffff;
-    font-size: 1rem;
-    gap: 8px;
-    box-shadow: 0 8px 18px rgba(224, 122, 95, 0.25);
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
 }
 
-.btn-primary:hover {
-    background: #d0694e;
+button:active {
+    background-color: #2980b9;
+    transform: translateY(2px);
 }
