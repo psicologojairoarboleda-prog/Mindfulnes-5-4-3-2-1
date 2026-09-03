@@ -3,9 +3,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Música ambiental de fondo
     const musicaFondo = new Audio("https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3");
     musicaFondo.loop = true;
-    musicaFondo.volume = 0.15;
+    musicaFondo.volume = 0.15; // Volumen objetivo (15%)
 
-    // Iconos de los sentidos
+    // Iconos SVG de los sentidos
     const iconos = {
         inicio: `<svg class="sense-icon" viewBox="0 0 24 24"><path stroke="currentColor" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path stroke="currentColor" d="M10 8l6 4-6 4V8z"/></svg>`,
         vista: `<svg class="sense-icon" viewBox="0 0 24 24"><path stroke="currentColor" d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3" stroke="currentColor"/></svg>`,
@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cierre: `<svg class="sense-icon" viewBox="0 0 24 24"><path stroke="currentColor" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path stroke="currentColor" d="M9 12l2 2 4-4"/></svg>`
     };
 
-    // Estructura limpia SIN enumerar los pasos
     const pasos = [
         {
             titulo: "Introducción",
@@ -69,7 +68,8 @@ document.addEventListener('DOMContentLoaded', () => {
             texto: "Has completado el ejercicio. Mantén esta sensación de presencia y calma.",
             audio: "audio/cierre.mp3",
             icono: iconos.cierre,
-            duracion: 0
+            duracion: 0,
+            esCierre: true
         }
     ];
 
@@ -93,6 +93,52 @@ document.addEventListener('DOMContentLoaded', () => {
     btnAnterior.disabled = true;
     btnSiguiente.textContent = "Iniciar Ejercicio";
 
+    // --- FUNCIONES DE TRANSICIÓN SUAVE (FADE IN / FADE OUT) ---
+
+    function aplicarFadeOut(audioElement, duracionMs = 1500, callback = null) {
+        if (!audioElement || audioElement.paused) {
+            if (callback) callback();
+            return;
+        }
+        const volumenInicial = audioElement.volume;
+        const intervalo = 50;
+        const pasos = duracionMs / intervalo;
+        const decremento = volumenInicial / pasos;
+
+        const timerFade = setInterval(() => {
+            if (audioElement.volume - decremento > 0) {
+                audioElement.volume -= decremento;
+            } else {
+                audioElement.volume = 0;
+                audioElement.pause();
+                audioElement.volume = volumenInicial; // Restablecer volumen de origen
+                clearInterval(timerFade);
+                if (callback) callback();
+            }
+        }, intervalo);
+    }
+
+    function aplicarFadeIn(audioElement, volumenMaximo = 0.15, duracionMs = 1500) {
+        if (!audioElement) return;
+        audioElement.volume = 0;
+        audioElement.play().catch(() => {});
+
+        const intervalo = 50;
+        const pasos = duracionMs / intervalo;
+        const incremento = volumenMaximo / pasos;
+
+        const timerFade = setInterval(() => {
+            if (audioElement.volume + incremento < volumenMaximo) {
+                audioElement.volume += incremento;
+            } else {
+                audioElement.volume = volumenMaximo;
+                clearInterval(timerFade);
+            }
+        }, intervalo);
+    }
+
+    // --- CONTROL DE AUDIOS Y TEMPORIZADOR ---
+
     function detenerTodoAudio() {
         if (audioInstruccion) {
             audioInstruccion.pause();
@@ -114,7 +160,6 @@ document.addEventListener('DOMContentLoaded', () => {
         timerProgress.style.strokeDashoffset = offset;
     }
 
-    // Conteo en tiempo real mostrado en el centro del circulo
     function iniciarConteoRegresivo(segundos, callback) {
         if (timerInterval) clearInterval(timerInterval);
         tiempoRestante = segundos;
@@ -151,20 +196,35 @@ document.addEventListener('DOMContentLoaded', () => {
         tituloEl.textContent = paso.titulo;
         descripcionEl.textContent = paso.texto;
 
-        // Renderizar icono + numero
         iconContainer.innerHTML = `${paso.icono}<span id="timer-display" class="timer-text">--</span>`;
 
-        if (paso.esOido) {
-            if (musicaFondo.paused) musicaFondo.play().catch(() => {});
+        if (paso.esCierre) {
+            // Reproducir audio de cierre y al finalizar, desvanecer la música de fondo en 3s
+            if (musicaFondo.paused) aplicarFadeIn(musicaFondo, 0.15, 1000);
+
+            audioInstruccion = new Audio(paso.audio);
+            audioInstruccion.play().catch(() => {});
+
+            audioInstruccion.onended = () => {
+                subIndicacionEl.textContent = "Sesión finalizada. Desconectando...";
+                aplicarFadeOut(musicaFondo, 3000, () => {
+                    subIndicacionEl.textContent = "¡Que tengas un excelente día!";
+                });
+            };
+        } else if (paso.esOido) {
+            if (musicaFondo.paused) aplicarFadeIn(musicaFondo, 0.15, 1000);
 
             audioInstruccion = new Audio("audio/oido.mp3");
             audioInstruccion.play().catch(() => {});
 
             audioInstruccion.onended = () => {
-                reproducirSecuenciaOido(paso.subAudios, 0);
+                // Hacer Fade Out de la música de fondo antes de iniciar la naturaleza
+                aplicarFadeOut(musicaFondo, 1500, () => {
+                    reproducirSecuenciaOido(paso.subAudios, 0);
+                });
             };
         } else {
-            if (musicaFondo.paused) musicaFondo.play().catch(() => {});
+            if (musicaFondo.paused) aplicarFadeIn(musicaFondo, 0.15, 1000);
 
             audioInstruccion = new Audio(paso.audio);
             audioInstruccion.play().catch(() => {});
@@ -190,36 +250,33 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function reproducirSecuenciaOido(audios, indiceAudio) {
         if (indiceAudio >= audios.length) {
-            if (musicaFondo.paused) musicaFondo.play().catch(() => {});
+            // Entrar de nuevo la música de fondo suavemente al terminar todos los sonidos
+            aplicarFadeIn(musicaFondo, 0.15, 2000);
             if (pasoActual < pasos.length - 1) {
                 ejecutarPaso(pasoActual + 1);
             }
             return;
         }
 
-        // Se detiene la música de fondo únicamente cuando suena la naturaleza
-        musicaFondo.pause();
-
         const actual = audios[indiceAudio];
         subIndicacionEl.textContent = `Escuchando: ${actual.nombre} (${indiceAudio + 1} de 3)...`;
 
         audioInstruccion = new Audio(actual.archivo);
-        audioInstruccion.play().catch(() => {});
+        // Iniciar el sonido de naturaleza con Fade In
+        aplicarFadeIn(audioInstruccion, 0.8, 1500);
 
-        // 10s sonido
         iniciarConteoRegresivo(10, () => {
-            if (audioInstruccion) {
-                audioInstruccion.pause();
-                audioInstruccion.currentTime = 0;
-            }
-
-            // 3s silencio/actividad
-            subIndicacionEl.textContent = `Tiempo de actividad (${actual.nombre})...`;
-            iniciarConteoRegresivo(3, () => {
-                reproducirSecuenciaOido(audios, indiceAudio + 1);
+            // Cuando falten pocos segundos / termine el tiempo, desvanecer con Fade Out
+            aplicarFadeOut(audioInstruccion, 1500, () => {
+                subIndicacionEl.textContent = `Tiempo de actividad (${actual.nombre})...`;
+                iniciarConteoRegresivo(3, () => {
+                    reproducirSecuenciaOido(audios, indiceAudio + 1);
+                });
             });
         });
     }
+
+    // --- CONTROLES DE BOTONES ---
 
     btnSiguiente.addEventListener('click', () => {
         if (pasoActual === -1 || pasoActual >= pasos.length - 1) {
