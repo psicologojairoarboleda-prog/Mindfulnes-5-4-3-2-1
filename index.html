@@ -8,29 +8,18 @@
 </head>
 <body>
     <div class="app-container">
-        <!-- Encabezado con indicador de progreso -->
         <header class="app-header">
-            <h1 id="stage-title">Cargando experiencia...</h1>
+            <h1 id="stage-title">Cargando...</h1>
             <div class="progress-bar-container">
                 <div class="progress-bar" id="progress-bar"></div>
             </div>
         </header>
 
-        <!-- Contenedor Visual e Ilustraciones -->
         <main class="stage-viewer">
-            <div id="visual-content" class="visual-content">
-                <!-- SVG de Olfato con animación integrada -->
-                <svg id="olfato-animation" viewBox="0 0 300 400" class="hidden" width="200" height="200">
-                    <path d="M 100,100 Q 140,120 150,160 Q 140,200 150,260 L 120,320 M 150,260 L 180,320" stroke="#b2bec3" stroke-width="4" fill="none"/>
-                    <circle class="aroma-particle p1" cx="120" cy="180" r="6" fill="#a29bfe"/>
-                    <circle class="aroma-particle p2" cx="120" cy="180" r="5" fill="#74b9ff"/>
-                </svg>
-                <img id="stage-image" src="" alt="Ilustración del sentido" class="stage-img">
-            </div>
+            <div id="visual-content" class="visual-content"></div>
             <p id="stage-subtext" class="stage-subtext"></p>
         </main>
 
-        <!-- Barra de Controles de Reproducción -->
         <footer class="controls-container">
             <button id="btn-prev" class="btn">⏮ Anterior</button>
             <button id="btn-play-pause" class="btn btn-primary">▶ Iniciar</button>
@@ -38,8 +27,8 @@
         </footer>
     </div>
 
-    <!-- Pistas de Audio -->
-    <audio id="bg-music" src="audio/ambiental.mp3" loop></audio>
+    <!-- Música ambiental de fondo -->
+    <audio id="bg-music" src="https://actions.google.com/sounds/v1/ambiences/relaxing_piano.ogg" loop></audio>
     <audio id="main-audio"></audio>
 
     <script src="script.js"></script>
