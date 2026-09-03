@@ -1,13 +1,13 @@
 :root {
     --bg-main: #fdfbf7;
-    --card-bg: rgba(255, 255, 255, 0.85);
+    --card-bg: rgba(255, 255, 255, 0.92);
     --border-color: #f3ece0;
     --text-primary: #3d405b;
     --text-muted: #707585;
     --accent-terracota: #e07a5f;
     --accent-sage: #81b29a;
     --accent-sand: #f2cc8f;
-    --shadow-warm: 0 20px 40px -15px rgba(224, 122, 95, 0.12);
+    --shadow-warm: 0 20px 40px -15px rgba(224, 122, 95, 0.15);
 }
 
 * {
@@ -31,22 +31,22 @@ body {
 
 .app-card {
     background: var(--card-bg);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(16px);
     border: 1px solid var(--border-color);
     border-radius: 32px;
-    padding: 36px 28px;
+    padding: 32px 28px;
     width: 100%;
-    max-width: 450px;
+    max-width: 440px;
     box-shadow: var(--shadow-warm);
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
-    gap: 24px;
+    gap: 20px;
 }
 
 .step-badge {
-    font-size: 0.75rem;
+    font-size: 0.8rem;
     font-weight: 700;
     text-transform: uppercase;
     letter-spacing: 0.08em;
@@ -57,7 +57,7 @@ body {
 }
 
 .app-header h1 {
-    font-size: 1.4rem;
+    font-size: 1.35rem;
     font-weight: 800;
     color: var(--text-primary);
     margin-top: 8px;
@@ -84,47 +84,57 @@ body {
     flex-direction: column;
     align-items: center;
     gap: 16px;
-    min-height: 250px;
-    justify-content: center;
     width: 100%;
 }
 
-.illustration-card {
-    width: 140px;
-    height: 140px;
-    border-radius: 28px;
-    background: #ffffff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
+.image-frame {
+    width: 100%;
+    height: 220px;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.06);
     border: 1px solid var(--border-color);
+    background-color: #f8f4ee;
 }
 
-/* Temporizador visual */
+.image-frame img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
+}
+
+.image-frame:hover img {
+    transform: scale(1.03);
+}
+
+/* Temporizador */
 .timer-container {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     background: #fdf0ed;
     color: var(--accent-terracota);
-    padding: 8px 18px;
+    padding: 10px 20px;
     border-radius: 20px;
     font-weight: 700;
-    font-size: 0.95rem;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    font-size: 1rem;
+    border: 1px solid #f9dcd5;
+    width: 100%;
+    opacity: 0.3;
+    transition: opacity 0.3s ease, background-color 0.3s ease;
 }
 
 .timer-container.active {
     opacity: 1;
+    background: #fce8e3;
 }
 
 .stage-subtext {
-    font-size: 0.98rem;
+    font-size: 0.95rem;
     color: var(--text-muted);
     line-height: 1.5;
-    max-width: 320px;
 }
 
 .controls-wrapper {
