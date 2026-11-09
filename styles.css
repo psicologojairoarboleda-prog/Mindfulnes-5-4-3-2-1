@@ -1,30 +1,198 @@
-/* Estilo difuminado perfecto para integrar las imágenes dentro del círculo */
-.step-graphic {
-    width: 140px;
-    height: 140px;
-    object-fit: contain;
-    position: absolute;
-    z-index: 1;
-    mix-blend-mode: multiply;
-    opacity: 1;
-    -webkit-mask-image: radial-gradient(circle, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 78%);
-    mask-image: radial-gradient(circle, rgba(0,0,0,1) 45%, rgba(0,0,0,0) 78%);
-    animation: fadeInStep 0.6s ease-in-out;
+:root {
+    --bg-color: #f7f4f0;
+    --card-bg: #ffffff;
+    --primary-color: #6b5b95;
+    --text-main: #2c2c2c;
 }
 
-/* Asegurar que el temporizador numérico quede al frente de la imagen difuminada */
-.timer-text {
-    z-index: 3;
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f7f4f0 0%, #ece6de 100%);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.card-container {
+    background-color: var(--card-bg);
+    border-radius: 28px;
+    padding: 35px 25px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(107, 91, 149, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+.badge {
+    background-color: #f0ecf6;
+    color: var(--primary-color);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 1.5px;
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin-top: 12px;
+    margin-bottom: 0;
+    color: var(--primary-color);
+}
+
+.breath-circle-container {
+    display: flex;
+    justify-content: center;
+    margin: 25px 0;
+}
+
+.breath-circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #faf8fc 0%, #f0ecf6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: relative;
+    box-shadow: inset 0 4px 10px rgba(0,0,0,0.03), 0 8px 20px rgba(107, 91, 149, 0.12);
+    overflow: hidden; /* Esto recorta cualquier exceso de la imagen */
 }
 
-@keyframes fadeInStep {
-    from {
-        opacity: 0;
-        transform: scale(0.85);
-    }
-    to {
-        opacity: 1;
-        transform: scale(1);
-    }
+.timer-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+    z-index: 4;
+    pointer-events: none;
+}
+
+.timer-bg {
+    fill: none;
+    stroke: #e2d9ec;
+    stroke-width: 6;
+}
+
+.timer-progress {
+    fill: none;
+    stroke: var(--primary-color);
+    stroke-width: 6;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear;
+}
+
+.icon-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+/* Imagen circular perfecta y adaptada dentro del círculo */
+.step-graphic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.sense-icon {
+    width: 38px;
+    height: 38px;
+    fill: none;
+    stroke: var(--primary-color);
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.timer-text {
+    font-size: 1.4rem;
+    font-weight: 800;
+    color: var(--primary-color);
+    background: rgba(255, 255, 255, 0.75);
+    padding: 4px 12px;
+    border-radius: 20px;
+    z-index: 5;
+}
+
+.descripcion {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-main);
+    min-height: 70px;
+    margin-bottom: 10px;
+}
+
+.sub-indicacion {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    min-height: 22px;
+    margin-bottom: 15px;
+}
+
+.controls-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-nav {
+    width: 100%;
+    padding: 13px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-nav:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.btn-nav:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(107, 91, 149, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #594a80;
+}
+
+.btn-pause {
+    background-color: #f0ecf6;
+    color: var(--primary-color);
 }
