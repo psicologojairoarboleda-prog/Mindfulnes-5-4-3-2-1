@@ -67,7 +67,7 @@ h1 {
     justify-content: center;
     position: relative;
     box-shadow: inset 0 4px 10px rgba(0,0,0,0.03), 0 8px 20px rgba(107, 91, 149, 0.12);
-    overflow: hidden;
+    overflow: hidden; /* Vital para que la imagen nunca se salga del círculo */
 }
 
 .timer-svg {
@@ -107,15 +107,15 @@ h1 {
     z-index: 2;
 }
 
-/* Corrección estricta para que la imagen se ajuste perfecta al círculo y no se desborde */
+/* Imagen perfectamente contenida y redonda dentro del círculo */
 .step-graphic {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 50%;
-    position: absolute;
-    top: 0;
-    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    border-radius: 50% !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
     z-index: 1;
 }
 
@@ -127,7 +127,7 @@ h1 {
     z-index: 12;
 }
 
-/* Animación de Ondas Relajantes Lentas */
+/* Ondas relajantes lentas */
 .relax-waves {
     position: relative;
     width: 100%;
