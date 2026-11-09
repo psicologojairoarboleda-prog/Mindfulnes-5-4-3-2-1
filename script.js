@@ -1,11 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- SISTEMA DE AUDIO CON FADE IN / FADE OUT ULTRA SUAVE ---
-    function aplicarFadeIn(audioElem, volumenMax = 0.25, duracionMs = 1500) {
+    // --- SISTEMA DE AUDIO CON FADE IN / FADE OUT LARGO Y SUAVE ---
+    function aplicarFadeIn(audioElem, volumenMax = 0.25, duracionMs = 2000) {
         audioElem.volume = 0;
         audioElem.play().catch(e => console.log("FadeIn bloqueado:", e));
         
-        let paso = 0.02;
+        let paso = 0.01;
         let intervalo = duracionMs / (volumenMax / paso);
         let timer = setInterval(() => {
             if (audioElem.volume < volumenMax - paso) {
@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, intervalo);
     }
 
-    function aplicarFadeOut(audioElem, duracionMs = 1500, alTerminar = null) {
+    function aplicarFadeOut(audioElem, duracionMs = 2000, alTerminar = null) {
         if (!audioElem || audioElem.paused) {
             if (alTerminar) alTerminar();
             return;
@@ -31,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        let paso = 0.02;
+        let paso = 0.01;
         let intervalo = duracionMs / (volumenInicial / paso);
         let timer = setInterval(() => {
             if (audioElem.volume > paso) {
@@ -49,7 +49,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const musicaFondo = new Audio('audio/Audio9.mp3');
     musicaFondo.loop = true;
 
-    // Estructura de ondas relajantes para la Intro y el Cierre
     const htmlOndasRelajantes = `
         <div class="relax-waves">
             <div class="wave-ring"></div>
@@ -58,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    // Pasos con los textos ajustados exactamente a lo que piden los audios
+    // Pasos con frases exactas y ajustadas a los audios reales
     const pasos = [
         {
             badgeText: "Técnica de Mindfulness 5-4-3-2-1",
@@ -71,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Paso 1 de 5",
             titulo: "Vista (5 Cosas)",
-            texto: "Mira a tu alrededor e identifica 5 objetos.",
+            texto: "Identifica 5 objetos.",
             audio: "audio/vista.mp3",
             imagen: "Imagenes1/VISTA.jpg",
             duracion: 15
@@ -189,7 +188,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function ejecutarSecuenciaOido() {
-        aplicarFadeOut(musicaFondo, 2000, () => {
+        // Desvanecimiento largo de 2.5s para la música de fondo antes de los sonidos de la naturaleza
+        aplicarFadeOut(musicaFondo, 2500, () => {
             const sonidosOido = ["audio/mar.mp3", "audio/aves.mp3", "audio/lluvia.mp3"];
             let indiceSonido = 0;
 
@@ -202,10 +202,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     const archivoAudio = sonidosOido[indiceSonido];
                     audioInstruccion = new Audio(archivoAudio);
                     
-                    aplicarFadeIn(audioInstruccion, 0.5, 1000);
+                    aplicarFadeIn(audioInstruccion, 0.5, 1200);
 
                     iniciarConteoRegresivo(7, () => {
-                        aplicarFadeOut(audioInstruccion, 1000, () => {
+                        aplicarFadeOut(audioInstruccion, 1200, () => {
                             indiceSonido++;
 
                             if (indiceSonido < sonidosOido.length) {
@@ -215,7 +215,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                     reproducirSiguienteSonidoOido();
                                 });
                             } else {
-                                aplicarFadeIn(musicaFondo, 0.25, 2500);
+                                // Reanudación suave y progresiva de la música de fondo con fundido largo de 3s
+                                aplicarFadeIn(musicaFondo, 0.25, 3000);
                                 if (pasoActual < pasos.length - 1) {
                                     ejecutarPaso(pasoActual + 1);
                                 }
@@ -250,15 +251,16 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
+        // Arrancar música de fondo simultáneamente con un fundido muy suave de entrada
         if (paso.esIntro && musicaFondo.paused) {
-            aplicarFadeIn(musicaFondo, 0.25, 1000);
+            aplicarFadeIn(musicaFondo, 0.25, 2000);
         }
 
         audioInstruccion = new Audio(paso.audio);
-        aplicarFadeIn(audioInstruccion, 0.8, 800);
+        aplicarFadeIn(audioInstruccion, 0.8, 1000);
 
         audioInstruccion.onended = () => {
-            aplicarFadeOut(audioInstruccion, 800, () => {
+            aplicarFadeOut(audioInstruccion, 1000, () => {
                 if (paso.esOidoEspecial) {
                     ejecutarSecuenciaOido();
                 } else if (paso.duracion > 0) {
@@ -285,7 +287,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function finalizarEjercicio() {
         subIndicacionEl.textContent = "¡Sesión finalizada con éxito!";
-        aplicarFadeOut(musicaFondo, 2500);
+        aplicarFadeOut(musicaFondo, 3000);
         btnSiguiente.textContent = "Reiniciar ↺";
     }
 
