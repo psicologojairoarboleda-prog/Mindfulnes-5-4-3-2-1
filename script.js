@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Audio de fondo configurado para saltar el silencio inicial (ej. segundo 3.5)
     const musicaFondo = new Audio('audio/Audio9.mp3');
     musicaFondo.loop = true;
     musicaFondo.volume = 0;
@@ -63,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    // Pasos completos con todos tus textos exactos y aprobados
+    // Pasos con la frase exacta corregida (sin redundancia en vista)
     const pasos = [
         {
             badgeText: "Técnica de Mindfulness 5-4-3-2-1",
@@ -76,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Paso 1 de 5",
             titulo: "Vista (5 Cosas)",
-            texto: "Mira a tu alrededor con atención y reconoce 5 elementos u objetos que puedas ver en este momento.",
+            texto: "Mira a tu alrededor con atención y reconoce 5 objetos que puedas ver en este momento.",
             audio: "audio/vista.mp3",
             imagen: "Imagenes1/VISTA.jpg",
             duracion: 15
@@ -135,7 +134,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const tituloEl = document.getElementById('titulo');
     const descripcionEl = document.getElementById('descripcion');
     const subIndicacionEl = document.getElementById('sub-indicacion');
-    const timerProgress = document.getElementById('timer-progress');
     const iconContainer = document.getElementById('icon-container');
 
     const btnAnterior = document.getElementById('btn-anterior');
@@ -157,17 +155,6 @@ document.addEventListener('DOMContentLoaded', () => {
         btnPausa.textContent = "⏸ Pausar";
     }
 
-    function actualizarCirculoProgreso(segundosRestantes, total) {
-        if (!timerProgress || total <= 0) {
-            if (timerProgress) timerProgress.style.strokeDashoffset = 283;
-            return;
-        }
-        const maxOffset = 283;
-        const proporcion = segundosRestantes / total;
-        const offset = maxOffset * (1 - proporcion);
-        timerProgress.style.strokeDashoffset = offset;
-    }
-
     function iniciarConteoRegresivo(segundos, callback) {
         if (timerInterval) clearInterval(timerInterval);
         tiempoRestante = segundos;
@@ -175,18 +162,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const timerDisplay = document.getElementById('timer-display');
         if (timerDisplay) timerDisplay.textContent = tiempoRestante;
-        actualizarCirculoProgreso(tiempoRestante, tiempoTotal);
 
         timerInterval = setInterval(() => {
             if (!enPausa) {
                 tiempoRestante--;
                 if (tiempoRestante >= 0) {
                     if (timerDisplay) timerDisplay.textContent = tiempoRestante;
-                    actualizarCirculoProgreso(tiempoRestante, tiempoTotal);
                 } else {
                     clearInterval(timerInterval);
                     if (timerDisplay) timerDisplay.textContent = "";
-                    actualizarCirculoProgreso(0, tiempoTotal);
                     if (callback) callback();
                 }
             }
@@ -198,8 +182,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const sonidosOido = ["audio/mar.mp3", "audio/aves.mp3", "audio/lluvia.mp3"];
             let indiceSonido = 0;
 
-            subIndicacionEl.textContent = "Escucha los sonidos de la naturaleza...";
-
             function reproducirSiguienteSonidoOido() {
                 if (enPausa) return;
 
@@ -207,19 +189,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     const archivoAudio = sonidosOido[indiceSonido];
                     audioInstruccion = new Audio(archivoAudio);
                     
-                    aplicarFadeIn(audioInstruccion, 0.5, 1000);
+                    subIndicacionEl.textContent = `Sonido ${indiceSonido + 1} de 3`;
+                    aplicarFadeIn(audioInstruccion, 0.6, 1000);
 
-                    iniciarConteoRegresivo(7, () => {
+                    // 1. El audio suena durante 8 segundos exactos
+                    iniciarConteoRegresivo(8, () => {
                         aplicarFadeOut(audioInstruccion, 1000, () => {
                             indiceSonido++;
 
                             if (indiceSonido < sonidosOido.length) {
-                                subIndicacionEl.textContent = "Pausa...";
-                                iniciarConteoRegresivo(3, () => {
-                                    subIndicacionEl.textContent = "Escucha el siguiente sonido...";
+                                subIndicacionEl.textContent = "Menciona mentalmente...";
+                                // 2. Pausa de 4 segundos para nombrarlo mentalmente
+                                iniciarConteoRegresivo(4, () => {
                                     reproducirSiguienteSonidoOido();
                                 });
                             } else {
+                                subIndicacionEl.textContent = "";
                                 aplicarFadeIn(musicaFondo, 0.25, 2500);
                                 if (pasoActual < pasos.length - 1) {
                                     ejecutarPaso(pasoActual + 1);
