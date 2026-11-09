@@ -9,13 +9,12 @@ document.addEventListener('DOMContentLoaded', () => {
         cierre: `<svg class="sense-icon" viewBox="0 0 24 24"><path stroke="currentColor" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path stroke="currentColor" d="M9 12l2 2 4-4"/></svg>`
     };
 
-    // Pasos enlazados con la carpeta Imagenes1 y los nombres exactos
     const pasos = [
         {
             titulo: "Introducción",
             texto: "Acomódate en tu lugar. Toma una respiración profunda y prepárate para conectar con tus sentidos.",
             audio: "audio/intro.mp3",
-            imagen: null, // Si la intro no usa imagen, usará el icono por defecto
+            imagen: null,
             duracion: 0
         },
         {
@@ -141,7 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
         tituloEl.textContent = paso.titulo;
         descripcionEl.textContent = paso.texto;
 
-        // Renderizado dinámico con imagen difuminada o icono por defecto
         if (paso.imagen) {
             iconContainer.innerHTML = `
                 <img src="${paso.imagen}" class="step-graphic" alt="${paso.titulo}">
