@@ -1,20 +1,26 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // Música ambiental de fondo (suena de inicio a fin)
     const musicaFondo = new Audio('audio/Audio9.mp3');
     musicaFondo.loop = true;
     musicaFondo.volume = 0.25;
 
-    const iconos = {
-        inicio: `<svg class="sense-icon" viewBox="0 0 24 24"><path stroke="currentColor" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path stroke="currentColor" d="M10 8l6 4-6 4V8z"/></svg>`,
-        cierre: `<svg class="sense-icon" viewBox="0 0 24 24"><path stroke="currentColor" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path stroke="currentColor" d="M9 12l2 2 4-4"/></svg>`
-    };
+    // Ondas concéntricas para la introducción y el cierre
+    const ondasIntro = `
+        <div class="waves-container">
+            <div class="wave"></div>
+            <div class="wave"></div>
+            <div class="wave"></div>
+        </div>
+    `;
 
+    // Pasos de la técnica 5-4-3-2-1
     const pasos = [
         {
             titulo: "Introducción",
             texto: "Acomódate en tu lugar. Toma una respiración profunda y prepárate para conectar con tus sentidos.",
             audio: "audio/intro.mp3",
-            imagen: null,
+            esIntro: true,
             duracion: 0
         },
         {
@@ -36,7 +42,8 @@ document.addEventListener('DOMContentLoaded', () => {
             texto: "Escucha con atención los sonidos de tu entorno o de la naturaleza.",
             audio: "audio/oido.mp3",
             imagen: "Imagenes1/OIDO.jpg",
-            duracion: 12
+            esOidoEspecial: true, // Manejo secuencial especial para mar, aves y lluvia
+            duracion: 0
         },
         {
             titulo: "Olfato (2 Olores)",
@@ -56,9 +63,8 @@ document.addEventListener('DOMContentLoaded', () => {
             titulo: "Cierre",
             texto: "Has completado el ejercicio. Mantén esta sensación de presencia y calma.",
             audio: "audio/cierre.mp3",
-            imagen: null,
-            duracion: 0,
-            esCierre: true
+            esCierre: true,
+            duracion: 0
         }
     ];
 
@@ -121,12 +127,56 @@ document.addEventListener('DOMContentLoaded', () => {
                     actualizarCirculoProgreso(tiempoRestante, tiempoTotal);
                 } else {
                     clearInterval(timerInterval);
-                    if (timerDisplay) timerDisplay.textContent = "--";
+                    if (timerDisplay) timerDisplay.textContent = "";
                     actualizarCirculoProgreso(0, 0);
                     if (callback) callback();
                 }
             }
         }, 1000);
+    }
+
+    // Función exclusiva para reproducir la secuencia del Oído: mar (7s) -> pausa (3s) -> aves (7s) -> pausa (3s) -> lluvia (7s)
+    function ejecutarSecuenciaOido() {
+        const sonidosOido = ["audio/mar.mp3", "audio/aves.mp3", "audio/lluvia.mp3"];
+        let indiceSonido = 0;
+
+        subIndicacionEl.textContent = "Escucha el sonido de la naturaleza...";
+
+        function reproducirSiguienteSonidoOido() {
+            if (enPausa) return;
+
+            if (indiceSonido < sonidosOido.length) {
+                const archivoAudio = sonidosOido[indiceSonido];
+                audioInstruccion = new Audio(archivoAudio);
+                
+                audioInstruccion.play().catch(e => console.log("Audio oído error:", e));
+
+                // Cada sonido de naturaleza suena durante 7 segundos exactos
+                iniciarConteoRegresivo(7, () => {
+                    if (audioInstruccion) {
+                        audioInstruccion.pause();
+                        audioInstruccion.currentTime = 0;
+                    }
+                    indiceSonido++;
+
+                    if (indiceSonido < sonidosOido.length) {
+                        // 3 segundos de silencio entre sonido y sonido
+                        subIndicacionEl.textContent = "Pausa...";
+                        iniciarConteoRegresivo(3, () => {
+                            subIndicacionEl.textContent = "Escucha el siguiente sonido...";
+                            reproducirSiguienteSonidoOido();
+                        });
+                    } else {
+                        // Al terminar los tres sonidos del oído, avanza automáticamente al siguiente paso (Olfato)
+                        if (pasoActual < pasos.length - 1) {
+                            ejecutarPaso(pasoActual + 1);
+                        }
+                    }
+                });
+            }
+        }
+
+        reproducirSiguienteSonidoOido();
     }
 
     function ejecutarPaso(indice) {
@@ -140,28 +190,30 @@ document.addEventListener('DOMContentLoaded', () => {
         tituloEl.textContent = paso.titulo;
         descripcionEl.textContent = paso.texto;
 
-        if (paso.imagen) {
+        // Renderizado visual limpio (sin cajas feas)
+        if (paso.esIntro || paso.esCierre) {
+            iconContainer.innerHTML = ondasIntro;
+        } else if (paso.imagen) {
             iconContainer.innerHTML = `
                 <img src="${paso.imagen}" class="step-graphic" alt="${paso.titulo}">
-                <span id="timer-display" class="timer-text">--</span>
-            `;
-        } else {
-            let iconoSvg = (paso.esCierre) ? iconos.cierre : iconos.inicio;
-            iconContainer.innerHTML = `
-                ${iconoSvg}
-                <span id="timer-display" class="timer-text">--</span>
+                <span id="timer-display" class="timer-text"></span>
             `;
         }
 
+        // Reproducir música ambiental de fondo si está pausada
         if (musicaFondo.paused) {
             musicaFondo.play().catch(e => console.log("Fondo:", e));
         }
 
+        // Reproducir el audio del paso actual
         audioInstruccion = new Audio(paso.audio);
         audioInstruccion.play().catch(e => console.log("Audio voz:", e));
 
         audioInstruccion.onended = () => {
-            if (paso.duracion > 0) {
+            if (paso.esOidoEspecial) {
+                // Si es el paso del oído, al terminar la voz introductoria (`oido.mp3`), lanzamos la secuencia de mar, aves y lluvia
+                ejecutarSecuenciaOido();
+            } else if (paso.duracion > 0) {
                 subIndicacionEl.textContent = "Tiempo de práctica...";
                 iniciarConteoRegresivo(paso.duracion, () => {
                     if (pasoActual < pasos.length - 1) {
