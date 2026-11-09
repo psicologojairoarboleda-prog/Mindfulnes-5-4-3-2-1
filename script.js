@@ -1,9 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Música ambiental de fondo (suena de inicio a fin)
+    // Música ambiental de fondo (configurada para arrancar con retraso de 10 segundos)
     const musicaFondo = new Audio('audio/Audio9.mp3');
     musicaFondo.loop = true;
     musicaFondo.volume = 0.25;
+    let temporizadorFondoInicio = null;
+
+    function iniciarMusicaFondoConRetardo() {
+        if (temporizadorFondoInicio) clearTimeout(temporizadorFondoInicio);
+        temporizadorFondoInicio = setTimeout(() => {
+            if (musicaFondo.paused && pasoActual !== -1) {
+                musicaFondo.play().catch(e => console.log("Fondo:", e));
+            }
+        }, 10000); // 10 segundos de retraso
+    }
 
     // Ondas concéntricas para la introducción y el cierre
     const ondasIntro = `
@@ -42,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
             texto: "Escucha con atención los sonidos de tu entorno o de la naturaleza.",
             audio: "audio/oido.mp3",
             imagen: "Imagenes1/OIDO.jpg",
-            esOidoEspecial: true, // Manejo secuencial especial para mar, aves y lluvia
+            esOidoEspecial: true, // Secuencia especial: mar, aves, lluvia
             duracion: 0
         },
         {
@@ -135,12 +145,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 1000);
     }
 
-    // Función exclusiva para reproducir la secuencia del Oído: mar (7s) -> pausa (3s) -> aves (7s) -> pausa (3s) -> lluvia (7s)
+    // Secuencia del sentido del oído: Pausa la música de fondo y reproduce mar, aves y lluvia (7s c/u con 3s de silencio)
     function ejecutarSecuenciaOido() {
+        // Pausar música ambiental mientras suenan los sonidos de la naturaleza
+        musicaFondo.pause();
+
         const sonidosOido = ["audio/mar.mp3", "audio/aves.mp3", "audio/lluvia.mp3"];
         let indiceSonido = 0;
 
-        subIndicacionEl.textContent = "Escucha el sonido de la naturaleza...";
+        subIndicacionEl.textContent = "Escucha los sonidos de la naturaleza...";
 
         function reproducirSiguienteSonidoOido() {
             if (enPausa) return;
@@ -148,10 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (indiceSonido < sonidosOido.length) {
                 const archivoAudio = sonidosOido[indiceSonido];
                 audioInstruccion = new Audio(archivoAudio);
-                
                 audioInstruccion.play().catch(e => console.log("Audio oído error:", e));
 
-                // Cada sonido de naturaleza suena durante 7 segundos exactos
+                // Cada sonido suena exactamente 7 segundos
                 iniciarConteoRegresivo(7, () => {
                     if (audioInstruccion) {
                         audioInstruccion.pause();
@@ -167,7 +179,8 @@ document.addEventListener('DOMContentLoaded', () => {
                             reproducirSiguienteSonidoOido();
                         });
                     } else {
-                        // Al terminar los tres sonidos del oído, avanza automáticamente al siguiente paso (Olfato)
+                        // Al terminar los tres sonidos, se reanuda la música de fondo y avanza al siguiente paso (Olfato) de corrido
+                        musicaFondo.play().catch(e => console.log("Fondo reanudar:", e));
                         if (pasoActual < pasos.length - 1) {
                             ejecutarPaso(pasoActual + 1);
                         }
@@ -190,7 +203,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tituloEl.textContent = paso.titulo;
         descripcionEl.textContent = paso.texto;
 
-        // Renderizado visual limpio (sin cajas feas)
+        // Renderizado visual limpio
         if (paso.esIntro || paso.esCierre) {
             iconContainer.innerHTML = ondasIntro;
         } else if (paso.imagen) {
@@ -200,10 +213,8 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        // Reproducir música ambiental de fondo si está pausada
-        if (musicaFondo.paused) {
-            musicaFondo.play().catch(e => console.log("Fondo:", e));
-        }
+        // Activar el conteo de los 10 segundos para la música de fondo si estamos empezando
+        iniciarMusicaFondoConRetardo();
 
         // Reproducir el audio del paso actual
         audioInstruccion = new Audio(paso.audio);
@@ -211,11 +222,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         audioInstruccion.onended = () => {
             if (paso.esOidoEspecial) {
-                // Si es el paso del oído, al terminar la voz introductoria (`oido.mp3`), lanzamos la secuencia de mar, aves y lluvia
                 ejecutarSecuenciaOido();
             } else if (paso.duracion > 0) {
                 subIndicacionEl.textContent = "Tiempo de práctica...";
                 iniciarConteoRegresivo(paso.duracion, () => {
+                    // AVANCE AUTOMÁTICO DE CORRIDO HASTA EL FINAL
                     if (pasoActual < pasos.length - 1) {
                         ejecutarPaso(pasoActual + 1);
                     } else {
@@ -225,7 +236,10 @@ document.addEventListener('DOMContentLoaded', () => {
             } else if (paso.esCierre) {
                 finalizarEjercicio();
             } else {
-                subIndicacionEl.textContent = "Haz clic en Siguiente para continuar";
+                // Avance automático continuo también para pasos sin cuenta regresiva (como la intro)
+                if (pasoActual < pasos.length - 1) {
+                    ejecutarPaso(pasoActual + 1);
+                }
             }
         };
 
@@ -236,6 +250,7 @@ document.addEventListener('DOMContentLoaded', () => {
         subIndicacionEl.textContent = "¡Sesión finalizada con éxito!";
         musicaFondo.pause();
         musicaFondo.currentTime = 0;
+        if (temporizadorFondoInicio) clearTimeout(temporizadorFondoInicio);
         btnSiguiente.textContent = "Reiniciar ↺";
     }
 
@@ -260,10 +275,13 @@ document.addEventListener('DOMContentLoaded', () => {
         if (enPausa) {
             if (audioInstruccion) audioInstruccion.pause();
             musicaFondo.pause();
+            if (temporizadorFondoInicio) clearTimeout(temporizadorFondoInicio);
             btnPausa.textContent = "▶ Reanudar";
         } else {
             if (audioInstruccion) audioInstruccion.play().catch(() => {});
-            musicaFondo.play().catch(() => {});
+            if (!musicaFondo.currentTime || musicaFondo.paused) {
+                musicaFondo.play().catch(() => {});
+            }
             btnPausa.textContent = "⏸ Pausar";
         }
     });
