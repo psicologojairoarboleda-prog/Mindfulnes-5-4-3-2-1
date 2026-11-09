@@ -1,11 +1,50 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Música ambiental de fondo (inicia de inmediato al arrancar la app con la introducción)
+    // --- SISTEMA DE AUDIO CON FADE IN / FADE OUT ---
+    function reproducirConFadeIn(audioElem, volumenMax = 0.25, duracionFade = 1500) {
+        audioElem.volume = 0;
+        audioElem.play().catch(e => console.log("FadeIn error:", e));
+        
+        let incremento = 0.05;
+        let intervaloTiempo = duracionFade / (volumenMax / incremento);
+        let fade = setInterval(() => {
+            if (audioElem.volume < volumenMax - incremento) {
+                audioElem.volume = Math.min(volumenMax, audioElem.volume + incremento);
+            } else {
+                audioElem.volume = volumenMax;
+                clearInterval(fade);
+            }
+        }, intervaloTiempo);
+    }
+
+    function detenerConFadeOut(audioElem, duracionFade = 1500, alTerminar = null) {
+        if (!audioElem || audioElem.paused) {
+            if (alTerminar) alTerminar();
+            return;
+        }
+
+        let volumenInicial = audioElem.volume;
+        let decremento = 0.05;
+        let intervaloTiempo = duracionFade / (volumenInicial / decremento || 1);
+
+        let fade = setInterval(() => {
+            if (audioElem.volume > decremento) {
+                audioElem.volume = Math.max(0, audioElem.volume - decremento);
+            } else {
+                audioElem.volume = 0;
+                audioElem.pause();
+                audioElem.currentTime = 0;
+                clearInterval(fade);
+                if (alTerminar) alTerminar();
+            }
+        }, intervaloTiempo);
+    }
+
+    // Música ambiental de fondo
     const musicaFondo = new Audio('audio/Audio9.mp3');
     musicaFondo.loop = true;
-    musicaFondo.volume = 0.25;
 
-    // Ondas concéntricas para la introducción y el cierre
+    // Ondas concéntricas para introducción y cierre
     const ondasIntro = `
         <div class="waves-container">
             <div class="wave"></div>
@@ -14,7 +53,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    // Pasos de la técnica 5-4-3-2-1
+    // Pasos estructurados de la técnica
     const pasos = [
         {
             titulo: "Introducción",
@@ -42,7 +81,7 @@ document.addEventListener('DOMContentLoaded', () => {
             texto: "Escucha con atención los sonidos de tu entorno o de la naturaleza.",
             audio: "audio/oido.mp3",
             imagen: "Imagenes1/OIDO.jpg",
-            esOidoEspecial: true, // Secuencia especial: mar, aves, lluvia
+            esOidoEspecial: true, // Secuencia mar, aves, lluvia con fade
             duracion: 0
         },
         {
@@ -88,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     btnAnterior.disabled = true;
     btnSiguiente.textContent = "Iniciar Ejercicio";
 
-    function detenerTodoAudio() {
+    function detenerTodoAudioInstantly() {
         if (audioInstruccion) {
             audioInstruccion.pause();
             audioInstruccion.currentTime = 0;
@@ -100,13 +139,16 @@ document.addEventListener('DOMContentLoaded', () => {
         btnPausa.textContent = "⏸ Pausar";
     }
 
+    // Círculo simple y limpio (el progreso se llena de forma directa)
     function actualizarCirculoProgreso(segundosRestantes, total) {
         if (total === 0) {
             timerProgress.style.strokeDashoffset = 283;
             return;
         }
         const maxOffset = 283;
-        const offset = maxOffset - (segundosRestantes / total) * maxOffset;
+        // Se llena proporcionalmente conforme avanza el tiempo
+        const transcurrido = total - segundosRestantes;
+        const offset = maxOffset - (transcurrido / total) * maxOffset;
         timerProgress.style.strokeDashoffset = offset;
     }
 
@@ -128,59 +170,59 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     clearInterval(timerInterval);
                     if (timerDisplay) timerDisplay.textContent = "";
-                    actualizarCirculoProgreso(0, 0);
+                    actualizarCirculoProgreso(tiempoTotal, tiempoTotal); // Llega lleno al final
                     if (callback) callback();
                 }
             }
         }, 1000);
     }
 
-    // Secuencia del sentido del oído: Pausa la música de fondo y reproduce mar, aves y lluvia (7s c/u con 3s de silencio)
+    // Secuencia de oído con FADE OUT y FADE IN en la música de fondo
     function ejecutarSecuenciaOido() {
-        musicaFondo.pause(); // Pausar música ambiental durante los sonidos de la naturaleza
+        // Desvanecer la música de fondo suavemente
+        detenerConFadeOut(musicaFondo, 1500, () => {
+            const sonidosOido = ["audio/mar.mp3", "audio/aves.mp3", "audio/lluvia.mp3"];
+            let indiceSonido = 0;
 
-        const sonidosOido = ["audio/mar.mp3", "audio/aves.mp3", "audio/lluvia.mp3"];
-        let indiceSonido = 0;
+            subIndicacionEl.textContent = "Escucha los sonidos de la naturaleza...";
 
-        subIndicacionEl.textContent = "Escucha los sonidos de la naturaleza...";
+            function reproducirSiguienteSonidoOido() {
+                if (enPausa) return;
 
-        function reproducirSiguienteSonidoOido() {
-            if (enPausa) return;
+                if (indiceSonido < sonidosOido.length) {
+                    const archivoAudio = sonidosOido[indiceSonido];
+                    audioInstruccion = new Audio(archivoAudio);
+                    
+                    reproducirConFadeIn(audioInstruccion, 0.5, 800);
 
-            if (indiceSonido < sonidosOido.length) {
-                const archivoAudio = sonidosOido[indiceSonido];
-                audioInstruccion = new Audio(archivoAudio);
-                audioInstruccion.play().catch(e => console.log("Audio oído error:", e));
+                    iniciarConteoRegresivo(7, () => {
+                        detenerConFadeOut(audioInstruccion, 800, () => {
+                            indiceSonido++;
 
-                iniciarConteoRegresivo(7, () => {
-                    if (audioInstruccion) {
-                        audioInstruccion.pause();
-                        audioInstruccion.currentTime = 0;
-                    }
-                    indiceSonido++;
-
-                    if (indiceSonido < sonidosOido.length) {
-                        subIndicacionEl.textContent = "Pausa...";
-                        iniciarConteoRegresivo(3, () => {
-                            subIndicacionEl.textContent = "Escucha el siguiente sonido...";
-                            reproducirSiguienteSonidoOido();
+                            if (indiceSonido < sonidosOido.length) {
+                                subIndicacionEl.textContent = "Pausa...";
+                                iniciarConteoRegresivo(3, () => {
+                                    subIndicacionEl.textContent = "Escucha el siguiente sonido...";
+                                    reproducirSiguienteSonidoOido();
+                                });
+                            } else {
+                                // Al terminar los 3 sonidos, reanudamos la música de fondo con Fade In y pasamos al olfato
+                                reproducirConFadeIn(musicaFondo, 0.25, 2000);
+                                if (pasoActual < pasos.length - 1) {
+                                    ejecutarPaso(pasoActual + 1);
+                                }
+                            }
                         });
-                    } else {
-                        // Al terminar los tres sonidos, se reanuda la música de fondo y avanza de corrido al olfato
-                        musicaFondo.play().catch(e => console.log("Fondo reanudar:", e));
-                        if (pasoActual < pasos.length - 1) {
-                            ejecutarPaso(pasoActual + 1);
-                        }
-                    }
-                });
+                    });
+                }
             }
-        }
 
-        reproducirSiguienteSonidoOido();
+            reproducirSiguienteSonidoOido();
+        });
     }
 
     function ejecutarPaso(indice) {
-        detenerTodoAudio();
+        detenerTodoAudioInstantly();
         subIndicacionEl.textContent = "";
 
         pasoActual = indice;
@@ -190,7 +232,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tituloEl.textContent = paso.titulo;
         descripcionEl.textContent = paso.texto;
 
-        // Renderizado visual limpio
+        // Render visual limpio
         if (paso.esIntro || paso.esCierre) {
             iconContainer.innerHTML = ondasIntro;
         } else if (paso.imagen) {
@@ -200,35 +242,37 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        // Si es la introducción, arrancamos la música de fondo al mismo instante
+        // Si es la introducción, arrancamos la música de fondo con Fade In de inmediato
         if (paso.esIntro && musicaFondo.paused) {
-            musicaFondo.play().catch(e => console.log("Fondo inicio:", e));
+            reproducirConFadeIn(musicaFondo, 0.25, 2000);
         }
 
-        // Reproducir el audio del paso actual
+        // Reproducir audio de voz del paso actual con Fade In
         audioInstruccion = new Audio(paso.audio);
-        audioInstruccion.play().catch(e => console.log("Audio voz:", e));
+        reproducirConFadeIn(audioInstruccion, 0.8, 800);
 
         audioInstruccion.onended = () => {
-            if (paso.esOidoEspecial) {
-                ejecutarSecuenciaOido();
-            } else if (paso.duracion > 0) {
-                subIndicacionEl.textContent = "Tiempo de práctica...";
-                iniciarConteoRegresivo(paso.duracion, () => {
+            detenerConFadeOut(audioInstruccion, 800, () => {
+                if (paso.esOidoEspecial) {
+                    ejecutarSecuenciaOido();
+                } else if (paso.duracion > 0) {
+                    subIndicacionEl.textContent = "Tiempo de práctica...";
+                    iniciarConteoRegresivo(paso.duracion, () => {
+                        if (pasoActual < pasos.length - 1) {
+                            ejecutarPaso(pasoActual + 1);
+                        } else {
+                            finalizarEjercicio();
+                        }
+                    });
+                } else if (paso.esCierre) {
+                    finalizarEjercicio();
+                } else {
+                    // Avance automático continuo en la introducción
                     if (pasoActual < pasos.length - 1) {
                         ejecutarPaso(pasoActual + 1);
-                    } else {
-                        finalizarEjercicio();
                     }
-                });
-            } else if (paso.esCierre) {
-                finalizarEjercicio();
-            } else {
-                // Avance automático continuo para la introducción
-                if (pasoActual < pasos.length - 1) {
-                    ejecutarPaso(pasoActual + 1);
                 }
-            }
+            });
         };
 
         btnSiguiente.textContent = (indice < pasos.length - 1) ? "Siguiente →" : "Reiniciar ↺";
@@ -236,8 +280,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function finalizarEjercicio() {
         subIndicacionEl.textContent = "¡Sesión finalizada con éxito!";
-        musicaFondo.pause();
-        musicaFondo.currentTime = 0;
+        detenerConFadeOut(musicaFondo, 2000);
         btnSiguiente.textContent = "Reiniciar ↺";
     }
 
