@@ -1,20 +1,19 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Audio de fondo configurado para saltar el silencio inicial (ej. segundo 3.5 en adelante, puedes ajustarlo si tu archivo tiene más o menos silencio al inicio)
+    // Audio de fondo configurado para saltar el silencio inicial (ej. segundo 3.5)
     const musicaFondo = new Audio('audio/Audio9.mp3');
     musicaFondo.loop = true;
     musicaFondo.volume = 0;
 
-    // Al cargar los metadatos o al reproducir, saltamos el silencio inicial del Audio9
     musicaFondo.addEventListener('loadedmetadata', () => {
         if (musicaFondo.duration > 3.5) {
-            musicaFondo.currentTime = 3.5; // Salta los primeros segundos de silencio
+            musicaFondo.currentTime = 3.5;
         }
     });
 
     function aplicarFadeIn(audioElem, volumenMax = 0.25, duracionMs = 2000) {
         if (audioElem === musicaFondo && audioElem.currentTime < 3.5) {
-            audioElem.currentTime = 3.5; // Asegura omitir el silencio al iniciar
+            audioElem.currentTime = 3.5;
         }
         audioElem.play().catch(e => console.log("Play bloqueado:", e));
         let paso = 0.01;
@@ -49,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 audioElem.volume = 0;
                 audioElem.pause();
-                audioElem.currentTime = 3.5; // Reinicia manteniendo el salto del silencio inicial
+                audioElem.currentTime = 3.5;
                 clearInterval(timer);
                 if (alTerminar) alTerminar();
             }
@@ -64,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    // Pasos completos con todos los textos correctos y aprobados
+    // Pasos completos con todos tus textos exactos y aprobados
     const pasos = [
         {
             badgeText: "Técnica de Mindfulness 5-4-3-2-1",
