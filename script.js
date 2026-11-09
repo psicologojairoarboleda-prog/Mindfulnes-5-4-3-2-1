@@ -1,11 +1,21 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Audio de fondo preparado desde el inicio para arrancar al instante
+    // Audio de fondo configurado para saltar el silencio inicial (ej. segundo 3.5 en adelante, puedes ajustarlo si tu archivo tiene más o menos silencio al inicio)
     const musicaFondo = new Audio('audio/Audio9.mp3');
     musicaFondo.loop = true;
     musicaFondo.volume = 0;
 
+    // Al cargar los metadatos o al reproducir, saltamos el silencio inicial del Audio9
+    musicaFondo.addEventListener('loadedmetadata', () => {
+        if (musicaFondo.duration > 3.5) {
+            musicaFondo.currentTime = 3.5; // Salta los primeros segundos de silencio
+        }
+    });
+
     function aplicarFadeIn(audioElem, volumenMax = 0.25, duracionMs = 2000) {
+        if (audioElem === musicaFondo && audioElem.currentTime < 3.5) {
+            audioElem.currentTime = 3.5; // Asegura omitir el silencio al iniciar
+        }
         audioElem.play().catch(e => console.log("Play bloqueado:", e));
         let paso = 0.01;
         let intervalo = duracionMs / (volumenMax / paso);
@@ -39,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 audioElem.volume = 0;
                 audioElem.pause();
-                audioElem.currentTime = 0;
+                audioElem.currentTime = 3.5; // Reinicia manteniendo el salto del silencio inicial
                 clearInterval(timer);
                 if (alTerminar) alTerminar();
             }
@@ -54,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    // Pasos con los textos exactos y correctos
+    // Pasos completos con todos los textos correctos y aprobados
     const pasos = [
         {
             badgeText: "Técnica de Mindfulness 5-4-3-2-1",
@@ -246,7 +256,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        // Arranque inmediato de la música ambiental en el primer paso (Introducción)
         if (paso.esIntro && musicaFondo.paused) {
             aplicarFadeIn(musicaFondo, 0.25, 1000);
         }
@@ -311,6 +320,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             if (audioInstruccion) audioInstruccion.play().catch(() => {});
             if (musicaFondo.paused) {
+                if (musicaFondo.currentTime < 3.5) musicaFondo.currentTime = 3.5;
                 musicaFondo.play().catch(() => {});
             }
             btnPausa.textContent = "⏸ Pausar";
