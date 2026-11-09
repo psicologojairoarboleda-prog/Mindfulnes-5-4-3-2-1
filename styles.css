@@ -67,7 +67,7 @@ h1 {
     justify-content: center;
     position: relative;
     box-shadow: inset 0 4px 10px rgba(0,0,0,0.03), 0 8px 20px rgba(107, 91, 149, 0.12);
-    overflow: hidden; /* Fundamental para contener la imagen dentro del círculo */
+    overflow: hidden;
 }
 
 .timer-svg {
@@ -107,7 +107,6 @@ h1 {
     z-index: 2;
 }
 
-/* Imagen perfectamente adaptada y rellenando el círculo sin salirse */
 .step-graphic {
     width: 100%;
     height: 100%;
@@ -127,7 +126,7 @@ h1 {
     z-index: 12;
 }
 
-/* Animación de ondas relajantes lentas */
+/* Animación de ondas muy lentas y relajantes (8 segundos por ciclo) */
 .relax-waves {
     position: relative;
     width: 100%;
@@ -139,27 +138,27 @@ h1 {
 
 .wave-ring {
     position: absolute;
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     border: 2px solid var(--primary-color);
     border-radius: 50%;
     opacity: 0;
-    animation: ripple 5s infinite cubic-bezier(0.25, 1, 0.5, 1);
+    animation: ripple 8s infinite cubic-bezier(0.1, 0.7, 0.3, 1);
 }
 
 .wave-ring:nth-child(1) { animation-delay: 0s; }
-.wave-ring:nth-child(2) { animation-delay: 1.6s; }
-.wave-ring:nth-child(3) { animation-delay: 3.2s; }
+.wave-ring:nth-child(2) { animation-delay: 2.6s; }
+.wave-ring:nth-child(3) { animation-delay: 5.2s; }
 
 @keyframes ripple {
     0% {
         width: 20px;
         height: 20px;
-        opacity: 0.8;
+        opacity: 0.9;
     }
     100% {
-        width: 150px;
-        height: 150px;
+        width: 155px;
+        height: 155px;
         opacity: 0;
     }
 }
