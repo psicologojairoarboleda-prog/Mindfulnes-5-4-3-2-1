@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- SISTEMA DE AUDIO CON FADE SUAVE Y PROGRESIVO ---
+    // --- MANEJO DE FADE IN / FADE OUT PROGRESIVO ---
     function aplicarFadeIn(audioElem, volumenMax = 0.25, duracionMs = 1500) {
         audioElem.volume = 0;
         audioElem.play().catch(e => console.log("FadeIn:", e));
@@ -46,20 +46,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }, intervalo);
     }
 
-    // Música ambiental de fondo
     const musicaFondo = new Audio('audio/Audio9.mp3');
     musicaFondo.loop = true;
 
-    // Ondas concéntricas para introducción y cierre
-    const ondasIntro = `
-        <div class="waves-container">
-            <div class="wave"></div>
-            <div class="wave"></div>
-            <div class="wave"></div>
+    // Componente gráfico de ondas relajantes para Intro y Cierre
+    const htmlOndasRelajantes = `
+        <div class="relax-waves">
+            <div class="wave-ring"></div>
+            <div class="wave-ring"></div>
+            <div class="wave-ring"></div>
         </div>
     `;
 
-    // Pasos ajustados con textos acordes al audio y estructura con nombre del ejercicio
     const pasos = [
         {
             badgeText: "Técnica de Mindfulness 5-4-3-2-1",
@@ -91,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
             texto: "Abre tus oídos para captar los sonidos sutiles a tu alrededor o los elementos de la naturaleza.",
             audio: "audio/oido.mp3",
             imagen: "Imagenes1/OIDO.jpg",
-            esOidoEspecial: true, // Secuencia mar, aves, lluvia con fundido suave
+            esOidoEspecial: true,
             duracion: 0
         },
         {
@@ -127,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let tiempoTotal = 0;
     let enPausa = false;
 
-    const badgeEl = document.querySelector('.badge'); // Elemento superior del nombre/etiqueta
+    const badgeEl = document.querySelector('.badge');
     const tituloEl = document.getElementById('titulo');
     const descripcionEl = document.getElementById('descripcion');
     const subIndicacionEl = document.getElementById('sub-indicacion');
@@ -154,13 +152,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function actualizarCirculoProgreso(segundosRestantes, total) {
-        if (total === 0) {
-            timerProgress.style.strokeDashoffset = 283;
+        if (!timerProgress || total <= 0) {
+            if (timerProgress) timerProgress.style.strokeDashoffset = 283;
             return;
         }
         const maxOffset = 283;
-        const transcurrido = total - segundosRestantes;
-        const offset = maxOffset - (transcurrido / total) * maxOffset;
+        const proporcion = segundosRestantes / total;
+        const offset = maxOffset * (1 - proporcion);
         timerProgress.style.strokeDashoffset = offset;
     }
 
@@ -182,14 +180,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     clearInterval(timerInterval);
                     if (timerDisplay) timerDisplay.textContent = "";
-                    actualizarCirculoProgreso(tiempoTotal, tiempoTotal);
+                    actualizarCirculoProgreso(0, tiempoTotal);
                     if (callback) callback();
                 }
             }
         }, 1000);
     }
 
-    // Secuencia del Oído con desvanecimiento (*Fade Out*) suave de la música ambiental
     function ejecutarSecuenciaOido() {
         aplicarFadeOut(musicaFondo, 2000, () => {
             const sonidosOido = ["audio/mar.mp3", "audio/aves.mp3", "audio/lluvia.mp3"];
@@ -217,7 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
                                     reproducirSiguienteSonidoOido();
                                 });
                             } else {
-                                // Al terminar los 3 sonidos, reanudamos la música de fondo con fundido suave (*Fade In*) y avanzamos al olfato
                                 aplicarFadeIn(musicaFondo, 0.25, 2500);
                                 if (pasoActual < pasos.length - 1) {
                                     ejecutarPaso(pasoActual + 1);
@@ -240,13 +236,12 @@ document.addEventListener('DOMContentLoaded', () => {
         btnAnterior.disabled = (pasoActual <= 0);
 
         const paso = pasos[indice];
-        if (badgeEl) badgeEl.textContent = paso.badgeText; // Actualiza el nombre/etiqueta superior del ejercicio
+        if (badgeEl) badgeEl.textContent = paso.badgeText;
         tituloEl.textContent = paso.titulo;
         descripcionEl.textContent = paso.texto;
 
-        // Renderizado visual limpio
         if (paso.esIntro || paso.esCierre) {
-            iconContainer.innerHTML = ondasIntro;
+            iconContainer.innerHTML = htmlOndasRelajantes;
         } else if (paso.imagen) {
             iconContainer.innerHTML = `
                 <img src="${paso.imagen}" class="step-graphic" alt="${paso.titulo}">
@@ -254,12 +249,10 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        // Si es la introducción, arrancamos la música de fondo con fundido suave (*Fade In*)
         if (paso.esIntro && musicaFondo.paused) {
             aplicarFadeIn(musicaFondo, 0.25, 2500);
         }
 
-        // Reproducir la voz guía del paso actual con fundido suave
         audioInstruccion = new Audio(paso.audio);
         aplicarFadeIn(audioInstruccion, 0.8, 1000);
 
