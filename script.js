@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Música ambiental de fondo local (Carpeta Audios/Audio9.mp3)
-    const musicaFondo = new Audio('Audios/Audio9.mp3');
+    // Música ambiental de fondo (dentro de la carpeta audio/)
+    const musicaFondo = new Audio('audio/Audio9.mp3');
     musicaFondo.loop = true;
     musicaFondo.volume = 0.25; // Volumen agradable (25%)
 
@@ -16,53 +16,54 @@ document.addEventListener('DOMContentLoaded', () => {
         cierre: `<svg class="sense-icon" viewBox="0 0 24 24"><path stroke="currentColor" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path stroke="currentColor" d="M9 12l2 2 4-4"/></svg>`
     };
 
+    // Pasos vinculados exactamente a los nombres de tus audios en la carpeta 'audio'
     const pasos = [
         {
             titulo: "Introducción",
             texto: "Acomódate en tu lugar. Toma una respiración profunda y prepárate para conectar con tus sentidos.",
-            audio: "Audios/Audio1.mp3",
+            audio: "audio/intro.mp3",
             icono: iconos.inicio,
             duracion: 0
         },
         {
             titulo: "Vista (5 Cosas)",
             texto: "Observa a tu alrededor e identifica 5 cosas que puedas ver claramente.",
-            audio: "Audios/Audio2.mp3",
+            audio: "audio/vista.mp3",
             icono: iconos.vista,
             duracion: 15
         },
         {
             titulo: "Tacto (4 Cosas)",
             texto: "Siente 4 cosas que puedas tocar a tu alrededor o la textura de tu ropa.",
-            audio: "Audios/Audio3.mp3",
+            audio: "audio/tacto.mp3",
             icono: iconos.tacto,
             duracion: 12
         },
         {
             titulo: "Oído (3 Sonidos)",
             texto: "Escucha con atención los sonidos de tu entorno o de la naturaleza.",
-            audio: "Audios/Audio4.mp3",
+            audio: "audio/oido.mp3",
             icono: iconos.oido,
             duracion: 12
         },
         {
             titulo: "Olfato (2 Olores)",
             texto: "Inhala despacio e identifica 2 olores presentes en tu entorno.",
-            audio: "Audios/Audio5.mp3",
+            audio: "audio/olfato.mp3",
             icono: iconos.olfato,
             duracion: 10
         },
         {
             titulo: "Gusto (1 Sabor)",
             texto: "Percibe y reconoce 1 sabor en tu boca en este momento.",
-            audio: "Audios/Audio6.mp3",
+            audio: "audio/gusto.mp3",
             icono: iconos.gusto,
             duracion: 8
         },
         {
             titulo: "Cierre",
             texto: "Has completado el ejercicio. Mantén esta sensación de presencia y calma.",
-            audio: "Audios/Audio7.mp3",
+            audio: "audio/cierre.mp3",
             icono: iconos.cierre,
             duracion: 0,
             esCierre: true
@@ -148,13 +149,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         iconContainer.innerHTML = `${paso.icono}<span id="timer-display" class="timer-text">--</span>`;
 
-        // Iniciar música de fondo local (Audio9.mp3) si está detenida
+        // Reproducir música de fondo local (audio/Audio9.mp3)
         if (musicaFondo.paused) {
-            musicaFondo.play().catch(err => console.warn("Música de fondo bloqueada:", err));
+            musicaFondo.play().catch(err => console.warn("Música de fondo bloqueada por navegador:", err));
         }
 
         audioInstruccion = new Audio(paso.audio);
-        audioInstruccion.play().catch(err => console.warn("Audio de voz no encontrado:", err));
+        audioInstruccion.play().catch(err => console.warn("Error al reproducir audio de voz:", err));
 
         audioInstruccion.onended = () => {
             if (paso.duracion > 0) {
