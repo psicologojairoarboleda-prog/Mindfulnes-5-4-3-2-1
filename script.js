@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- SISTEMA DE AUDIO CON FADE IN / FADE OUT LARGO Y SUAVE ---
+    // Sistema de audio con fundidos suaves
     function aplicarFadeIn(audioElem, volumenMax = 0.25, duracionMs = 2000) {
         audioElem.volume = 0;
         audioElem.play().catch(e => console.log("FadeIn bloqueado:", e));
@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    // Pasos con frases exactas y ajustadas a los audios reales
+    // Pasos con los textos exactos solicitados
     const pasos = [
         {
             badgeText: "Técnica de Mindfulness 5-4-3-2-1",
@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Paso 1 de 5",
             titulo: "Vista (5 Cosas)",
-            texto: "Identifica 5 objetos.",
+            texto: "5 objetos",
             audio: "audio/vista.mp3",
             imagen: "Imagenes1/VISTA.jpg",
             duracion: 15
@@ -86,7 +86,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Paso 3 de 5",
             titulo: "Oído (3 Sonidos)",
-            texto: "Escucha los sonidos que vienen a continuación...",
+            texto: "Los sonidos que vienen a continuación...",
             audio: "audio/oido.mp3",
             imagen: "Imagenes1/OIDO.jpg",
             esOidoEspecial: true,
@@ -103,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Paso 5 de 5",
             titulo: "Gusto (1 Sabor)",
-            texto: "Es hora de ser consciente de aquello que degustas.",
+            texto: "Es hora de ser consciente de aquello que degustas",
             audio: "audio/gusto.mp3",
             imagen: "Imagenes1/GUSTO.jpg",
             duracion: 8
@@ -188,8 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function ejecutarSecuenciaOido() {
-        // Desvanecimiento largo de 2.5s para la música de fondo antes de los sonidos de la naturaleza
-        aplicarFadeOut(musicaFondo, 2500, () => {
+        aplicarFadeOut(musicaFondo, 2000, () => {
             const sonidosOido = ["audio/mar.mp3", "audio/aves.mp3", "audio/lluvia.mp3"];
             let indiceSonido = 0;
 
@@ -202,10 +201,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     const archivoAudio = sonidosOido[indiceSonido];
                     audioInstruccion = new Audio(archivoAudio);
                     
-                    aplicarFadeIn(audioInstruccion, 0.5, 1200);
+                    aplicarFadeIn(audioInstruccion, 0.5, 1000);
 
                     iniciarConteoRegresivo(7, () => {
-                        aplicarFadeOut(audioInstruccion, 1200, () => {
+                        aplicarFadeOut(audioInstruccion, 1000, () => {
                             indiceSonido++;
 
                             if (indiceSonido < sonidosOido.length) {
@@ -215,8 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                                     reproducirSiguienteSonidoOido();
                                 });
                             } else {
-                                // Reanudación suave y progresiva de la música de fondo con fundido largo de 3s
-                                aplicarFadeIn(musicaFondo, 0.25, 3000);
+                                aplicarFadeIn(musicaFondo, 0.25, 2500);
                                 if (pasoActual < pasos.length - 1) {
                                     ejecutarPaso(pasoActual + 1);
                                 }
@@ -251,16 +249,16 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        // Arrancar música de fondo simultáneamente con un fundido muy suave de entrada
+        // Si es la introducción, arrancamos la música de fondo al instante exacto
         if (paso.esIntro && musicaFondo.paused) {
-            aplicarFadeIn(musicaFondo, 0.25, 2000);
+            aplicarFadeIn(musicaFondo, 0.25, 1500);
         }
 
         audioInstruccion = new Audio(paso.audio);
-        aplicarFadeIn(audioInstruccion, 0.8, 1000);
+        aplicarFadeIn(audioInstruccion, 0.8, 800);
 
         audioInstruccion.onended = () => {
-            aplicarFadeOut(audioInstruccion, 1000, () => {
+            aplicarFadeOut(audioInstruccion, 800, () => {
                 if (paso.esOidoEspecial) {
                     ejecutarSecuenciaOido();
                 } else if (paso.duracion > 0) {
@@ -287,7 +285,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function finalizarEjercicio() {
         subIndicacionEl.textContent = "¡Sesión finalizada con éxito!";
-        aplicarFadeOut(musicaFondo, 3000);
+        aplicarFadeOut(musicaFondo, 2500);
         btnSiguiente.textContent = "Reiniciar ↺";
     }
 
