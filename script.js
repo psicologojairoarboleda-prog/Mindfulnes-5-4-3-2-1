@@ -56,7 +56,10 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    // Pasos con las frases exactas solicitadas
+    // Pasos con tus textos originales restaurados, aplicando únicamente las correcciones que pediste:
+    // - Vista: "5 objetos"
+    // - Oído: "Presta atención a los sonidos que vienen a continuación..."
+    // - Gusto: "Es hora de ser consciente de aquello que degustas"
     const pasos = [
         {
             badgeText: "Técnica de Mindfulness 5-4-3-2-1",
@@ -77,7 +80,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Paso 2 de 5",
             titulo: "Tacto (4 Cosas)",
-            texto: "Toma consciencia de 4 cosas que puedas sentir al tacto, como la textura de tu ropa o la superficie donde te apoyas.",
+            texto: "Siente 4 cosas que puedas tocar a tu alrededor o la textura de tu ropa.",
             audio: "audio/tacto.mp3",
             imagen: "Imagenes1/TACTO.jpg",
             duracion: 12
@@ -94,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Paso 4 de 5",
             titulo: "Olfato (2 Olores)",
-            texto: "Inhala suavemente por la nariz e intenta percibir 2 aromas u olores presentes en tu entorno.",
+            texto: "Inhala despacio e identifica 2 olores presentes en tu entorno.",
             audio: "audio/olfato.mp3",
             imagen: "Imagenes1/OLFATO.jpg",
             duracion: 10
@@ -110,7 +113,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Cierre del Ejercicio",
             titulo: "Cierre",
-            texto: "El ejercicio ha concluido. Conserva esta sensación de calma, presencia y conexión interior.",
+            texto: "Has completado el ejercicio. Mantén esta sensación de presencia y calma.",
             audio: "audio/cierre.mp3",
             esCierre: true,
             duracion: 0
