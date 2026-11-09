@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- MANEJO DE FADE IN / FADE OUT PROGRESIVO ---
+    // Sistema de Fade In / Fade Out ultra suave
     function aplicarFadeIn(audioElem, volumenMax = 0.25, duracionMs = 1500) {
         audioElem.volume = 0;
-        audioElem.play().catch(e => console.log("FadeIn:", e));
+        audioElem.play().catch(e => console.log("FadeIn bloqueado:", e));
         
         let paso = 0.02;
         let intervalo = duracionMs / (volumenMax / paso);
@@ -49,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const musicaFondo = new Audio('audio/Audio9.mp3');
     musicaFondo.loop = true;
 
-    // Componente gráfico de ondas relajantes para Intro y Cierre
+    // Estructura de ondas relajantes para la Intro y el Cierre
     const htmlOndasRelajantes = `
         <div class="relax-waves">
             <div class="wave-ring"></div>
@@ -240,6 +240,7 @@ document.addEventListener('DOMContentLoaded', () => {
         tituloEl.textContent = paso.titulo;
         descripcionEl.textContent = paso.texto;
 
+        // Renderizado visual según el paso (ondas para intro/cierre, imagen para los sentidos)
         if (paso.esIntro || paso.esCierre) {
             iconContainer.innerHTML = htmlOndasRelajantes;
         } else if (paso.imagen) {
@@ -249,15 +250,16 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
+        // Si es la introducción, arrancamos la música de fondo EXACTAMENTE al mismo tiempo que la voz
         if (paso.esIntro && musicaFondo.paused) {
-            aplicarFadeIn(musicaFondo, 0.25, 2500);
+            aplicarFadeIn(musicaFondo, 0.25, 1000);
         }
 
         audioInstruccion = new Audio(paso.audio);
-        aplicarFadeIn(audioInstruccion, 0.8, 1000);
+        aplicarFadeIn(audioInstruccion, 0.8, 800);
 
         audioInstruccion.onended = () => {
-            aplicarFadeOut(audioInstruccion, 1000, () => {
+            aplicarFadeOut(audioInstruccion, 800, () => {
                 if (paso.esOidoEspecial) {
                     ejecutarSecuenciaOido();
                 } else if (paso.duracion > 0) {
