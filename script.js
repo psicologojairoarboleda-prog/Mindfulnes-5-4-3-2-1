@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Música ambiental de fondo local (Carpeta audio/Audio9.mp3)
+    // Música ambiental de fondo local
     const musicaFondo = new Audio('audio/Audio9.mp3');
     musicaFondo.loop = true;
     musicaFondo.volume = 0.25;
@@ -93,6 +93,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (audioInstruccion) {
             audioInstruccion.pause();
             audioInstruccion.currentTime = 0;
+            audioInstruccion.onended = null;
             audioInstruccion = null;
         }
         if (timerInterval) clearInterval(timerInterval);
@@ -148,14 +149,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         iconContainer.innerHTML = `${paso.icono}<span id="timer-display" class="timer-text">--</span>`;
 
-        // Reproducir música de fondo local
+        // Reproducir música de fondo si no está sonando
         if (musicaFondo.paused) {
-            musicaFondo.play().catch(err => console.warn("Música bloqueada:", err));
+            musicaFondo.play().catch(e => console.log("Fondo:", e));
         }
 
-        // Reproducir audio del paso actual tal como funcionaba originalmente
+        // Crear audio de la instrucción del paso
         audioInstruccion = new Audio(paso.audio);
-        audioInstruccion.play().catch(err => console.warn("Error audio:", err));
+        audioInstruccion.play().catch(e => console.log("Audio voz:", e));
 
         audioInstruccion.onended = () => {
             if (paso.duracion > 0) {
@@ -167,12 +168,10 @@ document.addEventListener('DOMContentLoaded', () => {
                         finalizarEjercicio();
                     }
                 });
+            } else if (paso.esCierre) {
+                finalizarEjercicio();
             } else {
-                if (paso.esCierre) {
-                    finalizarEjercicio();
-                } else if (pasoActual < pasos.length - 1) {
-                    ejecutarPaso(pasoActual + 1);
-                }
+                subIndicacionEl.textContent = "Haz clic en Siguiente para continuar";
             }
         };
 
