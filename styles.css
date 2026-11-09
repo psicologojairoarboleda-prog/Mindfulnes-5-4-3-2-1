@@ -1,3 +1,132 @@
+:root {
+    --bg-color: #f7f4f0;
+    --card-bg: #ffffff;
+    --primary-color: #6b5b95;
+    --text-main: #2c2c2c;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f7f4f0 0%, #ece6de 100%);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.card-container {
+    background-color: var(--card-bg);
+    border-radius: 28px;
+    padding: 35px 25px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(107, 91, 149, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+.badge {
+    background-color: #f0ecf6;
+    color: var(--primary-color);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 1.5px;
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin-top: 12px;
+    margin-bottom: 0;
+    color: var(--primary-color);
+}
+
+.breath-circle-container {
+    display: flex;
+    justify-content: center;
+    margin: 25px 0;
+}
+
+.breath-circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #faf8fc 0%, #f0ecf6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: inset 0 4px 10px rgba(0,0,0,0.03), 0 8px 20px rgba(107, 91, 149, 0.12);
+    overflow: hidden;
+}
+
+.timer-svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    transform: rotate(-90deg);
+    z-index: 10;
+    pointer-events: none;
+}
+
+.timer-bg {
+    fill: none;
+    stroke: #e2d9ec;
+    stroke-width: 6;
+}
+
+.timer-progress {
+    fill: none;
+    stroke: var(--primary-color);
+    stroke-width: 6;
+    stroke-dasharray: 283;
+    stroke-dashoffset: 283;
+    stroke-linecap: round;
+    transition: stroke-dashoffset 1s linear;
+}
+
+.icon-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+/* Corrección estricta para que la imagen se ajuste perfecta al círculo y no se desborde */
+.step-graphic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.timer-text {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+    z-index: 12;
+}
+
 /* Animación de Ondas Relajantes Lentas */
 .relax-waves {
     position: relative;
@@ -15,7 +144,7 @@
     border: 2px solid var(--primary-color);
     border-radius: 50%;
     opacity: 0;
-    animation: ripple 5s infinite cubic-bezier(0.25, 1, 0.5, 1); /* 5 segundos para mayor lentitud y relax */
+    animation: ripple 5s infinite cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .wave-ring:nth-child(1) { animation-delay: 0s; }
@@ -33,4 +162,62 @@
         height: 150px;
         opacity: 0;
     }
+}
+
+.descripcion {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-main);
+    min-height: 70px;
+    margin-bottom: 10px;
+}
+
+.sub-indicacion {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    min-height: 22px;
+    margin-bottom: 15px;
+}
+
+.controls-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.btn-nav {
+    width: 100%;
+    padding: 13px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
+
+.btn-nav:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.btn-nav:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(107, 91, 149, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: #594a80;
+}
+
+.btn-pause {
+    background-color: #f0ecf6;
+    color: var(--primary-color);
 }
