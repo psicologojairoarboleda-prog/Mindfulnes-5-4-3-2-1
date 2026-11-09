@@ -8,40 +8,42 @@
 </head>
 <body>
 
-    <main class="card-container">
-        <header class="header">
-            <span class="badge">Ejercicio Guiado</span>
-            <h1 id="titulo">Mindfulness 5-4-3-2-1</h1>
-        </header>
+    <div class="card-container">
+        <div class="header">
+            <span class="badge">Técnica de Mindfulness 5-4-3-2-1</span>
+            <h1 id="titulo">Ejercicio Guiado</h1>
+        </div>
 
-        <section class="content-body">
-            <!-- Círculo de tiempo e icono central -->
-            <div class="breath-circle-container">
-                <div class="breath-circle" id="breath-circle">
-                    <svg class="timer-svg" viewBox="0 0 100 100">
-                        <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
-                        <circle class="timer-progress" id="timer-progress" cx="50" cy="50" r="45"></circle>
-                    </svg>
-                    
-                    <div id="icon-container" class="icon-container">
-                        <span id="timer-display" class="timer-text">--</span>
+        <div class="breath-circle-container">
+            <div class="breath-circle" id="breath-circle">
+                <!-- SVG para el temporizador circular -->
+                <svg class="timer-svg" viewBox="0 0 100 100">
+                    <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
+                    <circle id="timer-progress" class="timer-progress" cx="50" cy="50" r="45"></circle>
+                </svg>
+
+                <!-- Contenedor dinámico limpio (aquí entran las ondas o las imágenes sin nada estorboso) -->
+                <div id="icon-container" class="icon-container">
+                    <div class="relax-waves">
+                        <div class="wave-ring"></div>
+                        <div class="wave-ring"></div>
+                        <div class="wave-ring"></div>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <p id="descripcion" class="descripcion">
-                Bienvenido a este espacio de calma. Haz clic en el botón para iniciar la técnica de conexión con el presente.
-            </p>
-            <p id="sub-indicacion" class="sub-indicacion"></p>
-        </section>
+        <div class="content-text">
+            <p id="descripcion" class="descripcion">Presiona el botón de abajo para comenzar tu práctica de atención plena.</p>
+            <div id="sub-indicacion" class="sub-indicacion"></div>
+        </div>
 
-        <!-- Botonera -->
-        <footer class="controls-nav">
-            <button id="btn-anterior" class="btn-nav" title="Anterior" disabled>← Anterior</button>
-            <button id="btn-pausa" class="btn-nav btn-pause" title="Pausar / Reanudar">⏸ Pausar</button>
-            <button id="btn-siguiente" class="btn-nav btn-primary" title="Siguiente">Iniciar Ejercicio</button>
-        </footer>
-    </main>
+        <div class="controls-nav">
+            <button id="btn-siguiente" class="btn-nav btn-primary">Iniciar Ejercicio</button>
+            <button id="btn-pausa" class="btn-nav btn-pause">⏸ Pausar</button>
+            <button id="btn-anterior" class="btn-nav btn-pause" disabled>← Anterior</button>
+        </div>
+    </div>
 
     <script src="script.js"></script>
 </body>
