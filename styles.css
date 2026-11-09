@@ -70,33 +70,6 @@ h1 {
     overflow: hidden;
 }
 
-.timer-svg {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    transform: rotate(-90deg);
-    z-index: 10;
-    pointer-events: none;
-}
-
-.timer-bg {
-    fill: none;
-    stroke: #e2d9ec;
-    stroke-width: 6;
-}
-
-.timer-progress {
-    fill: none;
-    stroke: var(--primary-color);
-    stroke-width: 6;
-    stroke-dasharray: 283;
-    stroke-dashoffset: 283;
-    stroke-linecap: round;
-    transition: stroke-dashoffset 1s linear;
-}
-
 .icon-container {
     position: absolute;
     width: 100%;
@@ -119,14 +92,14 @@ h1 {
 }
 
 .timer-text {
-    font-size: 1.6rem;
+    font-size: 2.2rem;
     font-weight: 800;
     color: #ffffff;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
     z-index: 12;
 }
 
-/* Animación de ondas muy lentas y relajantes (8 segundos por ciclo) */
+/* Animación de ondas EXTREMADAMENTE LENTAS Y RELAJANTES (9 segundos por ciclo) */
 .relax-waves {
     position: relative;
     width: 100%;
@@ -143,18 +116,18 @@ h1 {
     border: 2px solid var(--primary-color);
     border-radius: 50%;
     opacity: 0;
-    animation: ripple 8s infinite cubic-bezier(0.1, 0.7, 0.3, 1);
+    animation: ripple 9s infinite cubic-bezier(0.1, 0.7, 0.3, 1);
 }
 
 .wave-ring:nth-child(1) { animation-delay: 0s; }
-.wave-ring:nth-child(2) { animation-delay: 2.6s; }
-.wave-ring:nth-child(3) { animation-delay: 5.2s; }
+.wave-ring:nth-child(2) { animation-delay: 3s; }
+.wave-ring:nth-child(3) { animation-delay: 6s; }
 
 @keyframes ripple {
     0% {
         width: 20px;
         height: 20px;
-        opacity: 0.9;
+        opacity: 0.8;
     }
     100% {
         width: 155px;
