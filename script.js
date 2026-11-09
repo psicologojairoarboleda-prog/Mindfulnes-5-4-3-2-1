@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Sistema de Fade In / Fade Out ultra suave
+    // --- SISTEMA DE AUDIO CON FADE IN / FADE OUT ULTRA SUAVE ---
     function aplicarFadeIn(audioElem, volumenMax = 0.25, duracionMs = 1500) {
         audioElem.volume = 0;
         audioElem.play().catch(e => console.log("FadeIn bloqueado:", e));
@@ -58,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
+    // Pasos con los textos ajustados exactamente a lo que piden los audios
     const pasos = [
         {
             badgeText: "Técnica de Mindfulness 5-4-3-2-1",
@@ -70,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Paso 1 de 5",
             titulo: "Vista (5 Cosas)",
-            texto: "Mira a tu alrededor con atención y reconoce 5 elementos u objetos que puedas ver en este momento.",
+            texto: "Mira a tu alrededor e identifica 5 objetos.",
             audio: "audio/vista.mp3",
             imagen: "Imagenes1/VISTA.jpg",
             duracion: 15
@@ -86,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Paso 3 de 5",
             titulo: "Oído (3 Sonidos)",
-            texto: "Abre tus oídos para captar los sonidos sutiles a tu alrededor o los elementos de la naturaleza.",
+            texto: "Escucha los sonidos que vienen a continuación...",
             audio: "audio/oido.mp3",
             imagen: "Imagenes1/OIDO.jpg",
             esOidoEspecial: true,
@@ -103,7 +104,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Paso 5 de 5",
             titulo: "Gusto (1 Sabor)",
-            texto: "Presta atención a tu boca y percibe 1 sabor presente en este instante.",
+            texto: "Es hora de ser consciente de aquello que degustas.",
             audio: "audio/gusto.mp3",
             imagen: "Imagenes1/GUSTO.jpg",
             duracion: 8
@@ -240,7 +241,6 @@ document.addEventListener('DOMContentLoaded', () => {
         tituloEl.textContent = paso.titulo;
         descripcionEl.textContent = paso.texto;
 
-        // Renderizado visual según el paso (ondas para intro/cierre, imagen para los sentidos)
         if (paso.esIntro || paso.esCierre) {
             iconContainer.innerHTML = htmlOndasRelajantes;
         } else if (paso.imagen) {
@@ -250,7 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        // Si es la introducción, arrancamos la música de fondo EXACTAMENTE al mismo tiempo que la voz
         if (paso.esIntro && musicaFondo.paused) {
             aplicarFadeIn(musicaFondo, 0.25, 1000);
         }
