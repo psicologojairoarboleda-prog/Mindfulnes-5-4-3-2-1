@@ -1,9 +1,12 @@
 document.addEventListener('DOMContentLoaded', () => {
 
+    // Audio de fondo preparado desde el inicio para arrancar al instante
+    const musicaFondo = new Audio('audio/Audio9.mp3');
+    musicaFondo.loop = true;
+    musicaFondo.volume = 0;
+
     function aplicarFadeIn(audioElem, volumenMax = 0.25, duracionMs = 2000) {
-        audioElem.volume = 0;
-        audioElem.play().catch(e => console.log("FadeIn bloqueado:", e));
-        
+        audioElem.play().catch(e => console.log("Play bloqueado:", e));
         let paso = 0.01;
         let intervalo = duracionMs / (volumenMax / paso);
         let timer = setInterval(() => {
@@ -21,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (alTerminar) alTerminar();
             return;
         }
-
         let volumenInicial = audioElem.volume;
         if (volumenInicial === 0) {
             audioElem.pause();
@@ -29,7 +31,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (alTerminar) alTerminar();
             return;
         }
-
         let paso = 0.01;
         let intervalo = duracionMs / (volumenInicial / paso);
         let timer = setInterval(() => {
@@ -45,9 +46,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, intervalo);
     }
 
-    const musicaFondo = new Audio('audio/Audio9.mp3');
-    musicaFondo.loop = true;
-
     const htmlOndasRelajantes = `
         <div class="relax-waves">
             <div class="wave-ring"></div>
@@ -56,10 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    // Pasos con tus textos originales restaurados, aplicando únicamente las correcciones que pediste:
-    // - Vista: "5 objetos"
-    // - Oído: "Presta atención a los sonidos que vienen a continuación..."
-    // - Gusto: "Es hora de ser consciente de aquello que degustas"
+    // Pasos con los textos exactos y correctos
     const pasos = [
         {
             badgeText: "Técnica de Mindfulness 5-4-3-2-1",
@@ -72,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Paso 1 de 5",
             titulo: "Vista (5 Cosas)",
-            texto: "5 objetos",
+            texto: "Mira a tu alrededor con atención y reconoce 5 elementos u objetos que puedas ver en este momento.",
             audio: "audio/vista.mp3",
             imagen: "Imagenes1/VISTA.jpg",
             duracion: 15
@@ -80,7 +75,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Paso 2 de 5",
             titulo: "Tacto (4 Cosas)",
-            texto: "Siente 4 cosas que puedas tocar a tu alrededor o la textura de tu ropa.",
+            texto: "Toma consciencia de 4 cosas que puedas sentir al tacto, como la textura de tu ropa o la superficie donde te apoyas.",
             audio: "audio/tacto.mp3",
             imagen: "Imagenes1/TACTO.jpg",
             duracion: 12
@@ -97,7 +92,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Paso 4 de 5",
             titulo: "Olfato (2 Olores)",
-            texto: "Inhala despacio e identifica 2 olores presentes en tu entorno.",
+            texto: "Inhala suavemente por la nariz e intenta percibir 2 aromas u olores presentes en tu entorno.",
             audio: "audio/olfato.mp3",
             imagen: "Imagenes1/OLFATO.jpg",
             duracion: 10
@@ -113,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Cierre del Ejercicio",
             titulo: "Cierre",
-            texto: "Has completado el ejercicio. Mantén esta sensación de presencia y calma.",
+            texto: "El ejercicio ha concluido. Conserva esta sensación de calma, presencia y conexión interior.",
             audio: "audio/cierre.mp3",
             esCierre: true,
             duracion: 0
@@ -251,12 +246,13 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
+        // Arranque inmediato de la música ambiental en el primer paso (Introducción)
         if (paso.esIntro && musicaFondo.paused) {
             aplicarFadeIn(musicaFondo, 0.25, 1000);
         }
 
         audioInstruccion = new Audio(paso.audio);
-        aplicarFadeIn(audioInstruccion, 0.8, 800);
+        aplicarFadeIn(audioInstruccion, 0.8, 500);
 
         audioInstruccion.onended = () => {
             aplicarFadeOut(audioInstruccion, 800, () => {
