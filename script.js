@@ -1,43 +1,49 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // --- SISTEMA DE AUDIO CON FADE IN / FADE OUT ---
-    function reproducirConFadeIn(audioElem, volumenMax = 0.25, duracionFade = 1500) {
+    // --- SISTEMA DE AUDIO CON FADE SUAVE Y PROGRESIVO ---
+    function aplicarFadeIn(audioElem, volumenMax = 0.25, duracionMs = 1500) {
         audioElem.volume = 0;
-        audioElem.play().catch(e => console.log("FadeIn error:", e));
+        audioElem.play().catch(e => console.log("FadeIn:", e));
         
-        let incremento = 0.05;
-        let intervaloTiempo = duracionFade / (volumenMax / incremento);
-        let fade = setInterval(() => {
-            if (audioElem.volume < volumenMax - incremento) {
-                audioElem.volume = Math.min(volumenMax, audioElem.volume + incremento);
+        let paso = 0.02;
+        let intervalo = duracionMs / (volumenMax / paso);
+        let timer = setInterval(() => {
+            if (audioElem.volume < volumenMax - paso) {
+                audioElem.volume = Math.min(volumenMax, audioElem.volume + paso);
             } else {
                 audioElem.volume = volumenMax;
-                clearInterval(fade);
+                clearInterval(timer);
             }
-        }, intervaloTiempo);
+        }, intervalo);
     }
 
-    function detenerConFadeOut(audioElem, duracionFade = 1500, alTerminar = null) {
+    function aplicarFadeOut(audioElem, duracionMs = 1500, alTerminar = null) {
         if (!audioElem || audioElem.paused) {
             if (alTerminar) alTerminar();
             return;
         }
 
         let volumenInicial = audioElem.volume;
-        let decremento = 0.05;
-        let intervaloTiempo = duracionFade / (volumenInicial / decremento || 1);
+        if (volumenInicial === 0) {
+            audioElem.pause();
+            audioElem.currentTime = 0;
+            if (alTerminar) alTerminar();
+            return;
+        }
 
-        let fade = setInterval(() => {
-            if (audioElem.volume > decremento) {
-                audioElem.volume = Math.max(0, audioElem.volume - decremento);
+        let paso = 0.02;
+        let intervalo = duracionMs / (volumenInicial / paso);
+        let timer = setInterval(() => {
+            if (audioElem.volume > paso) {
+                audioElem.volume = Math.max(0, audioElem.volume - paso);
             } else {
                 audioElem.volume = 0;
                 audioElem.pause();
                 audioElem.currentTime = 0;
-                clearInterval(fade);
+                clearInterval(timer);
                 if (alTerminar) alTerminar();
             }
-        }, intervaloTiempo);
+        }, intervalo);
     }
 
     // Música ambiental de fondo
@@ -53,54 +59,61 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    // Pasos estructurados de la técnica
+    // Pasos ajustados con textos acordes al audio y estructura con nombre del ejercicio
     const pasos = [
         {
+            badgeText: "Técnica de Mindfulness 5-4-3-2-1",
             titulo: "Introducción",
-            texto: "Acomódate en tu lugar. Toma una respiración profunda y prepárate para conectar con tus sentidos.",
+            texto: "Busca una postura cómoda, toma una respiración profunda y prepárate para anclar tu atención en el presente a través de tus sentidos.",
             audio: "audio/intro.mp3",
             esIntro: true,
             duracion: 0
         },
         {
+            badgeText: "Paso 1 de 5",
             titulo: "Vista (5 Cosas)",
-            texto: "Observa a tu alrededor e identifica 5 cosas que puedas ver claramente.",
+            texto: "Mira a tu alrededor con atención y reconoce 5 elementos u objetos que puedas ver en este momento.",
             audio: "audio/vista.mp3",
             imagen: "Imagenes1/VISTA.jpg",
             duracion: 15
         },
         {
+            badgeText: "Paso 2 de 5",
             titulo: "Tacto (4 Cosas)",
-            texto: "Siente 4 cosas que puedas tocar a tu alrededor o la textura de tu ropa.",
+            texto: "Toma consciencia de 4 cosas que puedas sentir al tacto, como la textura de tu ropa o la superficie donde te apoyas.",
             audio: "audio/tacto.mp3",
             imagen: "Imagenes1/TACTO.jpg",
             duracion: 12
         },
         {
+            badgeText: "Paso 3 de 5",
             titulo: "Oído (3 Sonidos)",
-            texto: "Escucha con atención los sonidos de tu entorno o de la naturaleza.",
+            texto: "Abre tus oídos para captar los sonidos sutiles a tu alrededor o los elementos de la naturaleza.",
             audio: "audio/oido.mp3",
             imagen: "Imagenes1/OIDO.jpg",
-            esOidoEspecial: true, // Secuencia mar, aves, lluvia con fade
+            esOidoEspecial: true, // Secuencia mar, aves, lluvia con fundido suave
             duracion: 0
         },
         {
+            badgeText: "Paso 4 de 5",
             titulo: "Olfato (2 Olores)",
-            texto: "Inhala despacio e identifica 2 olores presentes en tu entorno.",
+            texto: "Inhala suavemente por la nariz e intenta percibir 2 aromas u olores presentes en tu entorno.",
             audio: "audio/olfato.mp3",
             imagen: "Imagenes1/OLFATO.jpg",
             duracion: 10
         },
         {
+            badgeText: "Paso 5 de 5",
             titulo: "Gusto (1 Sabor)",
-            texto: "Percibe y reconoce 1 sabor en tu boca en este momento.",
+            texto: "Presta atención a tu boca y percibe 1 sabor presente en este instante.",
             audio: "audio/gusto.mp3",
             imagen: "Imagenes1/GUSTO.jpg",
             duracion: 8
         },
         {
+            badgeText: "Cierre del Ejercicio",
             titulo: "Cierre",
-            texto: "Has completado el ejercicio. Mantén esta sensación de presencia y calma.",
+            texto: "El ejercicio ha concluido. Conserva esta sensación de calma, presencia y conexión interior.",
             audio: "audio/cierre.mp3",
             esCierre: true,
             duracion: 0
@@ -114,6 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let tiempoTotal = 0;
     let enPausa = false;
 
+    const badgeEl = document.querySelector('.badge'); // Elemento superior del nombre/etiqueta
     const tituloEl = document.getElementById('titulo');
     const descripcionEl = document.getElementById('descripcion');
     const subIndicacionEl = document.getElementById('sub-indicacion');
@@ -139,14 +153,12 @@ document.addEventListener('DOMContentLoaded', () => {
         btnPausa.textContent = "⏸ Pausar";
     }
 
-    // Círculo simple y limpio (el progreso se llena de forma directa)
     function actualizarCirculoProgreso(segundosRestantes, total) {
         if (total === 0) {
             timerProgress.style.strokeDashoffset = 283;
             return;
         }
         const maxOffset = 283;
-        // Se llena proporcionalmente conforme avanza el tiempo
         const transcurrido = total - segundosRestantes;
         const offset = maxOffset - (transcurrido / total) * maxOffset;
         timerProgress.style.strokeDashoffset = offset;
@@ -170,17 +182,16 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     clearInterval(timerInterval);
                     if (timerDisplay) timerDisplay.textContent = "";
-                    actualizarCirculoProgreso(tiempoTotal, tiempoTotal); // Llega lleno al final
+                    actualizarCirculoProgreso(tiempoTotal, tiempoTotal);
                     if (callback) callback();
                 }
             }
         }, 1000);
     }
 
-    // Secuencia de oído con FADE OUT y FADE IN en la música de fondo
+    // Secuencia del Oído con desvanecimiento (*Fade Out*) suave de la música ambiental
     function ejecutarSecuenciaOido() {
-        // Desvanecer la música de fondo suavemente
-        detenerConFadeOut(musicaFondo, 1500, () => {
+        aplicarFadeOut(musicaFondo, 2000, () => {
             const sonidosOido = ["audio/mar.mp3", "audio/aves.mp3", "audio/lluvia.mp3"];
             let indiceSonido = 0;
 
@@ -193,10 +204,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     const archivoAudio = sonidosOido[indiceSonido];
                     audioInstruccion = new Audio(archivoAudio);
                     
-                    reproducirConFadeIn(audioInstruccion, 0.5, 800);
+                    aplicarFadeIn(audioInstruccion, 0.5, 1000);
 
                     iniciarConteoRegresivo(7, () => {
-                        detenerConFadeOut(audioInstruccion, 800, () => {
+                        aplicarFadeOut(audioInstruccion, 1000, () => {
                             indiceSonido++;
 
                             if (indiceSonido < sonidosOido.length) {
@@ -206,8 +217,8 @@ document.addEventListener('DOMContentLoaded', () => {
                                     reproducirSiguienteSonidoOido();
                                 });
                             } else {
-                                // Al terminar los 3 sonidos, reanudamos la música de fondo con Fade In y pasamos al olfato
-                                reproducirConFadeIn(musicaFondo, 0.25, 2000);
+                                // Al terminar los 3 sonidos, reanudamos la música de fondo con fundido suave (*Fade In*) y avanzamos al olfato
+                                aplicarFadeIn(musicaFondo, 0.25, 2500);
                                 if (pasoActual < pasos.length - 1) {
                                     ejecutarPaso(pasoActual + 1);
                                 }
@@ -229,10 +240,11 @@ document.addEventListener('DOMContentLoaded', () => {
         btnAnterior.disabled = (pasoActual <= 0);
 
         const paso = pasos[indice];
+        if (badgeEl) badgeEl.textContent = paso.badgeText; // Actualiza el nombre/etiqueta superior del ejercicio
         tituloEl.textContent = paso.titulo;
         descripcionEl.textContent = paso.texto;
 
-        // Render visual limpio
+        // Renderizado visual limpio
         if (paso.esIntro || paso.esCierre) {
             iconContainer.innerHTML = ondasIntro;
         } else if (paso.imagen) {
@@ -242,17 +254,17 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        // Si es la introducción, arrancamos la música de fondo con Fade In de inmediato
+        // Si es la introducción, arrancamos la música de fondo con fundido suave (*Fade In*)
         if (paso.esIntro && musicaFondo.paused) {
-            reproducirConFadeIn(musicaFondo, 0.25, 2000);
+            aplicarFadeIn(musicaFondo, 0.25, 2500);
         }
 
-        // Reproducir audio de voz del paso actual con Fade In
+        // Reproducir la voz guía del paso actual con fundido suave
         audioInstruccion = new Audio(paso.audio);
-        reproducirConFadeIn(audioInstruccion, 0.8, 800);
+        aplicarFadeIn(audioInstruccion, 0.8, 1000);
 
         audioInstruccion.onended = () => {
-            detenerConFadeOut(audioInstruccion, 800, () => {
+            aplicarFadeOut(audioInstruccion, 1000, () => {
                 if (paso.esOidoEspecial) {
                     ejecutarSecuenciaOido();
                 } else if (paso.duracion > 0) {
@@ -267,7 +279,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else if (paso.esCierre) {
                     finalizarEjercicio();
                 } else {
-                    // Avance automático continuo en la introducción
                     if (pasoActual < pasos.length - 1) {
                         ejecutarPaso(pasoActual + 1);
                     }
@@ -280,7 +291,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function finalizarEjercicio() {
         subIndicacionEl.textContent = "¡Sesión finalizada con éxito!";
-        detenerConFadeOut(musicaFondo, 2000);
+        aplicarFadeOut(musicaFondo, 2500);
         btnSiguiente.textContent = "Reiniciar ↺";
     }
 
