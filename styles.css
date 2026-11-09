@@ -99,7 +99,7 @@ h1 {
     z-index: 12;
 }
 
-/* Animación de ondas EXTREMADAMENTE LENTAS Y RELAJANTES (9 segundos por ciclo) */
+/* Animación de ondas EXTREMADAMENTE LENTAS Y RELAJANTES (12 segundos por ciclo) */
 .relax-waves {
     position: relative;
     width: 100%;
@@ -111,27 +111,27 @@ h1 {
 
 .wave-ring {
     position: absolute;
-    width: 30px;
-    height: 30px;
+    width: 25px;
+    height: 25px;
     border: 2px solid var(--primary-color);
     border-radius: 50%;
     opacity: 0;
-    animation: ripple 9s infinite cubic-bezier(0.1, 0.7, 0.3, 1);
+    animation: ripple 12s infinite cubic-bezier(0.1, 0.7, 0.3, 1);
 }
 
 .wave-ring:nth-child(1) { animation-delay: 0s; }
-.wave-ring:nth-child(2) { animation-delay: 3s; }
-.wave-ring:nth-child(3) { animation-delay: 6s; }
+.wave-ring:nth-child(2) { animation-delay: 4s; }
+.wave-ring:nth-child(3) { animation-delay: 8s; }
 
 @keyframes ripple {
     0% {
-        width: 20px;
-        height: 20px;
+        width: 15px;
+        height: 15px;
         opacity: 0.8;
     }
     100% {
-        width: 155px;
-        height: 155px;
+        width: 160px;
+        height: 160px;
         opacity: 0;
     }
 }
