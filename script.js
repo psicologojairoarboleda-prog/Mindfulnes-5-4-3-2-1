@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Música ambiental de fondo
-    const musicaFondo = new Audio("https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3");
+    // Música ambiental de fondo local (Carpeta Audios/Audio9.mp3)
+    const musicaFondo = new Audio('Audios/Audio9.mp3');
     musicaFondo.loop = true;
-    musicaFondo.volume = 0.15; // Volumen objetivo (15%)
+    musicaFondo.volume = 0.25; // Volumen agradable (25%)
 
     // Iconos SVG de los sentidos
     const iconos = {
@@ -20,53 +20,49 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             titulo: "Introducción",
             texto: "Acomódate en tu lugar. Toma una respiración profunda y prepárate para conectar con tus sentidos.",
-            audio: "audio/intro.mp3",
+            audio: "Audios/Audio1.mp3",
             icono: iconos.inicio,
             duracion: 0
         },
         {
             titulo: "Vista (5 Cosas)",
             texto: "Observa a tu alrededor e identifica 5 cosas que puedas ver claramente.",
-            audio: "audio/vista.mp3",
+            audio: "Audios/Audio2.mp3",
             icono: iconos.vista,
-            duracion: 8
+            duracion: 15
         },
         {
             titulo: "Tacto (4 Cosas)",
             texto: "Siente 4 cosas que puedas tocar a tu alrededor o la textura de tu ropa.",
-            audio: "audio/tacto.mp3",
+            audio: "Audios/Audio3.mp3",
             icono: iconos.tacto,
-            duracion: 8
+            duracion: 12
         },
         {
             titulo: "Oído (3 Sonidos)",
-            texto: "Escucha con atención los sonidos de la naturaleza que se reproducirán a continuación.",
-            esOido: true,
+            texto: "Escucha con atención los sonidos de tu entorno o de la naturaleza.",
+            audio: "Audios/Audio4.mp3",
             icono: iconos.oido,
-            subAudios: [
-                { nombre: "Aves", archivo: "audio/aves.mp3" },
-                { nombre: "Lluvia", archivo: "audio/lluvia.mp3" },
-                { nombre: "Mar", archivo: "audio/mar.mp3" }
-            ]
+            duracion: 12
         },
         {
             titulo: "Olfato (2 Olores)",
             texto: "Inhala despacio e identifica 2 olores presentes en tu entorno.",
-            audio: "audio/olfato.mp3",
+            audio: "Audios/Audio5.mp3",
             icono: iconos.olfato,
-            duracion: 6
+            duracion: 10
         },
         {
             titulo: "Gusto (1 Sabor)",
             texto: "Percibe y reconoce 1 sabor en tu boca en este momento.",
-            audio: "audio/gusto.mp3",
+            audio: "Audios/Audio6.mp3",
             icono: iconos.gusto,
-            duracion: 4
+            duracion: 8
         },
         {
             titulo: "Cierre",
             texto: "Has completado el ejercicio. Mantén esta sensación de presencia y calma.",
-            audio: "audio/cierre.mp3",
+            audio: "Audios/Audio7.mp3",
             icono: iconos.cierre,
             duracion: 0,
             esCierre: true
@@ -93,52 +89,6 @@ document.addEventListener('DOMContentLoaded', () => {
     btnAnterior.disabled = true;
     btnSiguiente.textContent = "Iniciar Ejercicio";
 
-    // --- FUNCIONES DE TRANSICIÓN SUAVE (FADE IN / FADE OUT) ---
-
-    function aplicarFadeOut(audioElement, duracionMs = 1500, callback = null) {
-        if (!audioElement || audioElement.paused) {
-            if (callback) callback();
-            return;
-        }
-        const volumenInicial = audioElement.volume;
-        const intervalo = 50;
-        const pasos = duracionMs / intervalo;
-        const decremento = volumenInicial / pasos;
-
-        const timerFade = setInterval(() => {
-            if (audioElement.volume - decremento > 0) {
-                audioElement.volume -= decremento;
-            } else {
-                audioElement.volume = 0;
-                audioElement.pause();
-                audioElement.volume = volumenInicial; // Restablecer volumen de origen
-                clearInterval(timerFade);
-                if (callback) callback();
-            }
-        }, intervalo);
-    }
-
-    function aplicarFadeIn(audioElement, volumenMaximo = 0.15, duracionMs = 1500) {
-        if (!audioElement) return;
-        audioElement.volume = 0;
-        audioElement.play().catch(() => {});
-
-        const intervalo = 50;
-        const pasos = duracionMs / intervalo;
-        const incremento = volumenMaximo / pasos;
-
-        const timerFade = setInterval(() => {
-            if (audioElement.volume + incremento < volumenMaximo) {
-                audioElement.volume += incremento;
-            } else {
-                audioElement.volume = volumenMaximo;
-                clearInterval(timerFade);
-            }
-        }, intervalo);
-    }
-
-    // --- CONTROL DE AUDIOS Y TEMPORIZADOR ---
-
     function detenerTodoAudio() {
         if (audioInstruccion) {
             audioInstruccion.pause();
@@ -152,7 +102,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function actualizarCirculoProgreso(segundosRestantes, total) {
         if (total === 0) {
-            timerProgress.style.strokeDashoffset = 0;
+            timerProgress.style.strokeDashoffset = 283;
             return;
         }
         const maxOffset = 283;
@@ -198,85 +148,42 @@ document.addEventListener('DOMContentLoaded', () => {
 
         iconContainer.innerHTML = `${paso.icono}<span id="timer-display" class="timer-text">--</span>`;
 
-        if (paso.esCierre) {
-            // Reproducir audio de cierre y al finalizar, desvanecer la música de fondo en 3s
-            if (musicaFondo.paused) aplicarFadeIn(musicaFondo, 0.15, 1000);
+        // Iniciar música de fondo local (Audio9.mp3) si está detenida
+        if (musicaFondo.paused) {
+            musicaFondo.play().catch(err => console.warn("Música de fondo bloqueada:", err));
+        }
 
-            audioInstruccion = new Audio(paso.audio);
-            audioInstruccion.play().catch(() => {});
+        audioInstruccion = new Audio(paso.audio);
+        audioInstruccion.play().catch(err => console.warn("Audio de voz no encontrado:", err));
 
-            audioInstruccion.onended = () => {
-                subIndicacionEl.textContent = "Sesión finalizada. Desconectando...";
-                aplicarFadeOut(musicaFondo, 3000, () => {
-                    subIndicacionEl.textContent = "¡Que tengas un excelente día!";
-                });
-            };
-        } else if (paso.esOido) {
-            if (musicaFondo.paused) aplicarFadeIn(musicaFondo, 0.15, 1000);
-
-            audioInstruccion = new Audio("audio/oido.mp3");
-            audioInstruccion.play().catch(() => {});
-
-            audioInstruccion.onended = () => {
-                // Hacer Fade Out de la música de fondo antes de iniciar la naturaleza
-                aplicarFadeOut(musicaFondo, 1500, () => {
-                    reproducirSecuenciaOido(paso.subAudios, 0);
-                });
-            };
-        } else {
-            if (musicaFondo.paused) aplicarFadeIn(musicaFondo, 0.15, 1000);
-
-            audioInstruccion = new Audio(paso.audio);
-            audioInstruccion.play().catch(() => {});
-
-            audioInstruccion.onended = () => {
-                if (paso.duracion > 0) {
-                    subIndicacionEl.textContent = "Tiempo de práctica...";
-                    iniciarConteoRegresivo(paso.duracion, () => {
-                        if (pasoActual < pasos.length - 1) {
-                            ejecutarPaso(pasoActual + 1);
-                        }
-                    });
-                } else {
+        audioInstruccion.onended = () => {
+            if (paso.duracion > 0) {
+                subIndicacionEl.textContent = "Tiempo de práctica...";
+                iniciarConteoRegresivo(paso.duracion, () => {
                     if (pasoActual < pasos.length - 1) {
                         ejecutarPaso(pasoActual + 1);
+                    } else {
+                        finalizarEjercicio();
                     }
+                });
+            } else {
+                if (paso.esCierre) {
+                    finalizarEjercicio();
+                } else if (pasoActual < pasos.length - 1) {
+                    ejecutarPaso(pasoActual + 1);
                 }
-            };
-        }
+            }
+        };
 
         btnSiguiente.textContent = (indice < pasos.length - 1) ? "Siguiente →" : "Reiniciar ↺";
     }
 
-    function reproducirSecuenciaOido(audios, indiceAudio) {
-        if (indiceAudio >= audios.length) {
-            // Entrar de nuevo la música de fondo suavemente al terminar todos los sonidos
-            aplicarFadeIn(musicaFondo, 0.15, 2000);
-            if (pasoActual < pasos.length - 1) {
-                ejecutarPaso(pasoActual + 1);
-            }
-            return;
-        }
-
-        const actual = audios[indiceAudio];
-        subIndicacionEl.textContent = `Escuchando: ${actual.nombre} (${indiceAudio + 1} de 3)...`;
-
-        audioInstruccion = new Audio(actual.archivo);
-        // Iniciar el sonido de naturaleza con Fade In
-        aplicarFadeIn(audioInstruccion, 0.8, 1500);
-
-        iniciarConteoRegresivo(10, () => {
-            // Cuando falten pocos segundos / termine el tiempo, desvanecer con Fade Out
-            aplicarFadeOut(audioInstruccion, 1500, () => {
-                subIndicacionEl.textContent = `Tiempo de actividad (${actual.nombre})...`;
-                iniciarConteoRegresivo(3, () => {
-                    reproducirSecuenciaOido(audios, indiceAudio + 1);
-                });
-            });
-        });
+    function finalizarEjercicio() {
+        subIndicacionEl.textContent = "¡Sesión finalizada con éxito!";
+        musicaFondo.pause();
+        musicaFondo.currentTime = 0;
+        btnSiguiente.textContent = "Reiniciar ↺";
     }
-
-    // --- CONTROLES DE BOTONES ---
 
     btnSiguiente.addEventListener('click', () => {
         if (pasoActual === -1 || pasoActual >= pasos.length - 1) {
@@ -302,9 +209,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnPausa.textContent = "▶ Reanudar";
         } else {
             if (audioInstruccion) audioInstruccion.play().catch(() => {});
-            if (!pasos[pasoActual].esOido) {
-                musicaFondo.play().catch(() => {});
-            }
+            musicaFondo.play().catch(() => {});
             btnPausa.textContent = "⏸ Pausar";
         }
     });
