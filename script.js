@@ -56,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    // Pasos con la frase exacta corregida en el Oído
+    // Pasos con las frases exactas solicitadas
     const pasos = [
         {
             badgeText: "Técnica de Mindfulness 5-4-3-2-1",
@@ -249,7 +249,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         if (paso.esIntro && musicaFondo.paused) {
-            aplicarFadeIn(musicaFondo, 0.25, 1500);
+            aplicarFadeIn(musicaFondo, 0.25, 1000);
         }
 
         audioInstruccion = new Audio(paso.audio);
