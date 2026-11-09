@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Sistema de audio con fundidos suaves
     function aplicarFadeIn(audioElem, volumenMax = 0.25, duracionMs = 2000) {
         audioElem.volume = 0;
         audioElem.play().catch(e => console.log("FadeIn bloqueado:", e));
@@ -57,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    // Pasos con los textos exactos solicitados
+    // Pasos con la frase exacta corregida en el Oído
     const pasos = [
         {
             badgeText: "Técnica de Mindfulness 5-4-3-2-1",
@@ -86,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Paso 3 de 5",
             titulo: "Oído (3 Sonidos)",
-            texto: "Los sonidos que vienen a continuación...",
+            texto: "Presta atención a los sonidos que vienen a continuación...",
             audio: "audio/oido.mp3",
             imagen: "Imagenes1/OIDO.jpg",
             esOidoEspecial: true,
@@ -249,7 +248,6 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        // Si es la introducción, arrancamos la música de fondo al instante exacto
         if (paso.esIntro && musicaFondo.paused) {
             aplicarFadeIn(musicaFondo, 0.25, 1500);
         }
