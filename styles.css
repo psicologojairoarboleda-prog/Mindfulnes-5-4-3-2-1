@@ -94,7 +94,7 @@ h1 {
     stroke-dasharray: 283;
     stroke-dashoffset: 283;
     stroke-linecap: round;
-    transition: stroke-dashoffset 1s linear; /* Transición fluida segundo a segundo */
+    transition: stroke-dashoffset 1s linear; /* Avanza sin saltos bruscos */
 }
 
 .icon-container {
@@ -107,6 +107,7 @@ h1 {
     z-index: 2;
 }
 
+/* Imagen de cada sentido totalmente limpia */
 .step-graphic {
     width: 100%;
     height: 100%;
@@ -118,7 +119,7 @@ h1 {
     z-index: 1;
 }
 
-/* Conteo numérico sutil y limpio sin recuadros ni guiones */
+/* Conteo flotante sin recuadros ni sombras feas */
 .timer-text {
     font-size: 1.6rem;
     font-weight: 800;
@@ -127,7 +128,7 @@ h1 {
     z-index: 12;
 }
 
-/* Animación de ondas expansivas relajantes */
+/* Animación de Ondas Relajantes para la Intro y Cierre */
 .relax-waves {
     position: relative;
     width: 100%;
