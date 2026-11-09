@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
 
-    // Música ambiental de fondo (dentro de la carpeta audio/)
+    // Música ambiental de fondo local (Carpeta audio/Audio9.mp3)
     const musicaFondo = new Audio('audio/Audio9.mp3');
     musicaFondo.loop = true;
-    musicaFondo.volume = 0.25; // Volumen agradable (25%)
+    musicaFondo.volume = 0.25;
 
     // Iconos SVG de los sentidos
     const iconos = {
@@ -16,7 +16,6 @@ document.addEventListener('DOMContentLoaded', () => {
         cierre: `<svg class="sense-icon" viewBox="0 0 24 24"><path stroke="currentColor" d="M12 21a9 9 0 1 0 0-18 9 9 0 0 0 0 18z"/><path stroke="currentColor" d="M9 12l2 2 4-4"/></svg>`
     };
 
-    // Pasos vinculados exactamente a los nombres de tus audios en la carpeta 'audio'
     const pasos = [
         {
             titulo: "Introducción",
@@ -149,13 +148,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
         iconContainer.innerHTML = `${paso.icono}<span id="timer-display" class="timer-text">--</span>`;
 
-        // Reproducir música de fondo local (audio/Audio9.mp3)
+        // Reproducir música de fondo local
         if (musicaFondo.paused) {
-            musicaFondo.play().catch(err => console.warn("Música de fondo bloqueada por navegador:", err));
+            musicaFondo.play().catch(err => console.warn("Música bloqueada:", err));
         }
 
+        // Reproducir audio del paso actual tal como funcionaba originalmente
         audioInstruccion = new Audio(paso.audio);
-        audioInstruccion.play().catch(err => console.warn("Error al reproducir audio de voz:", err));
+        audioInstruccion.play().catch(err => console.warn("Error audio:", err));
 
         audioInstruccion.onended = () => {
             if (paso.duracion > 0) {
