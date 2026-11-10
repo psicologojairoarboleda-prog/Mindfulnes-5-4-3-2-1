@@ -1,318 +1,195 @@
-document.addEventListener('DOMContentLoaded', () => {
+:root {
+    --bg-color: #f7f4f0;
+    --card-bg: #ffffff;
+    --primary-color: #6b5b95;
+    --text-main: #2c2c2c;
+}
 
-    const musicaFondo = new Audio('audio/Audio9.mp3');
-    musicaFondo.loop = true;
-    musicaFondo.volume = 0;
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f7f4f0 0%, #ece6de 100%);
+    color: var(--text-main);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
 
-    function reproducirAudioFondoInstantaneo() {
-        if (musicaFondo.paused) {
-            musicaFondo.currentTime = 3.5; // Salta silencio inicial
-            musicaFondo.play().then(() => {
-                let volumenMax = 0.25;
-                let paso = 0.02;
-                let timer = setInterval(() => {
-                    if (musicaFondo.volume < volumenMax - paso) {
-                        musicaFondo.volume = Math.min(volumenMax, musicaFondo.volume + paso);
-                    } else {
-                        musicaFondo.volume = volumenMax;
-                        clearInterval(timer);
-                    }
-                }, 50);
-            }).catch(e => console.log("Audio bloqueado por navegador:", e));
-        }
+.card-container {
+    background-color: var(--card-bg);
+    border-radius: 28px;
+    padding: 35px 25px;
+    max-width: 420px;
+    width: 100%;
+    text-align: center;
+    box-shadow: 0 15px 35px rgba(107, 91, 149, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+}
+
+.header {
+    margin-bottom: 20px;
+}
+
+.badge {
+    background-color: #f0ecf6;
+    color: var(--primary-color);
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    padding: 6px 14px;
+    border-radius: 20px;
+    letter-spacing: 1.5px;
+}
+
+h1 {
+    font-size: 1.5rem;
+    margin-top: 12px;
+    margin-bottom: 0;
+    color: var(--primary-color);
+}
+
+.breath-circle-container {
+    display: flex;
+    justify-content: center;
+    margin: 25px 0;
+}
+
+.breath-circle {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: radial-gradient(circle, #faf8fc 0%, #f0ecf6 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    box-shadow: inset 0 4px 10px rgba(0,0,0,0.03), 0 8px 20px rgba(107, 91, 149, 0.12);
+    overflow: hidden;
+}
+
+.icon-container {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+
+.step-graphic {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.timer-text {
+    font-size: 2.2rem;
+    font-weight: 800;
+    color: #ffffff;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.6);
+    z-index: 12;
+}
+
+/* Animación de ondas EXTREMADAMENTE LENTAS Y RELAJANTES (12 segundos por ciclo) */
+.relax-waves {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.wave-ring {
+    position: absolute;
+    width: 25px;
+    height: 25px;
+    border: 2px solid var(--primary-color);
+    border-radius: 50%;
+    opacity: 0;
+    animation: ripple 12s infinite cubic-bezier(0.1, 0.7, 0.3, 1);
+}
+
+.wave-ring:nth-child(1) { animation-delay: 0s; }
+.wave-ring:nth-child(2) { animation-delay: 4s; }
+.wave-ring:nth-child(3) { animation-delay: 8s; }
+
+@keyframes ripple {
+    0% {
+        width: 15px;
+        height: 15px;
+        opacity: 0.8;
     }
-
-    function aplicarFadeIn(audioElem, volumenMax = 0.8, duracionMs = 500) {
-        audioElem.volume = 0;
-        audioElem.play().catch(e => console.log("Play bloqueado:", e));
-        let paso = 0.05;
-        let intervalo = duracionMs / (volumenMax / paso);
-        let timer = setInterval(() => {
-            if (audioElem.volume < volumenMax - paso) {
-                audioElem.volume = Math.min(volumenMax, audioElem.volume + paso);
-            } else {
-                audioElem.volume = volumenMax;
-                clearInterval(timer);
-            }
-        }, intervalo);
+    100% {
+        width: 160px;
+        height: 160px;
+        opacity: 0;
     }
+}
 
-    function aplicarFadeOut(audioElem, duracionMs = 1000, alTerminar = null) {
-        if (!audioElem || audioElem.paused) {
-            if (alTerminar) alTerminar();
-            return;
-        }
-        let volumenInicial = audioElem.volume;
-        if (volumenInicial === 0) {
-            audioElem.pause();
-            audioElem.currentTime = 0;
-            if (alTerminar) alTerminar();
-            return;
-        }
-        let paso = 0.05;
-        let intervalo = duracionMs / (volumenInicial / paso);
-        let timer = setInterval(() => {
-            if (audioElem.volume > paso) {
-                audioElem.volume = Math.max(0, audioElem.volume - paso);
-            } else {
-                audioElem.volume = 0;
-                audioElem.pause();
-                audioElem.currentTime = 0;
-                clearInterval(timer);
-                if (alTerminar) alTerminar();
-            }
-        }, intervalo);
-    }
+.descripcion {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--text-main);
+    min-height: 70px;
+    margin-bottom: 10px;
+}
 
-    const htmlOndasRelajantes = `
-        <div class="relax-waves">
-            <div class="wave-ring"></div>
-            <div class="wave-ring"></div>
-            <div class="wave-ring"></div>
-        </div>
-    `;
+.sub-indicacion {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    min-height: 22px;
+    margin-bottom: 15px;
+}
 
-    // Pasos con la frase exacta corregida para la vista
-    const pasos = [
-        {
-            badgeText: "Técnica de Mindfulness 5-4-3-2-1",
-            titulo: "Introducción",
-            texto: "Busca una postura cómoda, toma una respiración profunda y prepárate para anclar tu atención en el presente a través de tus sentidos.",
-            audio: "audio/intro.mp3",
-            esIntro: true,
-            duracion: 0
-        },
-        {
-            badgeText: "Paso 1 de 5",
-            titulo: "Vista (5 Cosas)",
-            texto: "Mira a tu alrededor con atención e identifica 5 objetos que puedas ver en este momento.",
-            audio: "audio/vista.mp3",
-            imagen: "Imagenes1/VISTA.jpg",
-            duracion: 15
-        },
-        {
-            badgeText: "Paso 2 de 5",
-            titulo: "Tacto (4 Cosas)",
-            texto: "Toma consciencia de 4 cosas que puedas sentir al tacto, como la textura de tu ropa o la superficie donde te apoyas.",
-            audio: "audio/tacto.mp3",
-            imagen: "Imagenes1/TACTO.jpg",
-            duracion: 12
-        },
-        {
-            badgeText: "Paso 3 de 5",
-            titulo: "Oído (3 Sonidos)",
-            texto: "Presta atención a los sonidos que vienen a continuación...",
-            audio: "audio/oido.mp3",
-            imagen: "Imagenes1/OIDO.jpg",
-            esOidoEspecial: true,
-            duracion: 0
-        },
-        {
-            badgeText: "Paso 4 de 5",
-            titulo: "Olfato (2 Olores)",
-            texto: "Inhala suavemente por la nariz e intenta percibir 2 aromas u olores presentes en tu entorno.",
-            audio: "audio/olfato.mp3",
-            imagen: "Imagenes1/OLFATO.jpg",
-            duracion: 10
-        },
-        {
-            badgeText: "Paso 5 de 5",
-            titulo: "Gusto (1 Sabor)",
-            texto: "Es hora de ser consciente de aquello que degustas",
-            audio: "audio/gusto.mp3",
-            imagen: "Imagenes1/GUSTO.jpg",
-            duracion: 8
-        },
-        {
-            badgeText: "Cierre del Ejercicio",
-            titulo: "Cierre",
-            texto: "El ejercicio ha concluido. Conserva esta sensación de calma, presencia y conexión interior.",
-            audio: "audio/cierre.mp3",
-            esCierre: true,
-            duracion: 0
-        }
-    ];
+.controls-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
 
-    let pasoActual = -1;
-    let audioInstruccion = null;
-    let timerInterval = null;
-    let tiempoRestante = 0;
-    let enPausa = false;
+.btn-nav {
+    width: 100%;
+    padding: 13px;
+    font-size: 0.95rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+}
 
-    const badgeEl = document.querySelector('.badge');
-    const tituloEl = document.getElementById('titulo');
-    const descripcionEl = document.getElementById('descripcion');
-    const subIndicacionEl = document.getElementById('sub-indicacion');
-    const iconContainer = document.getElementById('icon-container');
+.btn-nav:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
 
-    const btnAnterior = document.getElementById('btn-anterior');
-    const btnPausa = document.getElementById('btn-pausa');
-    const btnSiguiente = document.getElementById('btn-siguiente');
+.btn-nav:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
 
-    btnAnterior.disabled = true;
-    btnSiguiente.textContent = "Iniciar Ejercicio";
+.btn-primary {
+    background-color: var(--primary-color);
+    color: #ffffff;
+    box-shadow: 0 4px 15px rgba(107, 91, 149, 0.3);
+}
 
-    function detenerTodoAudioInstantly() {
-        if (audioInstruccion) {
-            audioInstruccion.pause();
-            audioInstruccion.currentTime = 0;
-            audioInstruccion.onended = null;
-            audioInstruccion = null;
-        }
-        if (timerInterval) clearInterval(timerInterval);
-        enPausa = false;
-        btnPausa.textContent = "⏸ Pausar";
-    }
+.btn-primary:hover:not(:disabled) {
+    background-color: #594a80;
+}
 
-    function iniciarConteoRegresivo(segundos, callback) {
-        if (timerInterval) clearInterval(timerInterval);
-        tiempoRestante = segundos;
-
-        const timerDisplay = document.getElementById('timer-display');
-        if (timerDisplay) timerDisplay.textContent = tiempoRestante;
-
-        timerInterval = setInterval(() => {
-            if (!enPausa) {
-                tiempoRestante--;
-                if (tiempoRestante >= 0) {
-                    if (timerDisplay) timerDisplay.textContent = tiempoRestante;
-                } else {
-                    clearInterval(timerInterval);
-                    if (timerDisplay) timerDisplay.textContent = "";
-                    if (callback) callback();
-                }
-            }
-        }, 1000);
-    }
-
-    function ejecutarSecuenciaOido() {
-        aplicarFadeOut(musicaFondo, 1500, () => {
-            const sonidosOido = ["audio/mar.mp3", "audio/aves.mp3", "audio/lluvia.mp3"];
-            let indiceSonido = 0;
-
-            function reproducirSiguienteSonidoOido() {
-                if (enPausa) return;
-
-                if (indiceSonido < sonidosOido.length) {
-                    const archivoAudio = sonidosOido[indiceSonido];
-                    audioInstruccion = new Audio(archivoAudio);
-                    
-                    subIndicacionEl.textContent = `Sonido ${indiceSonido + 1} de 3`;
-                    aplicarFadeIn(audioInstruccion, 0.7, 800);
-
-                    // 8 segundos de sonido
-                    iniciarConteoRegresivo(8, () => {
-                        aplicarFadeOut(audioInstruccion, 800, () => {
-                            indiceSonido++;
-
-                            if (indiceSonido < sonidosOido.length) {
-                                subIndicacionEl.textContent = "Nómbralo mentalmente...";
-                                // 4 segundos de pausa mental
-                                iniciarConteoRegresivo(4, () => {
-                                    reproducirSiguienteSonidoOido();
-                                });
-                            } else {
-                                subIndicacionEl.textContent = "";
-                                reproducirAudioFondoInstantaneo();
-                                if (pasoActual < pasos.length - 1) {
-                                    ejecutarPaso(pasoActual + 1);
-                                }
-                            }
-                        });
-                    });
-                }
-            }
-
-            reproducirSiguienteSonidoOido();
-        });
-    }
-
-    function ejecutarPaso(indice) {
-        detenerTodoAudioInstantly();
-        subIndicacionEl.textContent = "";
-
-        pasoActual = indice;
-        btnAnterior.disabled = (pasoActual <= 0);
-
-        const paso = pasos[indice];
-        if (badgeEl) badgeEl.textContent = paso.badgeText;
-        tituloEl.textContent = paso.titulo;
-        descripcionEl.textContent = paso.texto;
-
-        if (paso.esIntro || paso.esCierre) {
-            iconContainer.innerHTML = htmlOndasRelajantes;
-        } else if (paso.imagen) {
-            iconContainer.innerHTML = `
-                <img src="${paso.imagen}" class="step-graphic" alt="${paso.titulo}">
-                <span id="timer-display" class="timer-text"></span>
-            `;
-        }
-
-        if (paso.esIntro) {
-            reproducirAudioFondoInstantaneo();
-        }
-
-        audioInstruccion = new Audio(paso.audio);
-        aplicarFadeIn(audioInstruccion, 0.9, 400);
-
-        audioInstruccion.onended = () => {
-            aplicarFadeOut(audioInstruccion, 600, () => {
-                if (paso.esOidoEspecial) {
-                    ejecutarSecuenciaOido();
-                } else if (paso.duracion > 0) {
-                    subIndicacionEl.textContent = "Tiempo de práctica...";
-                    iniciarConteoRegresivo(paso.duracion, () => {
-                        if (pasoActual < pasos.length - 1) {
-                            ejecutarPaso(pasoActual + 1);
-                        } else {
-                            finalizarEjercicio();
-                        }
-                    });
-                } else if (paso.esCierre) {
-                    finalizarEjercicio();
-                } else {
-                    if (pasoActual < pasos.length - 1) {
-                        ejecutarPaso(pasoActual + 1);
-                    }
-                }
-            });
-        };
-
-        btnSiguiente.textContent = (indice < pasos.length - 1) ? "Siguiente →" : "Reiniciar ↺";
-    }
-
-    function finalizarEjercicio() {
-        subIndicacionEl.textContent = "¡Sesión finalizada con éxito!";
-        aplicarFadeOut(musicaFondo, 2000);
-        btnSiguiente.textContent = "Reiniciar ↺";
-    }
-
-    btnSiguiente.addEventListener('click', () => {
-        if (pasoActual === -1 || pasoActual >= pasos.length - 1) {
-            ejecutarPaso(0);
-        } else {
-            ejecutarPaso(pasoActual + 1);
-        }
-    });
-
-    btnAnterior.addEventListener('click', () => {
-        if (pasoActual > 0) {
-            ejecutarPaso(pasoActual - 1);
-        }
-    });
-
-    btnPausa.addEventListener('click', () => {
-        if (pasoActual === -1) return;
-
-        enPausa = !enPausa;
-        if (enPausa) {
-            if (audioInstruccion) audioInstruccion.pause();
-            musicaFondo.pause();
-            btnPausa.textContent = "▶ Reanudar";
-        } else {
-            if (audioInstruccion) audioInstruccion.play().catch(() => {});
-            musicaFondo.play().catch(() => {});
-            btnPausa.textContent = "⏸ Pausar";
-        }
-    });
-});
+.btn-pause {
+    background-color: #f0ecf6;
+    color: var(--primary-color);
+}
