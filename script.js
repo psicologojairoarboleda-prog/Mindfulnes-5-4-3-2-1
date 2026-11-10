@@ -4,18 +4,28 @@ document.addEventListener('DOMContentLoaded', () => {
     musicaFondo.loop = true;
     musicaFondo.volume = 0;
 
-    musicaFondo.addEventListener('loadedmetadata', () => {
-        if (musicaFondo.duration > 3.5) {
-            musicaFondo.currentTime = 3.5;
+    function reproducirAudioFondoInstantaneo() {
+        if (musicaFondo.paused) {
+            musicaFondo.currentTime = 3.5; // Salta silencio inicial
+            musicaFondo.play().then(() => {
+                let volumenMax = 0.25;
+                let paso = 0.02;
+                let timer = setInterval(() => {
+                    if (musicaFondo.volume < volumenMax - paso) {
+                        musicaFondo.volume = Math.min(volumenMax, musicaFondo.volume + paso);
+                    } else {
+                        musicaFondo.volume = volumenMax;
+                        clearInterval(timer);
+                    }
+                }, 50);
+            }).catch(e => console.log("Audio bloqueado por navegador:", e));
         }
-    });
+    }
 
-    function aplicarFadeIn(audioElem, volumenMax = 0.25, duracionMs = 2000) {
-        if (audioElem === musicaFondo && audioElem.currentTime < 3.5) {
-            audioElem.currentTime = 3.5;
-        }
+    function aplicarFadeIn(audioElem, volumenMax = 0.8, duracionMs = 500) {
+        audioElem.volume = 0;
         audioElem.play().catch(e => console.log("Play bloqueado:", e));
-        let paso = 0.01;
+        let paso = 0.05;
         let intervalo = duracionMs / (volumenMax / paso);
         let timer = setInterval(() => {
             if (audioElem.volume < volumenMax - paso) {
@@ -27,7 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
         }, intervalo);
     }
 
-    function aplicarFadeOut(audioElem, duracionMs = 2000, alTerminar = null) {
+    function aplicarFadeOut(audioElem, duracionMs = 1000, alTerminar = null) {
         if (!audioElem || audioElem.paused) {
             if (alTerminar) alTerminar();
             return;
@@ -39,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (alTerminar) alTerminar();
             return;
         }
-        let paso = 0.01;
+        let paso = 0.05;
         let intervalo = duracionMs / (volumenInicial / paso);
         let timer = setInterval(() => {
             if (audioElem.volume > paso) {
@@ -47,7 +57,7 @@ document.addEventListener('DOMContentLoaded', () => {
             } else {
                 audioElem.volume = 0;
                 audioElem.pause();
-                audioElem.currentTime = 3.5;
+                audioElem.currentTime = 0;
                 clearInterval(timer);
                 if (alTerminar) alTerminar();
             }
@@ -62,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
         </div>
     `;
 
-    // Pasos con la frase exacta corregida (sin redundancia en vista)
+    // Pasos con la frase exacta corregida para la vista
     const pasos = [
         {
             badgeText: "Técnica de Mindfulness 5-4-3-2-1",
@@ -75,7 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
         {
             badgeText: "Paso 1 de 5",
             titulo: "Vista (5 Cosas)",
-            texto: "Mira a tu alrededor con atención y reconoce 5 objetos que puedas ver en este momento.",
+            texto: "Mira a tu alrededor con atención e identifica 5 objetos que puedas ver en este momento.",
             audio: "audio/vista.mp3",
             imagen: "Imagenes1/VISTA.jpg",
             duracion: 15
@@ -127,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let audioInstruccion = null;
     let timerInterval = null;
     let tiempoRestante = 0;
-    let tiempoTotal = 0;
     let enPausa = false;
 
     const badgeEl = document.querySelector('.badge');
@@ -158,7 +167,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function iniciarConteoRegresivo(segundos, callback) {
         if (timerInterval) clearInterval(timerInterval);
         tiempoRestante = segundos;
-        tiempoTotal = segundos;
 
         const timerDisplay = document.getElementById('timer-display');
         if (timerDisplay) timerDisplay.textContent = tiempoRestante;
@@ -178,7 +186,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function ejecutarSecuenciaOido() {
-        aplicarFadeOut(musicaFondo, 2000, () => {
+        aplicarFadeOut(musicaFondo, 1500, () => {
             const sonidosOido = ["audio/mar.mp3", "audio/aves.mp3", "audio/lluvia.mp3"];
             let indiceSonido = 0;
 
@@ -190,22 +198,22 @@ document.addEventListener('DOMContentLoaded', () => {
                     audioInstruccion = new Audio(archivoAudio);
                     
                     subIndicacionEl.textContent = `Sonido ${indiceSonido + 1} de 3`;
-                    aplicarFadeIn(audioInstruccion, 0.6, 1000);
+                    aplicarFadeIn(audioInstruccion, 0.7, 800);
 
-                    // 1. El audio suena durante 8 segundos exactos
+                    // 8 segundos de sonido
                     iniciarConteoRegresivo(8, () => {
-                        aplicarFadeOut(audioInstruccion, 1000, () => {
+                        aplicarFadeOut(audioInstruccion, 800, () => {
                             indiceSonido++;
 
                             if (indiceSonido < sonidosOido.length) {
-                                subIndicacionEl.textContent = "Menciona mentalmente...";
-                                // 2. Pausa de 4 segundos para nombrarlo mentalmente
+                                subIndicacionEl.textContent = "Nómbralo mentalmente...";
+                                // 4 segundos de pausa mental
                                 iniciarConteoRegresivo(4, () => {
                                     reproducirSiguienteSonidoOido();
                                 });
                             } else {
                                 subIndicacionEl.textContent = "";
-                                aplicarFadeIn(musicaFondo, 0.25, 2500);
+                                reproducirAudioFondoInstantaneo();
                                 if (pasoActual < pasos.length - 1) {
                                     ejecutarPaso(pasoActual + 1);
                                 }
@@ -240,15 +248,15 @@ document.addEventListener('DOMContentLoaded', () => {
             `;
         }
 
-        if (paso.esIntro && musicaFondo.paused) {
-            aplicarFadeIn(musicaFondo, 0.25, 1000);
+        if (paso.esIntro) {
+            reproducirAudioFondoInstantaneo();
         }
 
         audioInstruccion = new Audio(paso.audio);
-        aplicarFadeIn(audioInstruccion, 0.8, 500);
+        aplicarFadeIn(audioInstruccion, 0.9, 400);
 
         audioInstruccion.onended = () => {
-            aplicarFadeOut(audioInstruccion, 800, () => {
+            aplicarFadeOut(audioInstruccion, 600, () => {
                 if (paso.esOidoEspecial) {
                     ejecutarSecuenciaOido();
                 } else if (paso.duracion > 0) {
@@ -275,7 +283,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function finalizarEjercicio() {
         subIndicacionEl.textContent = "¡Sesión finalizada con éxito!";
-        aplicarFadeOut(musicaFondo, 2500);
+        aplicarFadeOut(musicaFondo, 2000);
         btnSiguiente.textContent = "Reiniciar ↺";
     }
 
@@ -303,10 +311,7 @@ document.addEventListener('DOMContentLoaded', () => {
             btnPausa.textContent = "▶ Reanudar";
         } else {
             if (audioInstruccion) audioInstruccion.play().catch(() => {});
-            if (musicaFondo.paused) {
-                if (musicaFondo.currentTime < 3.5) musicaFondo.currentTime = 3.5;
-                musicaFondo.play().catch(() => {});
-            }
+            musicaFondo.play().catch(() => {});
             btnPausa.textContent = "⏸ Pausar";
         }
     });
